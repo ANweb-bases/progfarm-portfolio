@@ -7,7 +7,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
-class Clip { public string Text; public bool Pin; public DateTime At = DateTime.Now; }
+class Clip { public string Text; public bool Pin; public DateTime At = DateTime.Now, Flash = DateTime.MinValue; }
 
 class MainForm : Form
 {
@@ -24,7 +24,7 @@ class MainForm : Form
 
     public MainForm()
     {
-        Text = "ClipFlow — история буфера обмена"; Size = new Size(620, 640); MinimumSize = new Size(420, 400); StartPosition = FormStartPosition.CenterScreen;
+        Fx.FadeIn(this); Text = "ClipFlow — история буфера обмена"; Size = new Size(620, 640); MinimumSize = new Size(420, 400); StartPosition = FormStartPosition.CenterScreen;
         BackColor = Bg; ForeColor = Color.White; Font = new Font("Segoe UI", 10f);
         Icon ic = null; try { ic = new Icon(System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("app.ico")); Icon = ic; } catch { }
 
@@ -43,7 +43,8 @@ class MainForm : Form
         tray.Icon = ic ?? SystemIcons.Application; tray.Text = "ClipFlow"; tray.Visible = true;
         var m = new ContextMenuStrip(); m.Items.Add("Открыть", null, (s, e) => ShowMe()); m.Items.Add("Выход", null, (s, e) => { quit = true; Close(); });
         tray.ContextMenuStrip = m; tray.DoubleClick += (s, e) => ShowMe();
-        LoadData(); Fill();
+        var flash = new Timer { Interval = 30 }; flash.Tick += (s, e) => { if (clips.Any(c => (DateTime.Now - c.Flash).TotalMilliseconds < 800)) lb.Invalidate(); };
+        flash.Start(); LoadData(); Fill();
     }
     Button Btn(string t, EventHandler h) { var b = new Button { Text = t, Size = new Size(116, 32), FlatStyle = FlatStyle.Flat, BackColor = Panel_, ForeColor = Color.White, Cursor = Cursors.Hand }; b.FlatAppearance.BorderColor = Color.FromArgb(60, 66, 90); b.Click += h; return b; }
     void ShowMe() { Show(); WindowState = FormWindowState.Normal; Activate(); search.Focus(); }
@@ -64,7 +65,7 @@ class MainForm : Form
         {
             if (!Clipboard.ContainsText()) return; var t = Clipboard.GetText(); if (string.IsNullOrWhiteSpace(t)) return;
             clips.RemoveAll(c => c.Text == t && !c.Pin); if (clips.Any(c => c.Text == t)) return;
-            clips.Insert(0, new Clip { Text = t }); while (clips.Count(c => !c.Pin) > 100) clips.Remove(clips.Last(c => !c.Pin));
+            clips.Insert(0, new Clip { Text = t, Flash = DateTime.Now }); while (clips.Count(c => !c.Pin) > 100) clips.Remove(clips.Last(c => !c.Pin));
             Fill(); Save();
         }
         catch { }
@@ -76,6 +77,8 @@ class MainForm : Form
         if (e.Index < 0) return; var c = (Clip)lb.Items[e.Index]; bool sel = (e.State & DrawItemState.Selected) != 0;
         var r = Rectangle.Inflate(e.Bounds, -6, -3);
         using (var b = new SolidBrush(sel ? Color.FromArgb(40, 60, 100) : Panel_)) e.Graphics.FillRectangle(b, r);
+        double fa = 1 - (DateTime.Now - c.Flash).TotalMilliseconds / 800;   // вспышка у новой записи
+        if (fa > 0) using (var b = new SolidBrush(Color.FromArgb((int)(fa * 90), Acc))) e.Graphics.FillRectangle(b, r);
         if (c.Pin) using (var b = new SolidBrush(Acc)) e.Graphics.FillRectangle(b, r.X, r.Y, 4, r.Height);
         var one = c.Text.Replace("\r", " ").Replace("\n", " ").Trim(); if (one.Length > 90) one = one.Substring(0, 90) + "…";
         e.Graphics.DrawString((c.Pin ? "★ " : "") + one, Font, Brushes.White, new RectangleF(r.X + 10, r.Y + 5, r.Width - 16, 22));
@@ -91,6 +94,18 @@ class MainForm : Form
     void LoadData()
     {
         try { if (File.Exists(F)) foreach (var l in File.ReadAllLines(F)) { var p = l.Split(new[] { '\t' }, 3); if (p.Length == 3) clips.Add(new Clip { Pin = p[0] == "1", At = new DateTime(long.Parse(p[1])), Text = Unesc(p[2]) }); } } catch { }
+    }
+}
+
+
+static class Fx
+{
+    // плавное появление окна при запуске
+    public static void FadeIn(Form f)
+    {
+        f.Opacity = 0; var t = new Timer { Interval = 15 };
+        t.Tick += (s, e) => { f.Opacity += 0.1; if (f.Opacity >= 1) { f.Opacity = 1; t.Stop(); t.Dispose(); } };
+        f.Shown += (s, e) => t.Start();
     }
 }
 
