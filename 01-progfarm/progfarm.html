@@ -262,7 +262,7 @@ dialog ol{margin:14px 0 20px 20px;color:#c4ccdb}dialog li{margin:8px 0}dialog h3
   <div class="pgrid"><div class="pl" id="pl"></div><div class="pr"><div class="stage" id="stage"></div><div class="cap" id="cap"></div></div></div><div class="pbar" id="pbar"></div></div></div>
 <dialog id="dlg"><h3 id="dt"></h3>
   <ol><li>Файл <b>.exe</b> скачается автоматически — установка не нужна, он запускается сразу.</li><li>Если Windows покажет синее окно «Защитник Windows предотвратил запуск», нажмите <b>Подробнее → Выполнить в любом случае</b>. Так бывает со всеми программами без платной цифровой подписи.</li><li>Данные хранятся только на вашем компьютере.</li></ol>
-  <div class="btns"><a class="btn" id="dl" href="#">Скачать</a><button class="btn o" id="dc">Закрыть</button></div></dialog>
+  <p id="dnote" style="color:var(--acc);margin:0 0 14px;font-size:14px"></p><div class="btns"><a class="btn" id="dl" href="#">Скачать</a><button class="btn o" id="dc">Закрыть</button></div></dialog>
 
 <script>
 const BOT='https://t.me/ProgFarmBot',MAIL='tolyan.berd2008@gmail.com';
@@ -315,8 +315,10 @@ function projCard(x,kind){
 $('sites').innerHTML=SITES.map(x=>projCard(x,'web')).join('');
 $('apps').innerHTML=APPS.map(x=>projCard(x,'exe')).join('');
 document.querySelectorAll('[data-pv]').forEach(c=>{let go=false;new IntersectionObserver(([e])=>{if(e.isIntersecting&&!go){go=true;RUN[c.dataset.pv](c)}}).observe(c)});
-document.addEventListener('click',e=>{const b=e.target.closest('[data-dl]');if(!b)return;const a=APPS.find(x=>x.id==b.dataset.dl);
-  $('dt').textContent='Установка: '+a.t;$('dl').href=REL+a.id+'.exe';$('dl').textContent='↓ Скачать '+a.id+'.exe';$('dlg').showModal()});
+let assets;const getAssets=()=>assets||(assets=fetch('https://api.github.com/repos/ANweb-bases/progfarm-portfolio/releases/latest').then(r=>r.json()).then(j=>(j.assets||[]).map(x=>x.name)).catch(()=>null));
+document.addEventListener('click',async e=>{const b=e.target.closest('[data-dl]');if(!b)return;const a=APPS.find(x=>x.id==b.dataset.dl),f=a.id+'.exe';
+  $('dt').textContent='Установка: '+a.t;$('dnote').textContent='';$('dl').removeAttribute('download');$('dl').href=REL+f;$('dl').textContent='↓ Скачать '+f;$('dlg').showModal();
+  const names=await getAssets();if(names&&!names.includes(f)&&a.web){$('dl').href=a.web;$('dl').textContent='Открыть версию в браузере';$('dnote').textContent='Установочный файл этого приложения ещё загружается — пока доступна полная веб-версия.'}});
 $('dc').onclick=()=>$('dlg').close();$('dl').onclick=()=>setTimeout(()=>$('dlg').close(),600);$('dlg').onclick=e=>{if(e.target.id=='dlg')$('dlg').close()};
 
 /* ---------- окно проекта: описание слева, анимированная работа справа ---------- */
