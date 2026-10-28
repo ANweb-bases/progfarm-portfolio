@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>ProgFarm — сайты, приложения, боты и базы данных на заказ</title>
 <meta name="description" content="ProgFarm: создание сайтов и приложений на заказ, Telegram-боты для продаж, верстка, доработка и починка сайтов, базы данных. Цены от 1500 ₽. Готовые проекты можно открыть и установить прямо на сайте.">
-<meta property="og:title" content="ProgFarm — сайты, приложения, боты и базы данных на заказ"><meta property="og:type" content="website">
+<link rel="icon" type="image/svg+xml" href="favicon.svg"><link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png"><link rel="alternate icon" href="favicon.ico"><link rel="apple-touch-icon" href="apple-touch-icon.png"><meta name="theme-color" content="#06070c"><meta property="og:image" content="https://anweb-bases.github.io/progfarm-portfolio/01-progfarm/icon-512.png"><meta property="og:title" content="ProgFarm — сайты, приложения, боты и базы данных на заказ"><meta property="og:type" content="website">
 <style>
 :root{--bg:#06070c;--card:#0e1018;--b:#ffffff1a;--fg:#eef2f7;--mut:#8b94a7;--acc:#b6ff3b;--c2:#38e8ff;--c3:#ff4fd8;--mx:50vw;--my:30vh}
 *{box-sizing:border-box;margin:0}
@@ -20,6 +20,10 @@ a{color:inherit;text-decoration:none}
 .blob{position:fixed;z-index:0;border-radius:50%;filter:blur(90px);opacity:.35;pointer-events:none;animation:float 18s ease-in-out infinite}
 .b1{width:480px;height:480px;background:#38e8ff;top:-120px;right:-80px}.b2{width:420px;height:420px;background:#ff4fd8;bottom:10%;left:-140px;animation-delay:-6s}.b3{width:380px;height:380px;background:#b6ff3b;top:45%;right:5%;animation-delay:-11s;opacity:.18}
 @keyframes float{50%{transform:translate(60px,-50px) scale(1.15)}}
+/* курсор: заметный крестик с пустым центром, чтобы не закрывать текст */
+html,body{cursor:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='32'%20height='32'%20viewBox='0%200%2032%2032'%3E%3Cg%20transform='rotate(0%2016%2016)'%3E%3Cpath%20d='M16%203v8M16%2021v8M3%2016h8M21%2016h8'%20stroke='%2306070c'%20stroke-width='4.6'%20stroke-linecap='round'%20fill='none'/%3E%3Cpath%20d='M16%203v8M16%2021v8M3%2016h8M21%2016h8'%20stroke='%23b6ff3b'%20stroke-width='2.2'%20stroke-linecap='round'%20fill='none'/%3E%3Ccircle%20cx='16'%20cy='16'%20r='2'%20fill='%23b6ff3b'%20stroke='%2306070c'%20stroke-width='1.2'/%3E%3C/g%3E%3C/svg%3E") 16 16,crosshair}
+a,button,summary,select,label,[data-dl],.card[data-pv],.tabs button{cursor:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='32'%20height='32'%20viewBox='0%200%2032%2032'%3E%3Cg%20transform='rotate(45%2016%2016)'%3E%3Cpath%20d='M16%203v8M16%2021v8M3%2016h8M21%2016h8'%20stroke='%2306070c'%20stroke-width='4.6'%20stroke-linecap='round'%20fill='none'/%3E%3Cpath%20d='M16%203v8M16%2021v8M3%2016h8M21%2016h8'%20stroke='%2338e8ff'%20stroke-width='2.2'%20stroke-linecap='round'%20fill='none'/%3E%3Ccircle%20cx='16'%20cy='16'%20r='2'%20fill='%2338e8ff'%20stroke='%2306070c'%20stroke-width='1.2'/%3E%3C/g%3E%3C/svg%3E") 16 16,pointer!important}
+input,textarea{cursor:text}
 /* header */
 header{position:fixed;top:0;left:0;right:0;z-index:50;transition:.4s}
 header.s{background:#06070ccc;backdrop-filter:blur(14px);border-bottom:1px solid var(--b)}
@@ -477,8 +481,6 @@ document.addEventListener('pointermove',e=>{
   const c=e.target.closest('.card');if(c&&fine){const r=c.getBoundingClientRect(),x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;
     c.style.setProperty('--px',x*100+'%');c.style.setProperty('--py',y*100+'%');c.style.transform=`perspective(900px) rotateX(${(.5-y)*7}deg) rotateY(${(x-.5)*9}deg) translateZ(0)`}
   document.querySelectorAll('.card').forEach(o=>{if(o!==c)o.style.transform=''});
-  document.querySelectorAll('[data-mag]').forEach(b=>{const r=b.getBoundingClientRect(),dx=e.clientX-(r.left+r.width/2),dy=e.clientY-(r.top+r.height/2),d=Math.hypot(dx,dy);
-    b.style.transform=fine&&d<90?`translate(${dx*.25}px,${dy*.35}px)`:''});
 });
 document.addEventListener('pointerleave',()=>document.querySelectorAll('.card').forEach(o=>o.style.transform=''));
 /* частицы */
