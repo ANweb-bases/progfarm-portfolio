@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IRON — фитнес-клуб</title>
+<style>
+:root{--y:#ffe600;--k:#0a0a0a;--w:#f5f5f0}
+*{box-sizing:border-box;margin:0}
+body{background:var(--w);color:var(--k);font:16px/1.5 "Arial Black",Impact,Arial,sans-serif}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1160px;margin:auto;padding:0 20px}
+header{background:var(--k);color:var(--y)}
+header .wrap{display:flex;justify-content:space-between;align-items:center;height:64px}
+.logo{font-size:30px;letter-spacing:4px}
+nav{display:flex;gap:24px;font:700 14px Arial;text-transform:uppercase}nav a:hover{text-decoration:underline}
+.hero{background:var(--y);border-bottom:6px solid var(--k);overflow:hidden}
+.hero .wrap{padding:60px 20px 50px;position:relative}
+.hero h1{font-size:clamp(60px,14vw,190px);line-height:.85;text-transform:uppercase;letter-spacing:-4px}
+.hero p{font:700 20px Arial;max-width:420px;margin:24px 0}
+.btn{display:inline-block;background:var(--k);color:var(--y);padding:16px 30px;font:700 16px Arial;text-transform:uppercase;border:3px solid var(--k);cursor:pointer;transition:.15s}
+.btn:hover{background:var(--y);color:var(--k);box-shadow:6px 6px 0 var(--k);transform:translate(-3px,-3px)}
+.ticker{background:var(--k);color:var(--y);overflow:hidden;white-space:nowrap;padding:10px 0;font-size:20px}
+.ticker div{display:inline-block;animation:t 20s linear infinite}
+@keyframes t{to{transform:translateX(-50%)}}
+section{padding:70px 0}
+h2{font-size:clamp(34px,6vw,64px);text-transform:uppercase;letter-spacing:-2px;line-height:1;margin-bottom:30px}
+.prices{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px}
+.pl{border:4px solid var(--k);padding:26px;background:#fff;transition:.15s}
+.pl:hover{box-shadow:8px 8px 0 var(--k);transform:translate(-4px,-4px)}
+.pl.hot{background:var(--y)}
+.pl h3{font-size:24px;text-transform:uppercase}
+.pl .p{font-size:46px;margin:10px 0}.pl .p small{font:700 14px Arial}
+.pl ul{font:15px Arial;list-style:none;padding:0;margin-bottom:20px}.pl li{padding:4px 0;border-bottom:1px solid #0002}.pl li::before{content:"✓ ";font-weight:900}
+.tb{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.tb button{font:700 14px Arial;text-transform:uppercase;border:3px solid var(--k);background:#fff;padding:10px 16px;cursor:pointer}
+.tb button.on{background:var(--k);color:var(--y)}
+.sched{border:4px solid var(--k);background:#fff}
+.sr{display:grid;grid-template-columns:90px 1fr 140px 110px;gap:10px;padding:14px 18px;border-bottom:2px solid var(--k);align-items:center;font:700 16px Arial}
+.sr:last-child{border:0}.sr time{font-size:22px;font-family:"Arial Black"}.sr em{font-style:normal;color:#666;font-size:14px}
+.sr button{background:var(--y);border:3px solid var(--k);font:700 13px Arial;padding:8px;cursor:pointer;text-transform:uppercase}
+.sr button.done{background:var(--k);color:var(--y)}
+.calc{background:var(--k);color:var(--w)}
+.calc .g{display:grid;grid-template-columns:1fr 1fr;gap:30px}
+.calc label{display:block;font:700 13px Arial;text-transform:uppercase;margin:12px 0 4px;color:var(--y)}
+.calc input,.calc select{width:100%;padding:12px;font:700 16px Arial;border:3px solid var(--y);background:var(--k);color:var(--w)}
+.res{background:var(--y);color:var(--k);padding:30px;display:flex;flex-direction:column;justify-content:center}
+.res b{font-size:72px;line-height:1}.res span{font:700 16px Arial}
+.trainers{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px}
+.tr{border:4px solid var(--k)}.tr .ph{height:180px;background:repeating-linear-gradient(45deg,var(--y) 0 14px,var(--k) 14px 28px);display:grid;place-items:center;font-size:60px}
+.tr div:last-child{padding:14px;font:700 15px Arial}.tr h3{font:24px "Arial Black"}
+form.j{display:grid;gap:12px;max-width:520px}
+form.j input{padding:14px;border:4px solid var(--k);font:700 16px Arial}
+footer{background:var(--k);color:var(--y);padding:26px 0;text-align:center;font:14px Arial}footer a{text-decoration:underline}
+@media(max-width:720px){nav{display:none}.sr{grid-template-columns:70px 1fr 100px}.sr em{display:none}.calc .g{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><a class="logo" href="#">IRON</a><nav><a href="#prices">Цены</a><a href="#sched">Расписание</a><a href="#calc">Калькулятор</a><a href="#join">Записаться</a></nav></div></header>
+
+<div class="hero"><div class="wrap">
+  <h1>Стань<br>сильнее</h1>
+  <p>Зал 1200 м², 30 групповых занятий в неделю и тренеры, которые не дадут пропустить.</p>
+  <a class="btn" href="#join">Пробная тренировка — 0 ₽</a>
+</div></div>
+<div class="ticker"><div id="tk"></div></div>
+
+<section id="prices"><div class="wrap">
+  <h2>Абонементы</h2>
+  <div class="prices" id="pr"></div>
+</div></section>
+
+<section id="sched" style="background:#fff;border-block:6px solid var(--k)"><div class="wrap">
+  <h2>Расписание</h2>
+  <div class="tb" id="days"></div>
+  <div class="sched" id="sc"></div>
+</div></section>
+
+<section class="calc" id="calc"><div class="wrap">
+  <h2 style="color:var(--y)">Калькулятор калорий</h2>
+  <div class="g">
+    <div>
+      <label>Пол</label><select id="sex"><option value="m">Мужчина</option><option value="f">Женщина</option></select>
+      <label>Возраст</label><input id="age" type="number" value="25" min="14" max="90">
+      <label>Рост, см</label><input id="h" type="number" value="175" min="120" max="230">
+      <label>Вес, кг</label><input id="w" type="number" value="75" min="35" max="250">
+      <label>Активность</label><select id="act"><option value="1.2">Минимальная</option><option value="1.375" selected>3 тренировки в неделю</option><option value="1.55">5 тренировок в неделю</option><option value="1.725">Ежедневно</option></select>
+      <label>Цель</label><select id="goal"><option value="-400">Похудеть</option><option value="0" selected>Держать форму</option><option value="350">Набрать массу</option></select>
+    </div>
+    <div class="res"><span>Ваша норма в день</span><b id="kc">0</b><span>ккал · ИМТ <u id="bmi"></u> (<span id="bt"></span>)</span><span id="mac" style="margin-top:10px"></span></div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <h2>Тренеры</h2>
+  <div class="trainers">
+    <div class="tr"><div class="ph">🏋</div><div><h3>Артём</h3>Силовые, 9 лет опыта</div></div>
+    <div class="tr"><div class="ph">🧘</div><div><h3>Мария</h3>Йога и растяжка</div></div>
+    <div class="tr"><div class="ph">🥊</div><div><h3>Денис</h3>Бокс и кардио</div></div>
+    <div class="tr"><div class="ph">🏃</div><div><h3>Алина</h3>Функциональный тренинг</div></div>
+  </div>
+</div></section>
+
+<section id="join" style="background:var(--y);border-top:6px solid var(--k)"><div class="wrap">
+  <h2>Запишись на пробную</h2>
+  <form class="j" id="jf"><input id="jn" placeholder="Имя" required><input id="jp" placeholder="Телефон" required pattern="[0-9+()\s-]{10,}"><button class="btn">Записаться</button></form>
+  <h3 id="jok" style="display:none;margin-top:16px">✅ Заявка принята, перезвоним в течение часа!</h3>
+</div></section>
+<footer>Демо-сайт · разработано в <a href="../01-progfarm/progfarm.html">ProgFarm</a></footer>
+
+<script>
+const $=id=>document.getElementById(id);
+$('tk').innerHTML=('СИЛА · ВЫНОСЛИВОСТЬ · ХАРАКТЕР · '.repeat(8));
+const P=[['Утро',1900,['Вход 07:00–15:00','Тренажёрный зал','Раздевалки и душ']],['Безлимит',3200,['Весь день','Зал + групповые','1 персональная в месяц'],1],['Год',27000,['Безлимит на 12 месяцев','Заморозка 30 дней','Гостевые визиты']]];
+$('pr').innerHTML=P.map(([n,p,l,h])=>`<div class="pl ${h?'hot':''}"><h3>${n}</h3><div class="p">${p.toLocaleString('ru-RU')} ₽<small> / ${n=='Год'?'год':'мес'}</small></div><ul>${l.map(i=>`<li>${i}</li>`).join('')}</ul><a class="btn" href="#join">Выбрать</a></div>`).join('');
+const D=['Пн','Вт','Ср','Чт','Пт','Сб','Вс'],C=[['09:00','Йога','Мария'],['10:30','Кардио','Денис'],['12:00','Функционал','Алина'],['18:00','Силовая','Артём'],['19:30','Бокс','Денис'],['20:30','Стретчинг','Мария']];
+let day=(new Date().getDay()+6)%7,booked={};
+try{booked=JSON.parse(localStorage.iron||'{}')}catch{}
+function sched(){
+  $('days').innerHTML=D.map((d,i)=>`<button class="${i==day?'on':''}" data-d="${i}">${d}</button>`).join('');
+  $('sc').innerHTML=C.filter((_,i)=>(i+day)%3!=2||i<3).map(([t,n,c])=>{const k=day+t;return `<div class="sr"><time>${t}</time><span>${n}</span><em>${c}</em><button class="${booked[k]?'done':''}" data-k="${k}">${booked[k]?'Вы записаны':'Записаться'}</button></div>`}).join('');
+}
+$('days').onclick=e=>{if(e.target.dataset.d){day=+e.target.dataset.d;sched()}};
+$('sc').onclick=e=>{const k=e.target.dataset.k;if(k){booked[k]=!booked[k];try{localStorage.iron=JSON.stringify(booked)}catch{}sched()}};
+sched();
+function calc(){
+  const w=+$('w').value,h=+$('h').value,a=+$('age').value;if(!(w&&h&&a))return;
+  const bmr=10*w+6.25*h-5*a+($('sex').value=='m'?5:-161),kc=Math.round(bmr*$('act').value+ +$('goal').value),b=w/(h/100)**2;
+  $('kc').textContent=kc;$('bmi').textContent=b.toFixed(1);
+  $('bt').textContent=b<18.5?'недовес':b<25?'норма':b<30?'избыток':'ожирение';
+  $('mac').textContent=`Белки ${Math.round(w*1.8)} г · Жиры ${Math.round(kc*.25/9)} г · Углеводы ${Math.round((kc-w*1.8*4-kc*.25)/4)} г`;
+}
+document.querySelector('.calc').addEventListener('input',calc);calc();
+$('jf').onsubmit=e=>{e.preventDefault();$('jf').style.display='none';$('jok').style.display='block'};
+</script>
+</body>
+</html>
