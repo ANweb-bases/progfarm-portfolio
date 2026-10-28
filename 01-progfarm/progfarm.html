@@ -20,12 +20,6 @@ a{color:inherit;text-decoration:none}
 .blob{position:fixed;z-index:0;border-radius:50%;filter:blur(90px);opacity:.35;pointer-events:none;animation:float 18s ease-in-out infinite}
 .b1{width:480px;height:480px;background:#38e8ff;top:-120px;right:-80px}.b2{width:420px;height:420px;background:#ff4fd8;bottom:10%;left:-140px;animation-delay:-6s}.b3{width:380px;height:380px;background:#b6ff3b;top:45%;right:5%;animation-delay:-11s;opacity:.18}
 @keyframes float{50%{transform:translate(60px,-50px) scale(1.15)}}
-/* cursor */
-#cur,#dot{position:fixed;top:0;left:0;z-index:100;pointer-events:none;border-radius:50%;mix-blend-mode:difference;opacity:0;transition:opacity .3s}
-#cur{width:38px;height:38px;border:1.5px solid #fff;margin:-19px 0 0 -19px;transition:width .25s,height .25s,margin .25s,opacity .3s,background .25s}
-#dot{width:6px;height:6px;background:#fff;margin:-3px 0 0 -3px}
-#cur.big{width:70px;height:70px;margin:-35px 0 0 -35px;background:#fff}
-body.fine #cur,body.fine #dot{opacity:1}body.fine,body.fine a,body.fine button,body.fine summary{cursor:none}
 /* header */
 header{position:fixed;top:0;left:0;right:0;z-index:50;transition:.4s}
 header.s{background:#06070ccc;backdrop-filter:blur(14px);border-bottom:1px solid var(--b)}
@@ -114,12 +108,80 @@ footer{border-top:1px solid var(--b);padding:28px 0;color:var(--mut);font-size:1
 /* modal */
 dialog{background:var(--card);color:var(--fg);border:1px solid var(--b);border-radius:22px;padding:30px;max-width:480px;width:calc(100% - 32px);margin:auto}dialog::backdrop{background:#000a;backdrop-filter:blur(6px)}
 dialog ol{margin:14px 0 20px 20px;color:#c4ccdb}dialog li{margin:8px 0}dialog h3{font-size:24px;letter-spacing:-.5px}
+/* карточки проектов: кликабельны */
+.card[data-pv]{cursor:pointer}.more{position:absolute;right:12px;top:12px;z-index:3;font-size:12px;background:#06070ccc;border:1px solid var(--b);padding:4px 11px;border-radius:99px;color:var(--fg);opacity:0;transform:translateY(-6px);transition:.3s}.card:hover .more{opacity:1;transform:none}
+.inv{display:flex;flex-direction:column;height:148px;padding:10px 12px;overflow:hidden}.inv .h{font-size:12px;margin-bottom:4px}.inv .rs{flex:1;min-height:0;overflow:hidden}.inv .r{padding:3px 0;font-size:11px}.inv .t{margin-top:auto;padding-top:5px;border-top:2px solid #2f5bff;font-size:13px}
+.cy{font:12px/1.5 Consolas,monospace;color:#00f0ff;height:150px;overflow:hidden}.cy .cyt{font:900 22px Impact,"Arial Black",sans-serif;letter-spacing:2px;color:#fcee09;text-shadow:2px 0 #ff003c,-2px 0 #00f0ff;margin-top:8px;animation:gl 2.4s infinite}@keyframes gl{92%{transform:none}94%{transform:translateX(3px)}96%{transform:translateX(-3px)}}
+.cy .ok{color:#4ade80}
+/* окно проекта */
+.pm{position:fixed;inset:0;z-index:80;background:#05060bd9;backdrop-filter:blur(10px);display:none;align-items:center;justify-content:center;padding:18px;opacity:0;transition:opacity .35s}
+.pm.on{display:flex}.pm.show{opacity:1}
+.pbox{background:linear-gradient(160deg,#10131f,#0a0c14);border:1px solid var(--b);border-radius:26px;width:min(1180px,100%);max-height:94vh;display:flex;flex-direction:column;transform:translateY(30px) scale(.97);transition:transform .45s cubic-bezier(.2,.9,.2,1);overflow:hidden;position:relative}
+.pm.show .pbox{transform:none}
+.px{position:absolute;right:16px;top:14px;z-index:5;width:40px;height:40px;border-radius:50%;border:1px solid var(--b);background:#ffffff10;color:var(--fg);font-size:22px;cursor:pointer;transition:.25s}.px:hover{background:var(--acc);color:#000;transform:rotate(90deg)}
+.pnav{position:absolute;right:64px;top:14px;z-index:5;display:flex;gap:6px}.pnav button{width:40px;height:40px;border-radius:50%;border:1px solid var(--b);background:#ffffff10;color:var(--fg);cursor:pointer;font-size:16px;transition:.25s}.pnav button:hover{background:#ffffff25}
+.pgrid{display:grid;grid-template-columns:minmax(300px,420px) 1fr;gap:0;flex:1;min-height:0;overflow:auto}
+.pl{padding:30px 28px;overflow:auto;border-right:1px solid var(--b)}
+.pl h2{font-size:34px;letter-spacing:-1px;margin:6px 0 10px}.pl .lead{color:#c4ccdb;margin-bottom:18px;font-size:15.5px}
+.pl h4{font:700 12px Consolas,monospace;letter-spacing:2px;text-transform:uppercase;color:var(--acc);margin:20px 0 8px}
+.pl ol{margin:0 0 0 18px;padding:0;color:#c4ccdb;font-size:14.5px}.pl ol li{margin:6px 0}.pl ol li::marker{color:var(--acc);font-weight:700}
+.pl .chips{display:flex;flex-wrap:wrap;gap:6px}.pl .chips span{font-size:12px;padding:4px 11px;border-radius:99px;border:1px solid var(--b);color:var(--mut)}
+.pl .who{color:#c4ccdb;font-size:14.5px}
+.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:6px 0}.facts div{background:#ffffff08;border:1px solid var(--b);border-radius:12px;padding:10px;text-align:center}.facts b{display:block;font-size:19px;color:var(--acc);letter-spacing:-.5px}.facts span{font-size:11px;color:var(--mut)}
+.pl>*{animation:pin .6s both}.pl>*:nth-child(2){animation-delay:.05s}.pl>*:nth-child(3){animation-delay:.1s}.pl>*:nth-child(4){animation-delay:.15s}.pl>*:nth-child(5){animation-delay:.2s}.pl>*:nth-child(6){animation-delay:.25s}.pl>*:nth-child(n+7){animation-delay:.3s}@keyframes pin{from{opacity:0;transform:translateX(-16px)}}
+.pr{padding:56px 28px 18px;display:flex;flex-direction:column;min-width:0;background:radial-gradient(500px 300px at 70% 20%,#38e8ff10,transparent)}
+.stage{position:relative;flex:1;min-height:330px;border-radius:16px;overflow:hidden}
+.cap{margin-top:12px;min-height:46px;display:flex;gap:12px;align-items:center;color:#dfe6f3;font-size:15px}.cap b{flex:none;width:30px;height:30px;border-radius:50%;background:var(--acc);color:#000;display:grid;place-items:center;font-size:14px}.cap span{animation:pin .4s both}
+.pbar{display:flex;gap:12px;padding:16px 28px;border-top:1px solid var(--b);flex-wrap:wrap;background:#0b0d16}.pbar .btn{padding:13px 26px}
+.pbar .sp{flex:1}
+/* мини-интерфейсы в окне проекта */
+.win{background:#0b0d16;border:1px solid #ffffff1f;border-radius:12px;height:100%;display:flex;flex-direction:column;overflow:hidden;font-size:12px;color:#dfe6f3}
+.win .tb{padding:9px 12px;background:#141828;color:#8b94a7;display:flex;gap:6px;align-items:center}.win .tb i{width:9px;height:9px;border-radius:50%;background:#ffffff30}.win .tb i:nth-child(1){background:#ff5f57}.win .tb i:nth-child(2){background:#febc2e}.win .tb i:nth-child(3){background:#28c840}.win .tb span{margin-left:8px}
+.win .bd2{flex:1;display:flex;gap:12px;padding:12px;min-height:0}.win .col{display:flex;flex-direction:column;gap:5px;min-width:0}
+.win label{color:#8b94a7;font-size:11px;margin-top:3px}
+.fi{background:#06070c;border:1px solid #ffffff1f;border-radius:7px;padding:7px 9px;min-height:30px;white-space:nowrap;overflow:hidden;transition:border-color .2s,box-shadow .2s}
+.fi.t,.fi.hit{border-color:var(--acc);box-shadow:0 0 0 3px #b6ff3b22}.fi.t::after{content:"";display:inline-block;width:1px;height:13px;background:#fff;margin-left:1px;vertical-align:middle;animation:bl 1s steps(2) infinite}
+.bt{background:var(--acc);color:#000;font-weight:700;border-radius:8px;padding:8px 10px;text-align:center;transition:transform .2s,filter .2s}.bt.hit{transform:scale(.94);filter:brightness(1.2)}
+.chk{display:flex;gap:8px;align-items:center;margin:4px 0}.chk i{width:16px;height:16px;border:1.5px solid #ffffff50;border-radius:4px;display:grid;place-items:center;transition:.25s}.chk.on i{background:var(--acc);border-color:var(--acc)}.chk.on i::after{content:"✓";color:#000;font-size:11px;font-weight:900}
+.in{animation:pop2 .45s both}@keyframes pop2{from{opacity:0;transform:translateY(8px) scale(.96)}}
+.fc{position:absolute;left:0;top:0;width:22px;height:22px;z-index:20;pointer-events:none;transform:translate(30px,30px);transition:transform .65s cubic-bezier(.4,.1,.2,1);background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 2l16 9-7 2-3 7z' fill='white' stroke='black' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat;filter:drop-shadow(0 2px 4px #0008)}
+.fc::after{content:"";position:absolute;left:-8px;top:-8px;width:20px;height:20px;border-radius:50%;border:2px solid var(--acc);opacity:0}.fc.clk::after{animation:rip .35s}@keyframes rip{from{opacity:1;transform:scale(.3)}to{opacity:0;transform:scale(1.8)}}
+/* счёт */
+.paper2{flex:1;background:#fff;color:#0f1b33;border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:5px;position:relative;min-width:0}.paper2 h5{font-size:14px}.paper2 .small{font-size:11px;color:#6a7792;min-height:14px}.paper2 .rw{display:flex;justify-content:space-between;border-bottom:1px solid #e4e9f4;padding:5px 0;min-height:26px}.paper2 .vt{font-size:11px;color:#6a7792;min-height:14px}.paper2 .tt{margin-top:auto;display:flex;justify-content:space-between;font-size:16px;font-weight:800;color:#2f5bff;border-top:2px solid #0f1b33;padding-top:6px}
+.paper2 .ok{position:absolute;right:10px;top:10px;background:#16a34a;color:#fff;font-weight:700;padding:6px 12px;border-radius:99px;opacity:0;transform:scale(.7);transition:.4s}.paper2 .ok.in{opacity:1;transform:none;animation:none}
+/* devkit */
+.dk{width:104px;display:flex;flex-direction:column;gap:3px}.dk div{padding:7px 9px;border-radius:7px;color:#8b84a8;transition:.25s}.dk div.on{background:#a78bfa22;color:#a78bfa}
+.pre{flex:1;background:#06070c;border:1px solid #ffffff1f;border-radius:8px;padding:9px;font:12px/1.5 Consolas,monospace;white-space:pre;color:#c4b5fd;overflow:hidden;min-height:110px}.pre .k{color:#38e8ff}.pre .s{color:#b6ff3b}.pre .n{color:#ff4fd8}
+/* калькулятор */
+.sl{margin:5px 0}.sl div:first-child{display:flex;justify-content:space-between;color:#8bbfb4;font-size:11px;margin-bottom:5px}.sl .tr{height:6px;background:#ffffff1c;border-radius:6px;position:relative}.sl .tr i{position:absolute;left:0;top:0;bottom:0;border-radius:6px;background:#34d399;transition:width .9s cubic-bezier(.3,1,.4,1)}.sl .tr i::after{content:"";position:absolute;right:-6px;top:-4px;width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:0 0 0 4px #34d39944}
+.fbig{background:linear-gradient(135deg,#10b98133,#facc1522);border-radius:12px;padding:12px;margin-bottom:8px}.fbig span{font-size:11px;color:#8bbfb4}.fbig b{display:block;font-size:26px;letter-spacing:-1px;color:#e7fbf6}
+.tabs2{display:flex;gap:4px;margin-bottom:8px}.tabs2 div{padding:6px 12px;border-radius:8px;color:#8bbfb4;transition:.3s}.tabs2 div.on{background:#34d399;color:#052e26;font-weight:700}
+.cv{flex:1;min-height:80px}.cv svg{width:100%;height:100%}.cv path{fill:none;stroke:#34d399;stroke-width:3;stroke-dasharray:500;stroke-dashoffset:500;transition:stroke-dashoffset 1.6s ease}.cv path.go{stroke-dashoffset:0}
+/* привычки */
+.hr{display:flex;align-items:center;gap:8px;margin-bottom:7px;background:#1e2230;border-radius:10px;padding:9px 12px}.hr .n{width:80px;font-weight:700;font-size:13px}.hr .sq{display:flex;gap:4px;flex:1}.hr .sq i{flex:1;height:20px;border-radius:5px;background:#30354a;transition:background .3s,transform .3s}.hr .sq i.on{background:#4ade80}.hr .sq i.pu{transform:scale(1.35)}.hr .st{width:78px;text-align:right;color:#ff9f43;font-size:11px}
+.hf{margin-top:auto;color:#8b94a7;padding-top:6px;border-top:1px solid #ffffff14}
+/* clipflow */
+.doc{flex:1;background:#fff;color:#0f1b33;border-radius:8px;padding:10px;display:flex;flex-direction:column;gap:6px;font-size:11.5px}.doc div{padding:3px 6px;border-radius:4px;transition:background .3s}.doc div.sel{background:#bfdbfe}
+.cf{flex:1.15;display:flex;flex-direction:column;gap:5px;min-width:0}.cf .it{background:#1d2133;border-left:3px solid #60a5fa;border-radius:6px;padding:7px 9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;position:relative}.cf .it.pin{border-left-color:#fbbf24}.cf .it.pin::after{content:"★";position:absolute;right:8px;color:#fbbf24}.cf .it.fl{animation:flh .8s}@keyframes flh{from{background:#60a5fa66}}
+.toast2{position:absolute;bottom:14px;left:50%;transform:translate(-50%,40px);background:#fff;color:#000;padding:7px 14px;border-radius:99px;font-weight:700;transition:.35s;opacity:0;z-index:15}.toast2.on{transform:translate(-50%,0);opacity:1}
+/* копилка */
+.kt{display:flex;gap:8px;margin-bottom:6px}.kt div{flex:1;background:#181b27;border-radius:8px;padding:8px;text-align:center}.kt b{display:block;font-size:15px}.kt .g b{color:#4ade80}.kt .r b{color:#fb7185}
+.kr{display:flex;justify-content:space-between;padding:6px 8px;border-bottom:1px solid #ffffff10}.kr b{color:#fb7185}.kr b.p{color:#4ade80}
+.kb{display:flex;align-items:flex-end;gap:8px;height:100%;padding-top:6px}.kb i{flex:1;border-radius:5px 5px 0 0;transition:height .9s cubic-bezier(.3,1.4,.4,1);min-height:4px}
+.ml{text-align:center;font-weight:700;margin-bottom:4px;transition:opacity .25s}
+/* киберпанк */
+.cyb{background:#05060a;font-family:Consolas,monospace;color:#00f0ff;padding:14px;height:100%;position:relative;overflow:hidden;font-size:12px;line-height:1.55}.cyb::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(180deg,#0006 0 1px,transparent 1px 3px);pointer-events:none;z-index:5}
+.cyb .tl{color:#fcee09}.cyb .ok{color:#4ade80}.cyb .wr{color:#ff003c}.cyb h6{font:900 26px Impact,"Arial Black",sans-serif;color:#fcee09;text-shadow:2px 0 #ff003c,-2px 0 #00f0ff;letter-spacing:2px;margin:10px 0;animation:gl 2.4s infinite}
+.cyb .opt{border:1px solid #00f0ff55;padding:7px 10px;margin:5px 0;color:#e9f3f4;transition:.25s;background:#00f0ff08}.cyb .opt.sel{background:#fcee09;color:#000;border-color:#fcee09}
+.cyb .ab{display:grid;grid-template-columns:104px 1fr 24px;gap:8px;align-items:center;margin:4px 0;color:#e9f3f4}.cyb .ab div{height:7px;background:#ffffff18}.cyb .ab i{display:block;height:100%;width:0;background:linear-gradient(90deg,#00f0ff,#fcee09);transition:width .9s cubic-bezier(.3,1,.4,1)}
+@media(max-width:900px){.pgrid{grid-template-columns:1fr}.pl{border-right:0;border-bottom:1px solid var(--b)}.pr{padding-top:20px}.pnav{display:none}}
+
 @media(max-width:820px){nav{display:none}.contact{grid-template-columns:1fr;padding:26px}.grid{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01s!important;animation-iteration-count:1!important;transition-duration:.01s!important}}
 </style>
 </head>
 <body>
-<canvas id="bg"></canvas><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="glow"></div><div id="cur"></div><div id="dot"></div>
+<canvas id="bg"></canvas><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="glow"></div>
 
 <header id="hd"><div class="wrap">
   <a href="#top" class="logo">&lt;<b>Prog</b>Farm/&gt;</a>
@@ -132,7 +194,7 @@ dialog ol{margin:14px 0 20px 20px;color:#c4ccdb}dialog li{margin:8px 0}dialog h3
   <h1 id="h1"></h1>
   <p>Делаю сайты и приложения на заказ, Telegram-ботов для продаж, верстаю, дорабатываю и чиню чужие проекты. Понятные цены от 1500 ₽ и сроки без сюрпризов.</p>
   <div class="row"><a class="btn" data-mag href="#projects">Смотреть проекты</a><a class="btn o" data-mag href="#services">Услуги и цены</a></div>
-  <div class="stats"><div><b data-n="11">0</b><span>услуг в каталоге</span></div><div><b data-n="6">0</b><span>готовых проектов</span></div><div><b>от 1 500 ₽</b><span>стоимость старта</span></div></div>
+  <div class="stats"><div><b data-n="11">0</b><span>услуг в каталоге</span></div><div><b data-n="7">0</b><span>готовых проектов</span></div><div><b>от 1 500 ₽</b><span>стоимость старта</span></div></div>
 </div><div class="scroll mono">SCROLL ↓</div></div>
 
 <div class="mq"><div id="mq"></div></div>
@@ -140,7 +202,7 @@ dialog ol{margin:14px 0 20px 20px;color:#c4ccdb}dialog li{margin:8px 0}dialog h3
 <section id="projects"><div class="wrap">
   <div class="eyebrow rv">// проекты</div>
   <h2 class="rv">Работает, а не просто выглядит</h2>
-  <p class="sub rv">Шесть полезных проектов, которые можно открыть или установить прямо отсюда. Так выглядит работа, которую я делаю на заказ.</p>
+  <p class="sub rv">Семь полезных проектов, которые можно открыть или установить прямо отсюда. Нажмите на карточку — увидите подробное описание и как всё работает. Так выглядит работа, которую я делаю на заказ.</p>
   <div class="kind rv"><h3>Сайты</h3><i></i></div>
   <div class="grid" id="sites"></div>
   <div class="kind rv"><h3>Приложения для Windows</h3><i></i></div>
@@ -179,10 +241,10 @@ dialog ol{margin:14px 0 20px 20px;color:#c4ccdb}dialog li{margin:8px 0}dialog h3
       <h2>Обсудим ваш проект?</h2>
       <p class="sub">Заказать и оплатить услугу можно в Telegram-боте. Личные сообщения — только по развёрнутым и индивидуальным вопросам.</p>
       <div class="links">
-        <a href="https://t.me/ProgFarmBot" target="_blank" rel="noopener">🤖 Бот ProgFarm — заказ, оплата, связь со мной</a>
-        <a href="https://t.me/rivvva_la_viddda" target="_blank" rel="noopener">✈ Личный Telegram: @rivvva_la_viddda <small style="color:var(--mut)">— только развёрнутые и индивидуальные вопросы</small></a>
-        <a href="mailto:tolyan.berd2008@gmail.com">✉ Почта: tolyan.berd2008@gmail.com</a>
-        <a href="https://github.com/ANweb-bases" target="_blank" rel="noopener">⌥ GitHub: ANweb-bases</a>
+        <a href="https://t.me/ProgFarmBot" target="_blank" rel="noopener">Бот ProgFarm — заказ, оплата, связь со мной</a>
+        <a href="https://t.me/rivvva_la_viddda" target="_blank" rel="noopener">Личный Telegram: @rivvva_la_viddda <small style="color:var(--mut)">— только развёрнутые и индивидуальные вопросы</small></a>
+        <a href="mailto:tolyan.berd2008@gmail.com">Почта: tolyan.berd2008@gmail.com</a>
+        <a href="https://github.com/ANweb-bases" target="_blank" rel="noopener">GitHub: ANweb-bases</a>
       </div>
     </div>
     <form id="f">
@@ -196,6 +258,8 @@ dialog ol{margin:14px 0 20px 20px;color:#c4ccdb}dialog li{margin:8px 0}dialog h3
 
 <footer>© <span id="y"></span> ProgFarm · Сайты, приложения, боты, базы данных · <a href="https://github.com/ANweb-bases" target="_blank" rel="noopener">GitHub</a></footer>
 
+<div class="pm" id="pm"><div class="pbox"><div class="pnav"><button id="pprev" aria-label="Предыдущий">‹</button><button id="pnext" aria-label="Следующий">›</button></div><button class="px" id="pmx" aria-label="Закрыть">×</button>
+  <div class="pgrid"><div class="pl" id="pl"></div><div class="pr"><div class="stage" id="stage"></div><div class="cap" id="cap"></div></div></div><div class="pbar" id="pbar"></div></div></div>
 <dialog id="dlg"><h3 id="dt"></h3>
   <ol><li>Файл <b>.exe</b> скачается автоматически — установка не нужна, он запускается сразу.</li><li>Если Windows покажет синее окно «Защитник Windows предотвратил запуск», нажмите <b>Подробнее → Выполнить в любом случае</b>. Так бывает со всеми программами без платной цифровой подписи.</li><li>Данные хранятся только на вашем компьютере.</li></ol>
   <div class="btns"><a class="btn" id="dl" href="#">Скачать</a><button class="btn o" id="dc">Закрыть</button></div></dialog>
@@ -212,6 +276,7 @@ const SITES=[
  {id:'devkit',t:'DevKit',cat:'Для разработчиков',d:'Семь инструментов в одной вкладке: JSON, Base64, хеши, UUID, цвета, пароли и Unix-время. Всё считается локально.',l:['Без регистрации и рекламы','Криптостойкие пароли','Работает офлайн'],url:'../03-devkit/devkit.html'},
  {id:'fin',t:'ПроФинанс',cat:'Финансы',d:'Кредит, вклад и накопление на цель: ползунки, график и подробная таблица платежей.',l:['Аннуитет и дифференцированный платёж','Вклад с капитализацией и пополнением','Срок накопления на цель'],url:'../04-profinance/profinance.html'}];
 const APPS=[
+ {id:'CyberpunkBuildAdvisor',t:'Night City Build Advisor',cat:'Помощник по билдам Cyberpunk 2077',d:'Отвечаете на вопросы о стиле игры — приложение подбирает атрибуты, импланты, оружие и готовые сборки под ваш уровень и бюджет в евродолларах.',l:['Подбор билда по викторине','22 импланта и 10 классов оружия','Тема киберпанка: дождь, сканлайны, звуки'],size:'11,9 МБ',web:'../cyberpunk-builder/index.html'},
  {id:'HabitFlow',t:'HabitFlow',cat:'Трекер привычек',d:'Отмечайте привычки кликом по дням, следите за сериями и лучшим результатом. Ничего не уходит в интернет.',l:['Серии дней и статистика','Тёмная тема, 14 дней на виду','Данные в папке пользователя'],size:'31 КБ'},
  {id:'ClipFlow',t:'ClipFlow',cat:'История буфера обмена',d:'Запоминает всё, что вы копируете: ищите, закрепляйте и возвращайте в буфер. Живёт в трее, открывается Ctrl+Shift+V.',l:['Поиск и закрепление записей','Быстрый вызов Ctrl+Shift+V','Кнопка «Пауза» для паролей'],size:'32 КБ'},
  {id:'Kopilka',t:'Копилка',cat:'Учёт доходов и расходов',d:'Заносите траты и доходы, смотрите баланс по месяцам и диаграмму по категориям. Выгрузка в Excel одной кнопкой.',l:['Баланс и диаграмма по категориям','Месяцы листаются стрелками','Экспорт в CSV для Excel'],size:'40 КБ'}];
@@ -221,6 +286,7 @@ const PV={
  schet:()=>`<div class="inv"><div class="h"><span>Счёт № 2026-014</span><span>Итого</span></div><div class="rs"></div><div class="t"><span>К оплате</span><b class="sm">0 ₽</b></div></div>`,
  devkit:()=>`<div class="dots"><i></i><i></i><i></i></div><div class="term2"><span class="tx"></span><span class="c"></span></div>`,
  fin:()=>`<div class="fin"><small>Итоговая сумма</small><b class="fv">0 ₽</b><svg viewBox="0 0 300 110" preserveAspectRatio="none"><path class="a" d="M0 100 C60 96 100 80 150 60 S250 20 300 8 L300 110 L0 110Z"/><path d="M0 100 C60 96 100 80 150 60 S250 20 300 8"/></svg></div>`,
+ CyberpunkBuildAdvisor:()=>`<div class="cy"><div class="cyl"></div><div class="cyt">CYBERPUNK 2077</div></div>`,
  HabitFlow:()=>`<div class="hb">${['Вода','Спорт','Чтение','Сон'].map(n=>`<div><span>${n}</span>${'<i></i>'.repeat(10)}</div>`).join('')}</div>`,
  ClipFlow:()=>`<div class="clp"></div>`,
  Kopilka:()=>`<div class="kp-t"><span>Расходы · октябрь</span><b class="kv">0 ₽</b></div><div class="kp">${['#fb923c','#60a5fa','#4ade80','#f472b6','#facc15','#a78bfa'].map(c=>`<i style="background:${c};height:8%"></i>`).join('')}</div>`
@@ -234,6 +300,7 @@ const RUN={
   const pretty='{\n  <span class="k">"name"</span>: <span class="s">"ProgFarm"</span>,\n  <span class="k">"apps"</span>: <span class="n">3</span>,\n  <span class="k">"price"</span>: <span class="n">1500</span>\n}';
   for(;;){tx.textContent='';for(const ch of min){tx.textContent+=ch;await wait(35)}await wait(600);tx.innerHTML=pretty;await wait(2600)}},
  async fin(c){const fv=c.querySelector('.fv');for(;;){fv.textContent='0 ₽';count(fv,2480000,2600);await wait(4000)}},
+ async CyberpunkBuildAdvisor(c){const b=c.querySelector('.cyl'),L=['> NETWATCH ........ OK','> БАЗА ИМПЛАНТОВ (22) .. OK','> БАЗА ОРУЖИЯ (10) .... OK','> ДОБРО ПОЖАЛОВАТЬ.'];for(;;){b.innerHTML='';for(const l of L){const d=document.createElement('div');b.append(d);for(const ch of l){d.textContent+=ch;await wait(28)}d.innerHTML=d.textContent.replace(/OK$/,'<span class="ok">OK</span>');await wait(120)}await wait(3200)}},
  async HabitFlow(c){const rows=[...c.querySelectorAll('.hb div')];const pat=[[1,1,1,1,1,1,1,1,1,1],[1,0,1,1,0,1,1,1,0,1],[0,1,1,1,1,0,1,1,1,1],[1,1,0,1,1,1,1,0,1,1]];
   for(;;){rows.forEach(r=>r.querySelectorAll('i').forEach(i=>i.classList.remove('on')));for(let d=0;d<10;d++){rows.forEach((r,i)=>pat[i][d]&&r.querySelectorAll('i')[d].classList.add('on'));await wait(280)}await wait(2200)}},
  async ClipFlow(c){const box=c.querySelector('.clp'),L=['https://progfarm.dev/order','npm install express','+7 900 123-45-67','SELECT * FROM clients;','#b6ff3b','Спасибо за заказ!','git commit -m "fix"'];let i=0;
@@ -242,15 +309,128 @@ const RUN={
 };
 function projCard(x,kind){
   const web=kind=='web',pv=PV[x.id]();
-  return `<article class="card rv" data-pv="${x.id}"><div class="scr">${pv}</div><div class="bd"><span class="pbadge ${kind}">${web?'🌐 Сайт · открывается в браузере':'💻 Windows .exe · '+x.size}</span><span class="cat">${x.cat}</span><h3>${x.t}</h3><p>${x.d}</p><ul>${x.l.map(i=>`<li>${i}</li>`).join('')}</ul>
-  <div class="btns">${web?`<a class="btn" data-mag href="${x.url}">Открыть сайт →</a>`:`<button class="btn" data-mag data-dl="${x.id}">⬇ Установить</button>`}</div></div></article>`;
+  return `<article class="card rv" data-pv="${x.id}"><div class="scr">${pv}<span class="more">Подробнее →</span></div><div class="bd"><span class="pbadge ${kind}">${web?'🌐 Сайт · открывается в браузере':'💻 Windows .exe · '+x.size}</span><span class="cat">${x.cat}</span><h3>${x.t}</h3><p>${x.d}</p><ul>${x.l.map(i=>`<li>${i}</li>`).join('')}</ul>
+  <div class="btns">${web?`<a class="btn" data-mag href="${x.url}">Открыть сайт →</a>`:`<button class="btn" data-mag data-dl="${x.id}">↓ Установить</button>${x.web?`<a class="btn o" data-mag href="${x.web}">В браузере</a>`:''}`}</div></div></article>`;
 }
 $('sites').innerHTML=SITES.map(x=>projCard(x,'web')).join('');
 $('apps').innerHTML=APPS.map(x=>projCard(x,'exe')).join('');
 document.querySelectorAll('[data-pv]').forEach(c=>{let go=false;new IntersectionObserver(([e])=>{if(e.isIntersecting&&!go){go=true;RUN[c.dataset.pv](c)}}).observe(c)});
 document.addEventListener('click',e=>{const b=e.target.closest('[data-dl]');if(!b)return;const a=APPS.find(x=>x.id==b.dataset.dl);
-  $('dt').textContent='Установка: '+a.t;$('dl').href=REL+a.id+'.exe';$('dl').textContent='⬇ Скачать '+a.id+'.exe';$('dlg').showModal()});
+  $('dt').textContent='Установка: '+a.t;$('dl').href=REL+a.id+'.exe';$('dl').textContent='↓ Скачать '+a.id+'.exe';$('dlg').showModal()});
 $('dc').onclick=()=>$('dlg').close();$('dl').onclick=()=>setTimeout(()=>$('dlg').close(),600);$('dlg').onclick=e=>{if(e.target.id=='dlg')$('dlg').close()};
+
+/* ---------- окно проекта: описание слева, анимированная работа справа ---------- */
+const INFO={
+ schet:{lead:'Генератор счетов для фрилансеров и ИП. Вы заполняете реквизиты и позиции, а готовый документ собирается справа в реальном времени. Сохраните его в PDF или распечатайте — без регистраций и серверов.',
+  how:['Вводите реквизиты исполнителя и заказчика','Добавляете позиции: название, количество, цена — итог считается сам','Включаете НДС 20% — сумма разбивается автоматически','Нажимаете «Скачать PDF / Печать» — документ готов','Черновик остаётся в браузере и ждёт вас при следующем визите'],
+  tech:['HTML','CSS','JavaScript','localStorage','print-CSS'],who:'Фрилансеры, самозанятые, ИП и небольшие студии, которым нужен аккуратный счёт за пару минут.',facts:[['0 ₽','стоимость'],['20%','НДС в один клик'],['PDF','экспорт']]},
+ devkit:{lead:'Семь инструментов разработчика в одной вкладке. Всё считается прямо в браузере: ваши данные, токены и пароли никуда не отправляются.',
+  how:['JSON: форматирование, минификация и точное сообщение об ошибке','Base64: кодирование и декодирование, в том числе кириллицы','Хеши SHA-1, SHA-256 и SHA-512 пересчитываются по мере ввода','UUID v4 и URL-кодирование одним кликом','Цвет в HEX, RGB и HSL одновременно','Криптостойкий генератор паролей и конвертер Unix-времени'],
+  tech:['JavaScript','Web Crypto API','TextEncoder','Clipboard API'],who:'Разработчики, тестировщики и все, кто часто сталкивается с форматами данных и не хочет ставить лишние программы.',facts:[['7','инструментов'],['0','запросов к серверу'],['офлайн','работает']]},
+ fin:{lead:'Три калькулятора для больших решений: взять кредит, открыть вклад или накопить на цель. Ползунки, график и подробная таблица — цифры пересчитываются мгновенно.',
+  how:['Кредит: аннуитетный или дифференцированный платёж, переплата и график по месяцам','Вклад: капитализация и ежемесячные пополнения, итоговая сумма и рост','Цель: за сколько месяцев накопите, с учётом процентов','Линия на графике рисуется с анимацией при каждом изменении','Введённые значения запоминаются в браузере'],
+  tech:['JavaScript','Canvas','localStorage','CSS-анимации'],who:'Тем, кто планирует ипотеку, кредит или накопления и хочет увидеть реальные цифры до разговора с банком.',facts:[['3','калькулятора'],['360','строк графика'],['<1 с','пересчёт']]},
+ HabitFlow:{lead:'Трекер привычек для Windows. Откройте — и отметьте сегодняшний день одним кликом. На экране всегда последние 14 дней, серия подряд и лучший результат.',
+  how:['Вводите название привычки и нажимаете «Добавить»','Кликаете по квадратикам дней: зелёный — выполнено','Серия подряд считается автоматически, вчерашний день не обнуляет её','Внизу — сколько привычек выполнено сегодня и лучшая серия','Данные лежат в папке пользователя и не уходят в интернет'],
+  tech:['C#','WinForms','.NET Framework 4','GDI+ анимации'],who:'Всем, кто строит полезные привычки: спорт, чтение, вода, сон — без регистраций и подписок.',facts:[['33 КБ','размер'],['14','дней на виду'],['0','интернета']]},
+ ClipFlow:{lead:'История буфера обмена. ClipFlow запоминает всё, что вы копируете, и возвращает любую запись в буфер в один клик. Живёт в трее, открывается по Ctrl+Shift+V.',
+  how:['Копируете текст как обычно — запись появляется в списке со вспышкой','Поиск по истории: найдёт даже то, что вы копировали неделю назад','Звёздочкой закрепляете важное: оно не пропадёт при очистке','Двойной клик или Enter возвращает запись в буфер','Кнопка «Пауза» отключает запись, когда копируете пароли'],
+  tech:['C#','WinForms','Win32 API','Clipboard listener'],who:'Тем, кто много работает с текстом: программисты, менеджеры, копирайтеры, операторы.',facts:[['100','записей в истории'],['Ctrl+Shift+V','быстрый вызов'],['33 КБ','размер']]},
+ Kopilka:{lead:'Простой учёт доходов и расходов. Заносите траты за несколько секунд и сразу видите баланс месяца и диаграмму по категориям.',
+  how:['Выбираете тип, категорию и вводите сумму','Запись попадает в таблицу, баланс пересчитывается','Диаграмма показывает, на что уходит больше всего денег','Листаете месяцы стрелками и сравниваете периоды','Выгружаете месяц в CSV и открываете в Excel'],
+  tech:['C#','WinForms','LINQ','CSV'],who:'Тем, кто хочет понимать, куда уходят деньги, без громоздких банковских приложений и облаков.',facts:[['8','категорий'],['CSV','экспорт в Excel'],['40 КБ','размер']]},
+ CyberpunkBuildAdvisor:{lead:'Помощник по билдам для Cyberpunk 2077 (патч 2.x, Phantom Liberty). Отвечаете на несколько вопросов о стиле игры — приложение подбирает атрибуты, импланты, оружие и готовые сборки под ваш уровень и бюджет.',
+  how:['Терминал Найт-Сити загружает базы: 22 импланта и 10 классов оружия','Вопросы о стиле игры: скрытность, хакерство, тяжёлое оружие, ближний бой','Расчёт очков атрибутов и перков под выбранный билд','Подбор имплантов и оружия с ценами в евродолларах и учётом бюджета','Дождь из символов, сканлайны, звуки интерфейса — всё в стиле игры'],
+  tech:['HTML','CSS','JavaScript','Python','pywebview','PyInstaller'],who:'Игрокам Cyberpunk 2077, которые хотят собрать сильного персонажа и не изучать вики часами.',facts:[['22','импланта'],['10','классов оружия'],['2.x','патч игры']]}
+};
+const enc=s=>btoa(String.fromCharCode(...new TextEncoder().encode(s)));
+const pay=(a,r,y)=>{const i=r/1200,n=y*12;return a*i/(1-Math.pow(1+i,-n))};
+const D={
+schet:{steps:6,html:()=>`<div class="win"><div class="tb"><i></i><i></i><i></i><span>Счёт — генератор счетов</span></div><div class="bd2">
+ <div class="col" style="width:46%"><label>Исполнитель</label><div class="fi" data-k="a"></div><label>Заказчик</label><div class="fi" data-k="b"></div><label>Позиция 1</label><div class="fi" data-k="c"></div><label>Позиция 2</label><div class="fi" data-k="d"></div><div class="chk" data-k="v"><i></i>Включить НДС 20%</div><div class="bt" data-k="p">Скачать PDF</div></div>
+ <div class="paper2"><h5>Счёт № 2026-014</h5><div class="small" data-k="pa"></div><div class="small" data-k="pb"></div><div class="rw" data-k="r1"></div><div class="rw" data-k="r2"></div><div class="vt" data-k="vat"></div><div class="tt"><span>Итого</span><b data-k="t">0 ₽</b></div><div class="ok" data-k="ok">✓ PDF сохранён</div></div></div></div><div class="fc"></div>`,
+ async run(S){const {$,say,type,tap,z,count}=S;
+  say('Вводим реквизиты исполнителя');await tap($('a'));await type($('a'),'ИП Иванов Иван Иванович');$('pa').textContent='Исполнитель: ИП Иванов И. И.';
+  say('Добавляем заказчика');await tap($('b'));await type($('b'),'ООО «Ромашка»');$('pb').textContent='Заказчик: ООО «Ромашка»';
+  say('Заполняем позиции — документ собирается справа');await tap($('c'));await type($('c'),'Дизайн сайта · 15 000 ₽');$('r1').innerHTML='<span>Дизайн сайта</span><b>15 000 ₽</b>';$('r1').classList.add('in');count($('t'),15000);
+  await tap($('d'));await type($('d'),'Вёрстка · 12 000 ₽');$('r2').innerHTML='<span>Вёрстка</span><b>12 000 ₽</b>';$('r2').classList.add('in');count($('t'),27000,15000);
+  say('Включаем НДС 20% — сумма разбивается автоматически');await tap($('v'));$('v').classList.add('on');$('vat').textContent='В том числе НДС 20%: 4 500 ₽';await z(800);
+  say('Сохраняем документ в PDF одним нажатием');await tap($('p'));$('ok').classList.add('in');await z(2600)}},
+devkit:{steps:4,html:()=>`<div class="win"><div class="tb"><i></i><i></i><i></i><span>DevKit</span></div><div class="bd2"><div class="dk"><div data-k="t1">JSON</div><div data-k="t2">Base64</div><div data-k="t3">Хеш</div><div data-k="t4">Пароль</div></div>
+ <div class="col" style="flex:1"><div class="fi" data-k="in" style="min-height:34px"></div><div class="bt" data-k="go" style="background:#a78bfa;width:140px">Форматировать</div><div class="pre" data-k="out"></div></div></div></div><div class="fc"></div>`,
+ async run(S){const {$,say,type,tap,z}=S;const tabs=['t1','t2','t3','t4'];const on=k=>tabs.forEach(t=>$(t).classList.toggle('on',t==k));on('t1');
+  say('JSON: вставляем сжатый ответ API');await tap($('in'));await type($('in'),'{"id":7,"name":"ProgFarm","tags":["web","bot"]}',28);
+  say('«Форматировать» — читаемый вид и проверка на ошибки');await tap($('go'));$('out').innerHTML='{\n  <span class="k">"id"</span>: <span class="n">7</span>,\n  <span class="k">"name"</span>: <span class="s">"ProgFarm"</span>,\n  <span class="k">"tags"</span>: [<span class="s">"web"</span>, <span class="s">"bot"</span>]\n}';await z(1800);
+  say('Base64: кодируем кириллицу');await tap($('t2'));on('t2');$('in').textContent='';$('out').textContent='';$('go').textContent='Кодировать';await tap($('in'));await type($('in'),'Привет, мир');await tap($('go'));$('out').textContent=enc('Привет, мир');await z(1800);
+  say('Хеш: SHA-256 пересчитывается по мере ввода');await tap($('t3'));on('t3');$('in').textContent='';$('go').textContent='Копировать';$('out').textContent='';await tap($('in'));
+  const h='ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad';await type($('in'),'abc',160);$('out').textContent='SHA-256\n'+h.slice(0,32)+'\n'+h.slice(32);await z(1800);
+  say('Пароль: криптостойкая генерация одним кликом');await tap($('t4'));on('t4');$('in').textContent='Длина: 16 · A–Z · 0–9 · !@#';$('go').textContent='Сгенерировать';await tap($('go'));
+  const set='abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789!@#$%';for(let i=0;i<14;i++){$('out').textContent=[...Array(16)].map(()=>set[Math.random()*set.length|0]).join('');await z(60)}await z(2000)}},
+fin:{steps:5,html:()=>`<div class="win"><div class="tb"><i></i><i></i><i></i><span>ПроФинанс</span></div><div class="bd2"><div class="col" style="width:44%"><div class="tabs2"><div data-k="k">Кредит</div><div data-k="d">Вклад</div></div>
+ <div class="sl"><div><span data-k="l1">Сумма</span><b data-k="v1">500 000 ₽</b></div><div class="tr"><i data-k="s1" style="width:8%"></i></div></div><div class="sl"><div><span>Ставка</span><b data-k="v2">9 %</b></div><div class="tr"><i data-k="s2" style="width:22%"></i></div></div><div class="sl"><div><span>Срок</span><b data-k="v3">3 года</b></div><div class="tr"><i data-k="s3" style="width:10%"></i></div></div></div>
+ <div class="col" style="flex:1"><div class="fbig"><span data-k="lab">Платёж в месяц</span><b data-k="big">—</b></div><div class="cv"><svg viewBox="0 0 200 80" preserveAspectRatio="none"><path data-k="ch" d="M0 74 C40 72 70 60 100 44 S160 14 200 6"/></svg></div></div></div></div><div class="fc"></div>`,
+ async run(S){const {$,say,tap,z,count}=S;$('k').classList.add('on');$('big').textContent=Math.round(pay(5e5,9,3)).toLocaleString('ru-RU')+' ₽';
+  say('Задаём сумму кредита — платёж пересчитывается сразу');await tap($('s1'));$('s1').style.width='20%';$('v1').textContent='3 000 000 ₽';count($('big'),Math.round(pay(3e6,9,3)),Math.round(pay(5e5,9,3)));await z(1000);
+  say('Меняем срок: ипотека на 20 лет');await tap($('s3'));$('s3').style.width='66%';$('v3').textContent='20 лет';count($('big'),Math.round(pay(3e6,9,20)),Math.round(pay(3e6,9,3)));await z(1000);
+  say('Подбираем ставку по предложениям банков');await tap($('s2'));$('s2').style.width='36%';$('v2').textContent='12,5 %';count($('big'),Math.round(pay(3e6,12.5,20)),Math.round(pay(3e6,9,20)));await z(900);
+  say('График остатка долга рисуется по месяцам');$('ch').classList.add('go');await z(2200);
+  say('Переключаемся на вклад: капитализация и пополнения');await tap($('d'));$('d').classList.add('on');$('k').classList.remove('on');$('lab').textContent='Итоговая сумма вклада';$('l1').textContent='Взнос';$('ch').classList.remove('go');count($('big'),2029675,0);await z(300);$('ch').classList.add('go');await z(2600)}},
+HabitFlow:{steps:4,html:()=>{const rows=[['Вода',[1,1,1,1,0,1,1,1,1]],['Спорт',[1,0,1,1,0,1,0,1,1]],['Чтение',[0,0,1,1,1,0,1,1,1]]];return `<div class="win" style="background:#10121a"><div class="tb"><i></i><i></i><i></i><span>HabitFlow — трекер привычек</span></div><div class="bd2" style="flex-direction:column;gap:0"><div class="fi" data-k="in" style="margin-bottom:8px;display:none"></div>
+ ${rows.map(([n,a],i)=>`<div class="hr" data-k="r${i}"><span class="n">${n}</span><div class="sq">${a.map(v=>`<i class="${v?'on':''}"></i>`).join('')}<i></i></div><span class="st" data-k="st${i}"></span></div>`).join('')}<div class="hr" data-k="r3" style="display:none"><span class="n">Медитация</span><div class="sq">${'<i></i>'.repeat(10)}</div><span class="st"></span></div>
+ <div class="hf" data-k="ft">Сегодня выполнено: 0 из 3</div></div></div><div class="fc"></div>`},
+ async run(S){const {$,say,tap,z,type}=S;const streak=(r)=>[...r.querySelectorAll('.sq i')].reverse().findIndex(i=>!i.classList.contains('on'));
+  const upd=()=>{[0,1,2].forEach(k=>{const r=$('r'+k),s=streak(r);$('st'+k).textContent=s>0?'Серия: '+s+' дн.':'—'});const d=[0,1,2].filter(k=>$('r'+k).querySelector('.sq i:last-child').classList.contains('on')).length;$('ft').textContent='Сегодня выполнено: '+d+' из 3'};upd();
+  say('Отмечаем сегодняшний день одним кликом');for(const k of [0,1,2]){const sq=$('r'+k).querySelector('.sq i:last-child');await tap(sq);sq.classList.add('on','pu');upd();await z(250);sq.classList.remove('pu')}
+  say('Серия растёт, пока вы не пропускаете дни');await z(1800);
+  say('Привычки можно добавлять и удалять');const r3=$('r3');r3.style.display='flex';r3.classList.add('in');await z(500);const sq=r3.querySelector('.sq i:last-child');await tap(sq);sq.classList.add('on','pu');$('ft').textContent='Сегодня выполнено: 4 из 4';await z(1900);
+  say('Данные хранятся у вас на компьютере — интернет не нужен');await z(2200)}},
+ClipFlow:{steps:4,html:()=>`<div class="win"><div class="tb"><i></i><i></i><i></i><span>Рабочий стол  →  ClipFlow</span></div><div class="bd2"><div class="doc"><div data-k="d1">https://progfarm.dev/order</div><div data-k="d2">SELECT * FROM clients;</div><div data-k="d3">+7 900 123-45-67</div><div data-k="d4">Спасибо за заказ!</div></div><div class="cf" data-k="list"><div class="fi" data-k="se" style="min-height:26px;color:#8b94a7">Поиск…</div></div></div><div class="toast2" data-k="to">Скопировано</div></div><div class="fc"></div>`,
+ async run(S){const {$,say,tap,z,type}=S;const list=$('list');const add=(t)=>{const d=document.createElement('div');d.className='it fl';d.textContent=t;list.insertBefore(d,list.children[1]);return d};
+  say('Копируете как обычно — запись появляется в истории');for(const [k,t] of [['d1','https://progfarm.dev/order'],['d2','SELECT * FROM clients;'],['d3','+7 900 123-45-67']]){await tap($(k));$(k).classList.add('sel');$('to').textContent='Ctrl+C';$('to').classList.add('on');await z(350);add(t);$('to').classList.remove('on');await z(450);$(k).classList.remove('sel')}
+  say('Звёздочкой закрепляем важное');const items=[...list.querySelectorAll('.it')];await tap(items[2]);items[2].classList.add('pin');await z(1300);
+  say('Поиск по истории');await tap($('se'));$('se').style.color='#fff';await type($('se'),'sel',150);items.forEach(i=>{if(!/sel/i.test(i.textContent))i.style.display='none'});await z(1700);
+  say('Один клик — запись снова в буфере');const f=items.find(i=>/sel/i.test(i.textContent));await tap(f);$('to').textContent='Скопировано в буфер';$('to').classList.add('on');await z(2200)}},
+Kopilka:{steps:4,html:()=>`<div class="win"><div class="tb"><i></i><i></i><i></i><span>Копилка — учёт расходов</span></div><div class="bd2" style="flex-direction:column"><div class="ml" data-k="ml">◀  Октябрь 2026  ▶</div><div class="kt"><div class="g"><span>Доходы</span><b data-k="a">85 000 ₽</b></div><div class="r"><span>Расходы</span><b data-k="b">0 ₽</b></div><div><span>Баланс</span><b data-k="c">85 000 ₽</b></div></div>
+ <div style="display:flex;gap:10px;flex:1;min-height:0"><div class="col" style="width:38%"><div class="fi" data-k="cat">Продукты</div><div class="fi" data-k="am"></div><div class="bt" data-k="add" style="background:#fb923c">Добавить</div><div data-k="rows" style="margin-top:4px"></div></div><div class="kb" data-k="bars"><i style="background:#fb923c;height:4%"></i><i style="background:#60a5fa;height:4%"></i><i style="background:#4ade80;height:4%"></i></div></div></div></div><div class="fc"></div>`,
+ async run(S){const {$,say,tap,z,type,count}=S;const bars=[...$('bars').children];let ex=0;
+  const row=(c,s,i,h)=>{const r=document.createElement('div');r.className='kr in';r.innerHTML=`<span>${c}</span><b>-${s.toLocaleString('ru-RU')} ₽</b>`;$('rows').prepend(r);const prev=ex;ex+=s;count($('b'),ex,prev);count($('c'),85000-ex,85000-prev);bars[i].style.height=h+'%'};
+  say('Выбираем категорию и вводим сумму');await tap($('am'));await type($('am'),'1 250');
+  say('Добавляем — баланс и диаграмма обновляются');await tap($('add'));row('Продукты',1250,0,70);await z(1200);
+  $('cat').textContent='Транспорт';$('am').textContent='';await tap($('am'));await type($('am'),'450');await tap($('add'));row('Транспорт',450,1,28);await z(900);
+  $('cat').textContent='Развлечения';$('am').textContent='';await tap($('am'));await type($('am'),'2 300');await tap($('add'));row('Развлечения',2300,2,100);await z(900);
+  say('Листаем месяцы стрелками и сравниваем');await tap($('ml'));$('ml').style.opacity=0;await z(250);$('ml').textContent='◀  Сентябрь 2026  ▶';$('ml').style.opacity=1;await z(2200)}},
+CyberpunkBuildAdvisor:{steps:4,html:()=>`<div class="cyb"><div data-k="boot"></div><h6 data-k="ti" style="display:none">CYBERPUNK 2077</h6><div data-k="qz" style="display:none"><div class="tl">&gt; КАК ТЫ ИГРАЕШЬ?</div><div class="opt" data-k="o1">Скрытность и взлом</div><div class="opt" data-k="o2">Тяжёлое оружие</div><div class="opt" data-k="o3">Ближний бой</div></div>
+ <div data-k="rs" style="display:none"><div class="tl">&gt; БИЛД: НЕТРАННЕР-ХАКЕР</div>${['РЕАКЦИЯ:8','ТЕХ:20','ИНТЕЛЛЕКТ:18','ХЛАДНОКРОВИЕ:14'].map((a,i)=>{const [n,v]=a.split(':');return `<div class="ab"><span>${n}</span><div><i data-k="b${i}" data-v="${v*5}"></i></div><b>${v}</b></div>`}).join('')}<div class="tl" style="margin-top:8px">&gt; ИМПЛАНТЫ И ЦЕНА</div><div>Кибердека · Оптика · Нейросопроцессор</div><div style="margin-top:6px;font-size:16px;color:#fcee09" data-k="pr">€$ 0</div></div></div><div class="fc"></div>`,
+ async run(S){const {$,say,type,tap,z,count}=S;
+  say('Запуск: терминал Найт-Сити загружает базы');for(const l of ['> ИНИЦИАЛИЗАЦИЯ ЯДРА NETWATCH......... OK','> ЗАГРУЗКА БАЗЫ ИМПЛАНТОВ (22 ПОЗИЦИИ)... OK','> ЗАГРУЗКА БАЗЫ ОРУЖИЯ (10 КЛАССОВ)..... OK','> ДОБРО ПОЖАЛОВАТЬ, ИНФОРМАТОР.']){const d=document.createElement('div');$('boot').append(d);await type(d,l,16);d.innerHTML=d.textContent.replace(/OK$/,'<span class="ok">OK</span>')}await z(500);$('ti').style.display='block';await z(1400);
+  say('Отвечаем на вопросы о стиле игры');$('boot').style.display='none';$('ti').style.display='none';$('qz').style.display='block';await z(600);await tap($('o1'));$('o1').classList.add('sel');await z(900);
+  say('Приложение считает очки атрибутов под билд');$('qz').style.display='none';$('rs').style.display='block';await z(300);[0,1,2,3].forEach(i=>$('b'+i).style.width=$('b'+i).dataset.v+'%');await z(1500);
+  say('Готово: импланты и оружие с ценами в евродолларах');count($('pr'),48500,0,'','€$ ');await z(2800)}}
+};
+let tok=0;
+const ALL=()=>[...SITES.map(x=>({...x,kind:'web'})),...APPS.map(x=>({...x,kind:'exe'}))];
+async function play(id){const my=++tok,d=D[id],st=$('stage');if(!d)return;
+  const z=ms=>new Promise((r,j)=>setTimeout(()=>my===tok?r():j('stop'),ms));let n=0;
+  try{for(;;){st.innerHTML=d.html();const q=k=>st.querySelector(`[data-k="${k}"]`),fc=st.querySelector('.fc');n=0;
+    const S={$:q,z,
+     say:t=>{n++;$('cap').innerHTML=`<b>${n}</b><span>${t}</span>`},
+     type:async(el,t,ms=38)=>{el.classList.add('t');for(const c of t){el.textContent+=c;await z(ms)}el.classList.remove('t')},
+     tap:async el=>{const a=st.getBoundingClientRect(),b=el.getBoundingClientRect();fc.style.transform=`translate(${b.left-a.left+Math.min(b.width/2,40)}px,${b.top-a.top+b.height/2}px)`;await z(700);fc.classList.add('clk');el.classList.add('hit');await z(220);fc.classList.remove('clk');el.classList.remove('hit')},
+     count:(el,to,from=0,suf=' ₽',pre='')=>{const t0=performance.now();(function f(t){if(my!==tok)return;const p=Math.min(1,(t-t0)/800);el.textContent=pre+Math.round(from+(to-from)*(1-Math.pow(1-p,3))).toLocaleString('ru-RU')+suf;p<1&&requestAnimationFrame(f)})(t0)}};
+    await d.run(S);await z(400)}}catch(e){if(e!=='stop')console.error(e)}}
+function openProj(id){const x=ALL().find(a=>a.id==id);if(!x)return;const i=INFO[id],web=x.kind=='web';
+  $('pl').innerHTML=`<span class="pbadge ${x.kind}">${web?'🌐 Сайт':'💻 Приложение для Windows'}</span><span class="cat" style="display:block">${x.cat}</span><h2>${x.t}</h2><p class="lead">${i.lead}</p>
+   <div class="facts">${i.facts.map(f=>`<div><b>${f[0]}</b><span>${f[1]}</span></div>`).join('')}</div>
+   <h4>Как это работает</h4><ol>${i.how.map(h=>`<li>${h}</li>`).join('')}</ol><h4>Технологии</h4><div class="chips">${i.tech.map(t=>`<span>${t}</span>`).join('')}</div><h4>Для кого</h4><p class="who">${i.who}</p>`;
+  const dl=!web||x.web;
+  $('pbar').innerHTML=(web?`<a class="btn" href="${x.url}">Открыть сайт →</a>`:`<button class="btn" data-dl="${x.id}">↓ Установить для Windows</button>${x.web?`<a class="btn o" href="${x.web}">Открыть в браузере</a>`:''}`)+`<span class="sp"></span><a class="btn o" href="${BOT}?start=order" target="_blank" rel="noopener">Заказать такой же проект</a>`;
+  $('pm').classList.add('on');requestAnimationFrame(()=>$('pm').classList.add('show'));document.body.style.overflow='hidden';$('pl').scrollTop=0;
+  $('pm').dataset.id=id;$('cap').innerHTML='';play(id)}
+function closeProj(){tok++;$('pm').classList.remove('show');document.body.style.overflow='';setTimeout(()=>$('pm').classList.remove('on'),350)}
+function stepProj(d){const a=ALL(),i=(a.findIndex(x=>x.id==$('pm').dataset.id)+d+a.length)%a.length;openProj(a[i].id)}
+$('pmx').onclick=closeProj;$('pm').onclick=e=>{if(e.target.id=='pm')closeProj()};$('pprev').onclick=()=>stepProj(-1);$('pnext').onclick=()=>stepProj(1);
+addEventListener('keydown',e=>{if(!$('pm').classList.contains('on')||$('dlg').open)return;if(e.key=='Escape')closeProj();if(e.key=='ArrowRight')stepProj(1);if(e.key=='ArrowLeft')stepProj(-1)});
+document.addEventListener('click',e=>{if(e.target.closest('a,button'))return;const c=e.target.closest('[data-pv]');if(c)openProj(c.dataset.pv)});
 
 /* ---------- услуги (содержимое без изменений) ---------- */
 const S=[
@@ -289,10 +469,8 @@ $('mq').innerHTML=[...Array(2)].map(()=>['HTML','CSS','JavaScript','Node.js','C#
 
 /* ---------- движение: курсор, магнит, наклон карточек, фон ---------- */
 const fine=matchMedia('(pointer:fine)').matches&&!reduce;if(fine)document.body.classList.add('fine');
-let mx=innerWidth/2,my=innerHeight/3,cx=mx,cy=my;
-addEventListener('pointermove',e=>{mx=e.clientX;my=e.clientY;document.documentElement.style.setProperty('--mx',mx+'px');document.documentElement.style.setProperty('--my',my+'px');$('dot').style.transform=`translate(${mx}px,${my}px)`});
-(function loop(){cx+=(mx-cx)*.18;cy+=(my-cy)*.18;$('cur').style.transform=`translate(${cx}px,${cy}px)`;requestAnimationFrame(loop)})();
-document.addEventListener('pointerover',e=>{$('cur').classList.toggle('big',!!e.target.closest('a,button,summary,.card'))});
+let mx=innerWidth/2,my=innerHeight/3;
+addEventListener('pointermove',e=>{mx=e.clientX;my=e.clientY;document.documentElement.style.setProperty('--mx',mx+'px');document.documentElement.style.setProperty('--my',my+'px')});
 document.addEventListener('pointermove',e=>{
   const c=e.target.closest('.card');if(c&&fine){const r=c.getBoundingClientRect(),x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;
     c.style.setProperty('--px',x*100+'%');c.style.setProperty('--py',y*100+'%');c.style.transform=`perspective(900px) rotateX(${(.5-y)*7}deg) rotateY(${(x-.5)*9}deg) translateZ(0)`}
