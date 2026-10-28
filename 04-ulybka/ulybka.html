@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Улыбка — стоматологическая клиника</title>
+<style>
+:root{--bg:#f3fafb;--t:#0e8a96;--t2:#0b6f79;--ink:#12303a;--mut:#5f7b84;--ln:#d5e8ec}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.65 "Segoe UI",system-ui,sans-serif}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1100px;margin:auto;padding:0 20px}
+header{background:#fff;border-bottom:1px solid var(--ln);position:sticky;top:0;z-index:5}
+header .wrap{display:flex;justify-content:space-between;align-items:center;height:70px}
+.logo{font-weight:700;font-size:22px;color:var(--t)}
+nav{display:flex;gap:26px;color:var(--mut);font-size:15px}nav a:hover{color:var(--t)}
+.tel{font-weight:600}
+.btn{display:inline-block;background:var(--t);color:#fff;padding:13px 26px;border-radius:12px;border:0;cursor:pointer;font:600 15px inherit;font-family:inherit}
+.btn:hover{background:var(--t2)}
+.hero{padding:70px 0;display:grid;grid-template-columns:1.2fr 1fr;gap:40px;align-items:center}
+.hero h1{font-size:clamp(34px,5vw,54px);line-height:1.15;margin-bottom:16px}
+.hero p{color:var(--mut);margin-bottom:26px;max-width:480px}
+.hero .vis{aspect-ratio:1;border-radius:40% 60% 55% 45%/50% 45% 55% 50%;background:linear-gradient(135deg,#8ee0e8,#0e8a96);display:grid;place-items:center;font-size:120px;box-shadow:0 30px 60px #0e8a9633}
+.badges{display:flex;gap:26px;margin-top:30px;color:var(--mut);font-size:14px;flex-wrap:wrap}.badges b{display:block;font-size:24px;color:var(--t)}
+section{padding:60px 0}
+h2{font-size:34px;margin-bottom:8px}
+.sub{color:var(--mut);margin-bottom:28px}
+.sv{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:18px}
+.s{background:#fff;border:1px solid var(--ln);border-radius:16px;padding:22px;transition:.2s}
+.s:hover{box-shadow:0 12px 30px #0e8a9622;transform:translateY(-3px)}
+.s .i{font-size:34px}.s h3{margin:8px 0 4px}.s b{color:var(--t)}
+.docs{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px}
+.d{background:#fff;border-radius:16px;border:1px solid var(--ln);text-align:center;padding:24px}
+.d .av{width:90px;height:90px;border-radius:50%;margin:0 auto 12px;background:linear-gradient(135deg,#cdeef2,#7fd0d9);display:grid;place-items:center;font-size:40px}
+.d small{color:var(--mut)}
+.book{background:#fff;border:1px solid var(--ln);border-radius:24px;padding:36px;display:grid;grid-template-columns:1fr 1fr;gap:34px}
+form{display:grid;gap:12px}
+label{font-size:13px;color:var(--mut);font-weight:600}
+input,select{width:100%;padding:12px;border:1px solid var(--ln);border-radius:10px;font:inherit;background:#fff}
+input:focus,select:focus{outline:2px solid var(--t);border-color:transparent}
+.slots{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.slots button{padding:9px 0;border:1px solid var(--ln);border-radius:8px;background:#fff;cursor:pointer;font:inherit}
+.slots button.on{background:var(--t);color:#fff;border-color:var(--t)}
+.slots button:disabled{opacity:.35;text-decoration:line-through;cursor:not-allowed}
+.err{color:#c0392b;font-size:13px;min-height:18px}
+.ok{display:none;text-align:center;padding:30px 0}.ok .c{font-size:60px}
+.rev{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
+.rv{background:#fff;border-radius:16px;padding:22px;border:1px solid var(--ln)}.rv .st{color:#f5a623}
+details{background:#fff;border:1px solid var(--ln);border-radius:12px;padding:14px 18px;margin-bottom:10px}summary{cursor:pointer;font-weight:600}details p{color:var(--mut);margin-top:8px}
+footer{background:var(--ink);color:#9bb8c0;padding:28px 0;text-align:center;font-size:14px}footer a{color:#fff;text-decoration:underline}
+@media(max-width:760px){.hero,.book{grid-template-columns:1fr}nav,.tel{display:none}.hero .vis{max-width:240px}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><a class="logo" href="#">🦷 Улыбка</a><nav><a href="#sv">Услуги</a><a href="#docs">Врачи</a><a href="#faq">Вопросы</a><a href="#book">Запись</a></nav><a class="tel" href="tel:+74950000000">+7 495 000-00-00</a></div></header>
+
+<div class="wrap hero">
+  <div>
+    <h1>Лечим зубы <br>без боли и страха</h1>
+    <p>Современная клиника: цифровая диагностика, безболезненная анестезия и честные цены без скрытых доплат.</p>
+    <a class="btn" href="#book">Записаться на приём</a>
+    <div class="badges"><div><b>12 лет</b>на рынке</div><div><b>25 000+</b>пациентов</div><div><b>5 лет</b>гарантия</div></div>
+  </div>
+  <div class="vis">😁</div>
+</div>
+
+<section id="sv"><div class="wrap">
+  <h2>Услуги и цены</h2><p class="sub">Первичная консультация и осмотр — бесплатно.</p>
+  <div class="sv" id="svl"></div>
+</div></section>
+
+<section id="docs" style="background:#e9f6f8"><div class="wrap">
+  <h2>Наши врачи</h2><p class="sub">Практикующие специалисты с опытом от 8 лет.</p>
+  <div class="docs">
+    <div class="d"><div class="av">👩‍⚕️</div><h3>Елена Смирнова</h3><small>Терапевт, 14 лет опыта</small></div>
+    <div class="d"><div class="av">👨‍⚕️</div><h3>Игорь Власов</h3><small>Хирург-имплантолог, 11 лет</small></div>
+    <div class="d"><div class="av">👩‍⚕️</div><h3>Анна Мельник</h3><small>Ортодонт, 9 лет</small></div>
+  </div>
+</div></section>
+
+<section id="book"><div class="wrap">
+  <div class="book">
+    <div>
+      <h2>Онлайн-запись</h2><p class="sub">Выберите услугу, дату и время — мы подтвердим запись по телефону.</p>
+      <div id="sum" style="background:var(--bg);border-radius:12px;padding:16px;color:var(--mut)">Здесь появится ваша запись</div>
+    </div>
+    <form id="f" novalidate>
+      <div><label>Услуга</label><select id="srv"></select></div>
+      <div><label>Дата</label><input id="dt" type="date"></div>
+      <div><label>Время</label><div class="slots" id="sl"></div></div>
+      <div><label>Имя</label><input id="nm" placeholder="Иван"></div>
+      <div><label>Телефон</label><input id="ph" placeholder="+7 900 000-00-00"></div>
+      <div class="err" id="er"></div>
+      <button class="btn">Записаться</button>
+    </form>
+    <div class="ok" id="ok"><div class="c">✅</div><h3>Вы записаны!</h3><p id="okt"></p></div>
+  </div>
+</div></section>
+
+<section style="background:#e9f6f8"><div class="wrap">
+  <h2>Отзывы</h2><p class="sub"></p>
+  <div class="rev">
+    <div class="rv"><div class="st">★★★★★</div><p>Боялась стоматологов всю жизнь, здесь ничего не почувствовала. Спасибо!</p><b>— Ольга</b></div>
+    <div class="rv"><div class="st">★★★★★</div><p>Поставили имплант за две недели. Всё чётко, цена как в договоре.</p><b>— Михаил</b></div>
+    <div class="rv"><div class="st">★★★★★</div><p>Водил сына, он сам просится на повторный приём. Это успех.</p><b>— Дмитрий</b></div>
+  </div>
+</div></section>
+
+<section id="faq"><div class="wrap">
+  <h2>Вопросы</h2><p class="sub"></p>
+  <details><summary>Это больно?</summary><p>Используем современную анестезию — вы не почувствуете боли во время лечения.</p></details>
+  <details><summary>Есть ли гарантия?</summary><p>Да, на пломбы — 2 года, на импланты и коронки — до 5 лет.</p></details>
+  <details><summary>Можно ли оплатить в рассрочку?</summary><p>Да, оформляем рассрочку до 12 месяцев без переплат.</p></details>
+</div></section>
+<footer>Демо-сайт · разработано в <a href="../01-progfarm/progfarm.html">ProgFarm</a></footer>
+
+<script>
+const $=id=>document.getElementById(id);
+const S=[['🪥','Профессиональная чистка',3500],['🦷','Лечение кариеса',4200],['⚡','Отбеливание',9800],['🔩','Имплантация',38000],['😬','Брекеты',45000],['👶','Детская стоматология',2500]];
+$('svl').innerHTML=S.map(([i,n,p])=>`<div class="s"><div class="i">${i}</div><h3>${n}</h3><b>от ${p.toLocaleString('ru-RU')} ₽</b></div>`).join('');
+$('srv').innerHTML=S.map(s=>`<option>${s[1]}</option>`).join('');
+const today=new Date().toISOString().slice(0,10);$('dt').min=$('dt').value=today;
+let time='';
+function slots(){
+  const taken=(+$('dt').value.slice(-2))%3; // имитация занятых слотов
+  $('sl').innerHTML=['09:00','10:00','11:00','12:00','14:00','15:00','16:00','17:00'].map((t,i)=>`<button type="button" ${i%3==taken?'disabled':''} class="${t==time?'on':''}">${t}</button>`).join('');
+}
+$('sl').onclick=e=>{if(e.target.tagName=='BUTTON'){time=e.target.textContent;slots()}};
+$('dt').onchange=()=>{time='';slots()};slots();
+$('f').onsubmit=e=>{e.preventDefault();
+  const n=$('nm').value.trim(),p=$('ph').value.replace(/\D/g,'');
+  $('er').textContent=!$('dt').value?'Выберите дату':!time?'Выберите время':n.length<2?'Введите имя':p.length<10?'Введите корректный телефон':'';
+  if($('er').textContent)return;
+  const d=new Date($('dt').value).toLocaleDateString('ru-RU',{day:'numeric',month:'long'});
+  $('f').style.display='none';$('ok').style.display='block';
+  $('okt').textContent=`${n}, ждём вас ${d} в ${time} — ${$('srv').value}.`;
+  $('sum').textContent=`${$('srv').value} · ${d} · ${time}`;
+};
+</script>
+</body>
+</html>
