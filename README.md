@@ -21,7 +21,7 @@
 Стек: HTML, CSS, JavaScript, Node.js. Все сайты — один файл без сборки.
 
 ## Контакты
-Telegram [@rivvva_la_viddda](https://t.me/rivvva_la_viddda) · tolyan.berd2008@gmail.com
+Заказ и оплата — [@ProgFarmBot](https://t.me/ProgFarmBot). Личный Telegram [@rivvva_la_viddda](https://t.me/rivvva_la_viddda) — только для развёрнутых и индивидуальных вопросов. Почта: tolyan.berd2008@gmail.com
 
 ## Бот
 `cd bot && cp .env.example .env` → впишите токен → `node bot.js`.
