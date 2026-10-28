@@ -33,46 +33,84 @@ const send = (chat_id, text, kb) => call('sendMessage', { chat_id, text, parse_m
 const edit = (chat_id, message_id, text, kb) => call('editMessageText', { chat_id, message_id, text, parse_mode: 'HTML', reply_markup: { inline_keyboard: kb || [] } });
 
 const MENU = [
-  [{ text: '🛠 Услуги и цены', callback_data: 'cats' }],
-  [{ text: '📝 Оставить заявку', callback_data: 'order' }, { text: '💳 Оплата', callback_data: 'pay' }],
-  [{ text: '✈ Telegram', url: TG }, { text: '✉ Почта', url: 'mailto:' + MAIL }],
+  [{ text: '🛠 Услуги, заказ и оплата', callback_data: 'cats' }],
+  [{ text: '💬 Связаться со мной лично', callback_data: 'ask' }],
+  [{ text: '📞 Контакты', callback_data: 'contacts' }],
 ];
 const HOME = [[{ text: '⬅ В меню', callback_data: 'menu' }]];
-const WELCOME = '<b>ProgFarm</b> — сайты, боты и базы данных на заказ.\n\nЦены от 1 500 ₽. Выберите раздел:';
+const WELCOME = '<b>ProgFarm</b> — сайты, боты и базы данных на заказ.\n\nЦены от 1 500 ₽. Заказ и оплата — прямо здесь, в боте. Выберите раздел:';
 
-const waiting = new Set(); // chat_id, от которых ждём текст заявки
+// chat_id -> { kind: 'order'|'ask', service? } — ждём следующее сообщение пользователя
+const waiting = new Map();
+// id сообщения админа -> chat_id пользователя, чтобы ответ админа ушёл пользователю
+const relayFile = path.join(__dirname, 'relay.json');
+let relay = {}; try { relay = JSON.parse(fs.readFileSync(relayFile, 'utf8')); } catch {}
+const saveRelay = () => fs.writeFileSync(relayFile, JSON.stringify(relay));
+const log = o => fs.appendFileSync(path.join(__dirname, 'orders.jsonl'), JSON.stringify({ at: new Date().toISOString(), ...o }) + '\n');
+const who = u => u.username ? '@' + u.username : u.first_name;
+const esc = t => t.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+
+function serviceCard(chat, s, mid) {
+  const text = `<b>${s.t}</b>\n\n${s.a}\n\n💰 от <b>${rub(s.p)}</b>\n⏱ ${s.d}`;
+  const kb = [[{ text: '💳 Заказать и оплатить', callback_data: 'buy:' + s.id }],
+    [{ text: '❓ Вопрос по услуге', callback_data: 'ask:' + s.id }],
+    [{ text: '⬅ Назад', callback_data: 'cat:' + cats.indexOf(s.c) }]];
+  return mid ? edit(chat, mid, text, kb) : send(chat, text, kb);
+}
 
 async function onCallback(q) {
   const chat = q.message.chat.id, mid = q.message.message_id, [act, arg] = q.data.split(':');
   call('answerCallbackQuery', { callback_query_id: q.id });
-  if (act === 'menu') return edit(chat, mid, WELCOME, MENU);
+  if (act === 'menu') { waiting.delete(chat); return edit(chat, mid, WELCOME, MENU); }
   if (act === 'cats') return edit(chat, mid, '<b>Категории услуг</b>', [...cats.map((c, i) => [{ text: c, callback_data: 'cat:' + i }]), ...HOME]);
   if (act === 'cat') {
     const list = S.filter(s => s.c === cats[arg]);
     return edit(chat, mid, `<b>${cats[arg]}</b>`, [...list.map(s => [{ text: `${s.t} — от ${rub(s.p)}`, callback_data: 'svc:' + s.id }]), [{ text: '⬅ Назад', callback_data: 'cats' }]]);
   }
-  if (act === 'svc') {
+  if (act === 'svc') return serviceCard(chat, S.find(x => x.id == arg), mid);
+  if (act === 'buy') {
     const s = S.find(x => x.id == arg);
-    return edit(chat, mid, `<b>${s.t}</b>\n\n${s.a}\n\n💰 от <b>${rub(s.p)}</b>\n⏱ ${s.d}`,
-      [[{ text: '📝 Заказать', callback_data: 'order:' + s.id }], [{ text: '⬅ Назад', callback_data: 'cat:' + cats.indexOf(s.c) }]]);
+    waiting.set(chat, { kind: 'order', service: s });
+    return send(chat, `Вы выбрали: <b>${s.t}</b> (от ${rub(s.p)}).\n\nОпишите задачу одним сообщением: что нужно, сроки, пожелания. После этого заявка получит номер и вы перейдёте к оплате.`);
   }
-  if (act === 'order') {
-    waiting.add(chat); waiting.service = arg && S.find(x => x.id == arg)?.t;
-    return send(chat, 'Опишите задачу одним сообщением (что нужно, сроки, пожелания) — я передам заявку разработчику.');
+  if (act === 'ask') {
+    waiting.set(chat, { kind: 'ask', service: arg && S.find(x => x.id == arg) });
+    return send(chat, '💬 Напишите ваш вопрос одним сообщением — он придёт лично мне, и я отвечу прямо здесь, в боте.');
   }
-  if (act === 'pay') return edit(chat, mid, '💳 <b>Оплата</b>\n\nПриём оплаты в боте скоро появится. Пока что детали оплаты согласуются в личном сообщении.', [[{ text: '✈ Написать разработчику', url: TG }], ...HOME]);
+  if (act === 'contacts') return edit(chat, mid,
+    '📞 <b>Контакты</b>\n\n• Заказ, оплата, вопросы — в этом боте.\n• Личный Telegram — <b>только для развёрнутых и индивидуальных вопросов</b>.\n• Почта: ' + MAIL,
+    [[{ text: '💬 Написать через бота', callback_data: 'ask' }], [{ text: '✈ Личный Telegram (развёрнутые вопросы)', url: TG }], [{ text: '✉ Почта', url: 'mailto:' + MAIL }], ...HOME]);
+  if (act === 'pay') return send(chat, '💳 <b>Оплата</b>\n\nПриём платежей в боте подключается. Заявка зафиксирована — как только оплата заработает, пришлю реквизиты и ссылку на оплату сюда. Если срочно — нажмите «Связаться со мной лично».', MENU);
 }
 
 async function onMessage(m) {
-  const chat = m.chat.id, text = m.text || '';
+  const chat = m.chat.id, text = m.text || '', u = m.from;
   if (text === '/myid') return send(chat, `Ваш chat id: <code>${chat}</code>`);
-  if (text.startsWith('/start') || text === '/menu') { waiting.delete(chat); return send(chat, WELCOME, MENU); }
-  if (waiting.has(chat) && text) {
+
+  // ответ админа на пересланное сообщение -> пользователю
+  if (ADMIN && String(chat) === String(ADMIN) && m.reply_to_message) {
+    const to = relay[m.reply_to_message.message_id];
+    if (to && text) { await send(to, '💬 <b>Ответ:</b>\n' + esc(text)); return send(chat, '✅ Отправлено'); }
+  }
+
+  if (text.startsWith('/start') || text === '/menu') {
     waiting.delete(chat);
-    const u = m.from, order = { at: new Date().toISOString(), chat, user: u.username || u.first_name, service: waiting.service || null, text };
-    fs.appendFileSync(path.join(__dirname, 'orders.jsonl'), JSON.stringify(order) + '\n');
-    if (ADMIN) send(ADMIN, `🆕 <b>Новая заявка</b>\nОт: ${u.username ? '@' + u.username : u.first_name} (<code>${chat}</code>)\nУслуга: ${order.service || '—'}\n\n${text.replace(/</g, '&lt;')}`);
-    return send(chat, '✅ Заявка принята! Разработчик свяжется с вами. Можно сразу написать: ' + TG, HOME);
+    const p = text.split(' ')[1], s = p && /^svc(\d+)$/.test(p) && S.find(x => x.id == p.slice(3));
+    return s ? serviceCard(chat, s) : send(chat, WELCOME, MENU);
+  }
+
+  const w = waiting.get(chat);
+  if (w && text) {
+    waiting.delete(chat);
+    const svc = w.service ? w.service.t : null;
+    log({ kind: w.kind, chat, user: who(u), service: svc, text });
+    const head = (w.kind === 'order' ? '🆕 <b>Новая заявка</b>' : '💬 <b>Вопрос</b>') + `\nОт: ${who(u)} (<code>${chat}</code>)\nУслуга: ${svc || '—'}\n\n${esc(text)}\n\n<i>Ответьте реплаем на это сообщение — ответ уйдёт пользователю.</i>`;
+    if (ADMIN) {
+      const r = await send(ADMIN, head);
+      if (r?.ok) { relay[r.result.message_id] = chat; saveRelay(); }
+    }
+    if (w.kind === 'order') return send(chat, `✅ Заявка принята${svc ? ': <b>' + svc + '</b>' : ''}. Следующий шаг — оплата.`, [[{ text: '💳 Перейти к оплате', callback_data: 'pay' }], ...HOME]);
+    return send(chat, ADMIN ? '✅ Вопрос передан, отвечу прямо здесь в ближайшее время.' : '✅ Вопрос сохранён. Если срочно — личный Telegram (только развёрнутые вопросы): ' + TG, HOME);
   }
   return send(chat, 'Нажмите кнопку в меню 👇', MENU);
 }
