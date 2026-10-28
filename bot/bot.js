@@ -1,0 +1,94 @@
+// ProgFarm — бот-визитка. Без зависимостей: нужен Node 18+. Запуск: node bot.js
+const fs = require('fs');
+const path = require('path');
+
+const env = Object.fromEntries(
+  fs.readFileSync(path.join(__dirname, '.env'), 'utf8').split(/\r?\n/)
+    .filter(l => l.includes('=') && !l.startsWith('#')).map(l => [l.slice(0, l.indexOf('=')).trim(), l.slice(l.indexOf('=') + 1).trim()])
+);
+const TOKEN = env.BOT_TOKEN, ADMIN = env.ADMIN_ID;
+if (!TOKEN) throw new Error('BOT_TOKEN не задан в .env');
+const API = `https://api.telegram.org/bot${TOKEN}/`;
+const TG = 'https://t.me/rivvva_la_viddda', MAIL = 'tolyan.berd2008@gmail.com';
+
+const S = [
+  { id: 1, c: 'Сайты', t: 'Лендинг', p: 4500, d: '3–5 дней', a: 'Одностраничный продающий сайт: дизайн, адаптив, форма заявки, базовое SEO.' },
+  { id: 2, c: 'Сайты', t: 'Сайт-визитка', p: 7000, d: '5–8 дней', a: 'До 5 страниц, уникальный дизайн и анимации, карта, соцсети, помощь с доменом.' },
+  { id: 3, c: 'Сайты', t: 'Сайт с уникальным функционалом', p: 12000, d: '7–14 дней', a: 'Калькуляторы, кабинеты, фильтры, записи — по вашему ТЗ.' },
+  { id: 4, c: 'Сайты', t: 'Интернет-магазин', p: 15000, d: '10–14 дней', a: 'Каталог, корзина, оформление заказа, уведомления, база товаров.' },
+  { id: 5, c: 'Боты', t: 'Бот для продаж (каркас)', p: 3000, d: '2–4 дня', a: 'Пустой бот: меню, разделы, кнопки, заготовка под оплату, инструкция.' },
+  { id: 6, c: 'Боты', t: 'Бот по вашему ТЗ', p: 8000, d: '5–10 дней', a: 'Сценарии, база пользователей и заказов, админ-команды, рассылка, деплой.' },
+  { id: 7, c: 'Вёрстка и правки', t: 'Вёрстка по макету', p: 2500, d: '1–4 дня', a: 'Figma/PSD/картинка → аккуратный адаптивный HTML/CSS/JS.' },
+  { id: 8, c: 'Вёрстка и правки', t: 'Доработка сайта', p: 1500, d: '1–3 дня', a: 'Новые блоки, формы, страницы, изменение дизайна и логики.' },
+  { id: 9, c: 'Вёрстка и правки', t: 'Починка сайта', p: 2000, d: '1–2 дня', a: 'Диагностика и исправление багов, «съехавшей» вёрстки, ошибок форм.' },
+  { id: 10, c: 'Базы данных', t: 'Создание базы данных', p: 6000, d: '3–7 дней', a: 'Проектирование схемы, создание БД (SQLite/PostgreSQL/MySQL), документация.' },
+  { id: 11, c: 'Базы данных', t: 'Работа с БД', p: 3500, d: '1–5 дней', a: 'Импорт, SQL-запросы, оптимизация, отчёты, бэкапы и миграции.' },
+];
+const cats = [...new Set(S.map(s => s.c))];
+const rub = n => n.toLocaleString('ru-RU') + ' ₽';
+
+const call = (m, body) => fetch(API + m, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+  .then(r => r.json()).then(j => { if (!j.ok) console.error(m, j.description); return j; }).catch(e => console.error(m, e.message));
+const send = (chat_id, text, kb) => call('sendMessage', { chat_id, text, parse_mode: 'HTML', disable_web_page_preview: true, reply_markup: kb && { inline_keyboard: kb } });
+const edit = (chat_id, message_id, text, kb) => call('editMessageText', { chat_id, message_id, text, parse_mode: 'HTML', reply_markup: { inline_keyboard: kb || [] } });
+
+const MENU = [
+  [{ text: '🛠 Услуги и цены', callback_data: 'cats' }],
+  [{ text: '📝 Оставить заявку', callback_data: 'order' }, { text: '💳 Оплата', callback_data: 'pay' }],
+  [{ text: '✈ Telegram', url: TG }, { text: '✉ Почта', url: 'mailto:' + MAIL }],
+];
+const HOME = [[{ text: '⬅ В меню', callback_data: 'menu' }]];
+const WELCOME = '<b>ProgFarm</b> — сайты, боты и базы данных на заказ.\n\nЦены от 1 500 ₽. Выберите раздел:';
+
+const waiting = new Set(); // chat_id, от которых ждём текст заявки
+
+async function onCallback(q) {
+  const chat = q.message.chat.id, mid = q.message.message_id, [act, arg] = q.data.split(':');
+  call('answerCallbackQuery', { callback_query_id: q.id });
+  if (act === 'menu') return edit(chat, mid, WELCOME, MENU);
+  if (act === 'cats') return edit(chat, mid, '<b>Категории услуг</b>', [...cats.map((c, i) => [{ text: c, callback_data: 'cat:' + i }]), ...HOME]);
+  if (act === 'cat') {
+    const list = S.filter(s => s.c === cats[arg]);
+    return edit(chat, mid, `<b>${cats[arg]}</b>`, [...list.map(s => [{ text: `${s.t} — от ${rub(s.p)}`, callback_data: 'svc:' + s.id }]), [{ text: '⬅ Назад', callback_data: 'cats' }]]);
+  }
+  if (act === 'svc') {
+    const s = S.find(x => x.id == arg);
+    return edit(chat, mid, `<b>${s.t}</b>\n\n${s.a}\n\n💰 от <b>${rub(s.p)}</b>\n⏱ ${s.d}`,
+      [[{ text: '📝 Заказать', callback_data: 'order:' + s.id }], [{ text: '⬅ Назад', callback_data: 'cat:' + cats.indexOf(s.c) }]]);
+  }
+  if (act === 'order') {
+    waiting.add(chat); waiting.service = arg && S.find(x => x.id == arg)?.t;
+    return send(chat, 'Опишите задачу одним сообщением (что нужно, сроки, пожелания) — я передам заявку разработчику.');
+  }
+  if (act === 'pay') return edit(chat, mid, '💳 <b>Оплата</b>\n\nПриём оплаты в боте скоро появится. Пока что детали оплаты согласуются в личном сообщении.', [[{ text: '✈ Написать разработчику', url: TG }], ...HOME]);
+}
+
+async function onMessage(m) {
+  const chat = m.chat.id, text = m.text || '';
+  if (text === '/myid') return send(chat, `Ваш chat id: <code>${chat}</code>`);
+  if (text.startsWith('/start') || text === '/menu') { waiting.delete(chat); return send(chat, WELCOME, MENU); }
+  if (waiting.has(chat) && text) {
+    waiting.delete(chat);
+    const u = m.from, order = { at: new Date().toISOString(), chat, user: u.username || u.first_name, service: waiting.service || null, text };
+    fs.appendFileSync(path.join(__dirname, 'orders.jsonl'), JSON.stringify(order) + '\n');
+    if (ADMIN) send(ADMIN, `🆕 <b>Новая заявка</b>\nОт: ${u.username ? '@' + u.username : u.first_name} (<code>${chat}</code>)\nУслуга: ${order.service || '—'}\n\n${text.replace(/</g, '&lt;')}`);
+    return send(chat, '✅ Заявка принята! Разработчик свяжется с вами. Можно сразу написать: ' + TG, HOME);
+  }
+  return send(chat, 'Нажмите кнопку в меню 👇', MENU);
+}
+
+async function main() {
+  const me = await call('getMe', {});
+  if (!me?.ok) return console.error('Неверный токен или нет сети');
+  console.log(`Бот @${me.result.username} запущен`);
+  let offset = 0;
+  for (;;) {
+    const r = await call('getUpdates', { offset, timeout: 30, allowed_updates: ['message', 'callback_query'] });
+    if (!r?.ok) { await new Promise(s => setTimeout(s, 3000)); continue; }
+    for (const u of r.result) {
+      offset = u.update_id + 1;
+      try { await (u.callback_query ? onCallback(u.callback_query) : u.message && onMessage(u.message)); } catch (e) { console.error(e); }
+    }
+  }
+}
+main();
