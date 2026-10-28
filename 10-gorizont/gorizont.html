@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Горизонт — подбор и бронирование туров</title>
+<style>
+:root{--sky:#0ea5e9;--deep:#075985;--sun:#fb923c;--bg:#f0f9ff;--ink:#0c2a3d;--mut:#5d7b8c;--ln:#d3e8f2}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 "Segoe UI",system-ui,sans-serif}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1140px;margin:auto;padding:0 20px}
+.hero{background:linear-gradient(180deg,#38bdf8 0%,#0ea5e9 45%,#fb923c 120%);color:#fff;padding-bottom:110px;position:relative;overflow:hidden}
+.hero::after{content:"☀";position:absolute;right:8%;top:60px;font-size:150px;opacity:.35}
+header .wrap{display:flex;justify-content:space-between;align-items:center;height:70px}
+.logo{font:800 24px "Segoe UI";letter-spacing:-.5px}
+header a.tl{background:#fff3;padding:8px 18px;border-radius:99px;font-size:14px}
+.hero h1{font-size:clamp(34px,6vw,64px);line-height:1.05;max-width:680px;margin:30px 0 14px;letter-spacing:-1px}
+.hero p{max-width:480px;opacity:.9}
+.search{background:#fff;color:var(--ink);border-radius:22px;padding:18px;margin-top:-56px;position:relative;z-index:3;box-shadow:0 20px 50px #075985333;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:12px;align-items:end}
+label{font-size:12px;color:var(--mut);font-weight:600;display:block;margin-bottom:4px}
+input,select{width:100%;padding:12px;border:1px solid var(--ln);border-radius:12px;font:inherit;background:#fff}
+input:focus,select:focus{outline:2px solid var(--sky);border-color:transparent}
+.bar{display:flex;justify-content:space-between;align-items:center;margin:40px 0 18px;flex-wrap:wrap;gap:10px}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chips button{border:1px solid var(--ln);background:#fff;padding:7px 16px;border-radius:99px;cursor:pointer;font:inherit;font-size:14px}
+.chips button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:22px;padding-bottom:60px}
+.t{background:#fff;border-radius:22px;overflow:hidden;box-shadow:0 8px 24px #0c2a3d12;transition:.25s;cursor:pointer}
+.t:hover{transform:translateY(-6px);box-shadow:0 20px 40px #0c2a3d22}
+.t .im{height:170px;display:grid;place-items:center;font-size:70px;position:relative}
+.t .hot{position:absolute;top:12px;left:12px;background:var(--sun);color:#fff;font-size:12px;font-weight:700;padding:3px 10px;border-radius:99px}
+.t .b{padding:18px}.t h3{font-size:19px}.t .m{color:var(--mut);font-size:14px;margin:4px 0 12px}
+.t .f{display:flex;justify-content:space-between;align-items:center}.t .f b{font-size:22px;color:var(--deep)}
+.t .f span{background:var(--bg);padding:4px 10px;border-radius:99px;font-size:13px}
+.empty{grid-column:1/-1;text-align:center;color:var(--mut);padding:50px}
+.why{background:#fff;padding:60px 0}
+.why .g{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:24px;margin-top:24px}
+.why h4{margin:6px 0 2px}.why p{color:var(--mut);font-size:14px}.why .i{font-size:34px}
+#md{position:fixed;inset:0;background:#0c2a3da0;display:none;place-items:center;z-index:20;padding:14px}
+#md.open{display:grid}
+.box{background:#fff;border-radius:24px;max-width:540px;width:100%;max-height:96vh;overflow:auto}
+.box .im{height:150px;display:grid;place-items:center;font-size:70px;position:relative}
+.box .in{padding:24px}
+.cl{position:absolute;top:10px;right:10px;background:#fff;border:0;width:34px;height:34px;border-radius:50%;font-size:20px;cursor:pointer}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+.tot{display:flex;justify-content:space-between;align-items:center;background:var(--bg);padding:14px 18px;border-radius:14px;margin-bottom:12px}.tot b{font-size:26px;color:var(--deep)}
+.btn{width:100%;background:var(--sky);color:#fff;border:0;padding:14px;border-radius:14px;font:700 16px inherit;font-family:inherit;cursor:pointer}.btn:hover{background:var(--deep)}
+.in ul{padding-left:18px;color:var(--mut);font-size:14px;margin:8px 0}
+footer{background:var(--ink);color:#8fb0c2;padding:26px 0;text-align:center;font-size:14px}footer a{color:#fff;text-decoration:underline}
+@media(max-width:780px){.search{grid-template-columns:1fr 1fr}.search div:first-child{grid-column:1/-1}}
+</style>
+</head>
+<body>
+<div class="hero">
+  <header><div class="wrap"><a class="logo" href="#">☼ Горизонт</a><a class="tl" href="#list">Все туры</a></div></header>
+  <div class="wrap"><h1>Отпуск мечты — в три клика</h1><p>Подберём тур по бюджету и датам. Горящие предложения обновляются каждый день.</p></div>
+</div>
+
+<div class="wrap">
+  <div class="search">
+    <div><label>Куда</label><input id="q" placeholder="Страна или курорт, например Турция"></div>
+    <div><label>Бюджет до, ₽</label><select id="bd"><option value="0">Любой</option><option value="60000">60 000</option><option value="100000">100 000</option><option value="150000">150 000</option></select></div>
+    <div><label>Ночей</label><select id="nt"><option value="0">Любое</option><option value="7">до 7</option><option value="10">до 10</option><option value="14">до 14</option></select></div>
+    <div><label>Сортировка</label><select id="so"><option value="">Популярные</option><option value="p">Сначала дешёвые</option><option value="r">По рейтингу</option></select></div>
+  </div>
+
+  <div class="bar" id="list"><h2 id="cnt"></h2><div class="chips" id="ch"></div></div>
+  <div class="grid" id="gr"></div>
+</div>
+
+<div class="why"><div class="wrap"><h2>Почему «Горизонт»</h2><div class="g">
+  <div><div class="i">🛡</div><h4>Без скрытых платежей</h4><p>Итоговая цена в договоре, как на сайте.</p></div>
+  <div><div class="i">🔄</div><h4>Возврат до вылета</h4><p>Бесплатная отмена за 14 дней.</p></div>
+  <div><div class="i">🎧</div><h4>Поддержка 24/7</h4><p>Поможем, где бы вы ни были.</p></div>
+</div></div></div>
+<footer>Демо-сайт · разработано в <a href="../01-progfarm/progfarm.html">ProgFarm</a></footer>
+
+<div id="md"><div class="box"><div class="im" id="mi"><span id="me"></span><button class="cl" id="cl">×</button></div><div class="in" id="mc"></div></div></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const T=[
+['Турция','Анталья · Kemer Beach 5★',7,68000,4.7,'🏖','#7dd3fc',1],
+['Египет','Хургада · Sunrise Resort 4★',10,54000,4.5,'🐠','#fdba74',1],
+['ОАЭ','Дубай · City Stay 4★',7,112000,4.8,'🏙','#fcd34d'],
+['Таиланд','Пхукет · Palm Bay 4★',14,138000,4.9,'🌴','#86efac'],
+['Мальдивы','Мале · Ocean Villa 5★',10,215000,5.0,'🏝','#67e8f9'],
+['Греция','Крит · Aegean Pearl 4★',7,89000,4.6,'🏛','#c4b5fd'],
+['Турция','Белек · Golf Club 5★',10,95000,4.8,'⛳','#bbf7d0'],
+['Вьетнам','Нячанг · Blue Sea 4★',14,119000,4.4,'🛶','#fda4af',1],
+['Россия','Сочи · Горная долина 4★',7,46000,4.5,'🏔','#a5b4fc'],
+['Черногория','Будва · Adriatic 4★',10,79000,4.6,'⛵','#93c5fd']
+].map(([c,h,n,p,r,e,col,hot],id)=>({id,c,h,n,p,r,e,col,hot}));
+const cs=['Все',...new Set(T.map(x=>x.c))];let cur='Все';
+const rub=n=>n.toLocaleString('ru-RU')+' ₽';
+function draw(){
+  $('ch').innerHTML=cs.map(c=>`<button class="${c==cur?'on':''}">${c}</button>`).join('');
+  const q=$('q').value.trim().toLowerCase(),b=+$('bd').value,n=+$('nt').value;
+  let v=T.filter(x=>(cur=='Все'||x.c==cur)&&(!q||(x.c+x.h).toLowerCase().includes(q))&&(!b||x.p<=b)&&(!n||x.n<=n));
+  const s=$('so').value;if(s)v.sort((a,c)=>s=='p'?a.p-c.p:c.r-a.r);
+  $('cnt').textContent=`Найдено туров: ${v.length}`;
+  $('gr').innerHTML=v.length?v.map(x=>`<div class="t" data-id="${x.id}"><div class="im" style="background:linear-gradient(135deg,${x.col},#fff)">${x.e}${x.hot?'<span class="hot">🔥 Горящий</span>':''}</div><div class="b"><h3>${x.c}</h3><div class="m">${x.h}<br>${x.n} ночей · вылет из Москвы</div><div class="f"><b>от ${rub(x.p)}</b><span>★ ${x.r}</span></div></div></div>`).join(''):'<div class="empty">Туров не найдено — попробуйте изменить условия</div>';
+}
+['q','bd','nt','so'].forEach(i=>$(i).oninput=draw);
+$('ch').onclick=e=>{if(e.target.tagName=='BUTTON'){cur=e.target.textContent;draw()}};
+$('gr').onclick=e=>{
+  const c=e.target.closest('.t');if(!c)return;const x=T[c.dataset.id];
+  $('mi').style.background=`linear-gradient(135deg,${x.col},#fff)`;$('me').textContent=x.e;
+  $('mc').innerHTML=`<h2>${x.c}</h2><p style="color:var(--mut)">${x.h} · ${x.n} ночей</p><ul><li>Перелёт и трансфер</li><li>Проживание, завтраки</li><li>Медицинская страховка</li></ul>
+  <div class="opts"><div><label>Дата вылета</label><input id="dt" type="date"></div><div><label>Взрослых</label><select id="ad"><option>1</option><option selected>2</option><option>3</option><option>4</option></select></div></div>
+  <div class="tot"><span>Итого</span><b id="sm"></b></div>
+  <form id="bf"><div class="opts"><input id="bn" placeholder="Имя" required><input id="bp" placeholder="Телефон" required pattern="[0-9+()\\s-]{10,}"></div><button class="btn">Забронировать</button></form>`;
+  const dt=$('dt'),calc=()=>$('sm').textContent=rub(x.p*$('ad').value);
+  dt.min=dt.value=new Date(Date.now()+864e5*14).toISOString().slice(0,10);
+  $('ad').oninput=calc;calc();
+  $('bf').onsubmit=ev=>{ev.preventDefault();$('mc').innerHTML=`<div style="text-align:center;padding:30px 0"><div style="font-size:60px">✅</div><h2>Тур забронирован!</h2><p style="color:var(--mut)">${x.c}, вылет ${new Date(dt.value).toLocaleDateString('ru-RU')}. Менеджер свяжется для подтверждения.</p></div>`};
+  $('md').classList.add('open');
+};
+$('cl').onclick=()=>$('md').classList.remove('open');
+$('md').onclick=e=>{if(e.target.id=='md')$('md').classList.remove('open')};
+draw();
+</script>
+</body>
+</html>
