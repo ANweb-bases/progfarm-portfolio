@@ -31,6 +31,9 @@ textarea:focus,input:focus,select:focus{outline:0;border-color:var(--acc)}
 label.c{display:inline-flex;gap:6px;align-items:center;color:var(--mut);font-size:14px}label.c input{width:auto}
 .out{display:grid;grid-template-columns:90px 1fr auto;gap:8px;align-items:center;margin-bottom:8px}.out span{color:var(--mut);font-size:13px}
 footer{margin-top:40px;color:var(--mut);font-size:13px}footer a{text-decoration:underline}
+aside button{transition:.2s;position:relative}aside button.on::before{content:"";position:absolute;left:0;top:20%;bottom:20%;width:3px;border-radius:3px;background:var(--acc);animation:in .3s}
+.logo b{display:inline-block;animation:glow 3s ease-in-out infinite}@keyframes glow{50%{text-shadow:0 0 14px var(--acc)}}
+.out,.pw{animation:in .35s both}.flash{animation:fl .7s}@keyframes fl{0%{box-shadow:0 0 0 0 #a78bfa88;border-color:var(--acc)}100%{box-shadow:0 0 0 14px #a78bfa00}}
 .tool{display:none;animation:in .3s}.tool.on{display:block}@keyframes in{from{opacity:0;transform:translateY(8px)}}
 @media(max-width:760px){.app{grid-template-columns:1fr}aside{position:static;height:auto;display:flex;flex-wrap:wrap;gap:4px}aside .logo{width:100%}aside button{width:auto}.cols{grid-template-columns:1fr}}
 </style>
@@ -82,12 +85,13 @@ $('nav').onclick=e=>{const b=e.target.closest('button');if(b)show(b.dataset.t)};
 document.addEventListener('click',e=>{const c=e.target.dataset.copy;if(c){const el=$(c),t=el.value??el.textContent;navigator.clipboard.writeText(t);e.target.textContent='Скопировано ✓';setTimeout(()=>e.target.textContent=e.target.dataset.l||'Копировать',1200)}});
 const msg=(id,t,ok)=>{$(id).textContent=t;$(id).className='msg '+(ok?'ok':'err')};
 // JSON
-$('jf').onclick=()=>{try{$('jin').value=JSON.stringify(JSON.parse($('jin').value),null,2);msg('jmsg','Корректный JSON ✓',1)}catch(e){msg('jmsg','Ошибка: '+e.message,0)}};
+const flash=e=>{e.classList.remove('flash');void e.offsetWidth;e.classList.add('flash')};
+$('jf').onclick=()=>{try{$('jin').value=JSON.stringify(JSON.parse($('jin').value),null,2);flash($('jin'));msg('jmsg','Корректный JSON ✓',1)}catch(e){msg('jmsg','Ошибка: '+e.message,0)}};
 $('jm').onclick=()=>{try{$('jin').value=JSON.stringify(JSON.parse($('jin').value));msg('jmsg','Минифицировано ✓',1)}catch(e){msg('jmsg','Ошибка: '+e.message,0)}};
 // Base64 (UTF-8 safe)
 const enc=s=>btoa(String.fromCharCode(...new TextEncoder().encode(s))),dec=s=>new TextDecoder().decode(Uint8Array.from(atob(s),c=>c.charCodeAt(0)));
-$('be').onclick=()=>{try{$('bout').value=enc($('bin').value);msg('bmsg','Готово ✓',1)}catch(e){msg('bmsg',e.message,0)}};
-$('bd').onclick=()=>{try{$('bout').value=dec($('bin').value.trim());msg('bmsg','Готово ✓',1)}catch{msg('bmsg','Это не корректный Base64',0)}};
+$('be').onclick=()=>{try{$('bout').value=enc($('bin').value);flash($('bout'));msg('bmsg','Готово ✓',1)}catch(e){msg('bmsg',e.message,0)}};
+$('bd').onclick=()=>{try{$('bout').value=dec($('bin').value.trim());flash($('bout'));msg('bmsg','Готово ✓',1)}catch{msg('bmsg','Это не корректный Base64',0)}};
 // Hash
 $('hin').oninput=async()=>{const d=new TextEncoder().encode($('hin').value);let h='';
   for(const a of ['SHA-1','SHA-256','SHA-512']){const x=[...new Uint8Array(await crypto.subtle.digest(a,d))].map(b=>b.toString(16).padStart(2,'0')).join('');h+=`<div class="out"><span>${a}</span><input readonly value="${x}"><button class="b g" onclick="navigator.clipboard.writeText('${x}')">⧉</button></div>`}$('hout').innerHTML=h};
