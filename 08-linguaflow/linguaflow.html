@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LinguaFlow — учим английский слова</title>
+<style>
+:root{--bg:#fdf6ff;--p:#7c3aed;--p2:#ec4899;--ink:#2b1b45;--mut:#8a7aa6;--ok:#22c55e;--no:#ef4444}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--ink);font:17px/1.5 "Nunito","Segoe UI",system-ui,sans-serif;min-height:100vh}
+a{color:inherit}
+.wrap{max-width:720px;margin:auto;padding:20px}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.logo{font-weight:900;font-size:26px;background:linear-gradient(90deg,var(--p),var(--p2));-webkit-background-clip:text;color:transparent}
+.xp{background:#fff;border-radius:99px;padding:8px 16px;font-weight:800;box-shadow:0 4px 14px #7c3aed22}
+.nav{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.nav button,.set button{border:2px solid #e5d9f7;background:#fff;color:var(--mut);padding:10px 18px;border-radius:14px;font:800 15px inherit;font-family:inherit;cursor:pointer}
+.nav button.on{background:var(--p);border-color:var(--p);color:#fff}
+.prog{height:10px;background:#eadffc;border-radius:99px;overflow:hidden;margin-bottom:20px}.prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--p),var(--p2));transition:.4s}
+.scene{perspective:1000px}
+.card{height:280px;position:relative;transform-style:preserve-3d;transition:transform .5s;cursor:pointer}
+.card.flip{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;border-radius:28px;display:flex;flex-direction:column;justify-content:center;align-items:center;box-shadow:0 20px 40px #7c3aed26;padding:20px;text-align:center}
+.front{background:#fff}.back{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;transform:rotateY(180deg)}
+.face .w{font-size:46px;font-weight:900}.face small{color:var(--mut);margin-top:6px}.back small{color:#ffffffbb}
+.tip{text-align:center;color:var(--mut);font-size:14px;margin:12px 0}
+.act{display:flex;gap:12px;justify-content:center}
+.act button{flex:1;max-width:220px;border:0;padding:14px;border-radius:16px;font:800 16px inherit;font-family:inherit;cursor:pointer;color:#fff}
+.k{background:var(--no)}.kn{background:var(--ok)}
+.q{background:#fff;border-radius:28px;padding:30px;box-shadow:0 20px 40px #7c3aed26;text-align:center}
+.q .w{font-size:42px;font-weight:900;margin:8px 0 22px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opts button{padding:16px;border:2px solid #e5d9f7;background:#fff;border-radius:16px;font:800 17px inherit;font-family:inherit;cursor:pointer;transition:.15s}
+.opts button:hover:not(:disabled){border-color:var(--p)}
+.opts .good{background:#dcfce7;border-color:var(--ok)}.opts .bad{background:#fee2e2;border-color:var(--no)}
+.res{text-align:center;background:#fff;border-radius:28px;padding:40px;box-shadow:0 20px 40px #7c3aed26}
+.res .big{font-size:72px;font-weight:900;color:var(--p)}
+.btn{background:var(--p);color:#fff;border:0;padding:14px 28px;border-radius:16px;font:800 16px inherit;font-family:inherit;cursor:pointer;margin-top:16px}
+.btn:hover{background:#6d28d9}
+.set{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}.set button.on{background:var(--p2);border-color:var(--p2);color:#fff}
+footer{text-align:center;color:var(--mut);font-size:13px;margin-top:40px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><div class="logo">LinguaFlow</div><div class="xp">⭐ <span id="xp">0</span> XP · 🔥 <span id="sk">0</span></div></header>
+<div class="nav" id="nav"><button class="on" data-m="cards">Карточки</button><button data-m="quiz">Тест</button></div>
+<div class="set" id="set"></div>
+<div class="prog"><i id="pg"></i></div>
+<div id="view"></div>
+<footer>Демо-приложение · разработано в <a href="../01-progfarm/progfarm.html">ProgFarm</a></footer>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const W={
+'Базовые':[['hello','привет'],['thanks','спасибо'],['water','вода'],['friend','друг'],['house','дом'],['time','время'],['work','работа'],['love','любовь'],['book','книга'],['city','город']],
+'Путешествия':[['ticket','билет'],['luggage','багаж'],['airport','аэропорт'],['hotel','отель'],['passport','паспорт'],['map','карта'],['journey','путешествие'],['beach','пляж']],
+'IT':[['bug','ошибка'],['server','сервер'],['database','база данных'],['deploy','развернуть'],['browser','браузер'],['password','пароль'],['network','сеть'],['update','обновление']]
+};
+let mode='cards',topic='Базовые',deck=[],i=0,score=0,known=0;
+let st={xp:0,sk:0,last:''};try{st=JSON.parse(localStorage.lf)||st}catch{}
+const today=new Date().toDateString();
+const saveSt=()=>{try{localStorage.lf=JSON.stringify(st)}catch{}$('xp').textContent=st.xp;$('sk').textContent=st.sk};
+function xp(n){
+  st.xp+=n;
+  if(st.last!=today){st.sk=(st.last==new Date(Date.now()-864e5).toDateString()?st.sk:0)+1;st.last=today}
+  saveSt();
+}
+const shuffle=a=>[...a].sort(()=>Math.random()-.5);
+function start(){deck=shuffle(W[topic]);i=0;score=0;known=0;show()}
+function show(){
+  $('pg').style.width=(i/deck.length*100)+'%';
+  if(i>=deck.length)return end();
+  const [en,ru]=deck[i];
+  if(mode=='cards'){
+    $('view').innerHTML=`<div class="scene"><div class="card" id="cd"><div class="face front"><div class="w">${en}</div><small>нажмите, чтобы перевернуть</small></div><div class="face back"><div class="w">${ru}</div><small>${en}</small></div></div></div>
+    <p class="tip">Слово ${i+1} из ${deck.length}</p>
+    <div class="act"><button class="k" id="no">Ещё учить</button><button class="kn" id="yes">Знаю!</button></div>`;
+    $('cd').onclick=()=>$('cd').classList.toggle('flip');
+    $('yes').onclick=()=>{known++;xp(2);i++;show()};
+    $('no').onclick=()=>{deck.push(deck[i]);i++;show()};
+  }else{
+    const opts=shuffle([ru,...shuffle(Object.values(W).flat().map(x=>x[1]).filter(x=>x!=ru)).slice(0,3)]);
+    $('view').innerHTML=`<div class="q"><small style="color:var(--mut)">Как переводится?</small><div class="w">${en}</div><div class="opts">${opts.map(o=>`<button>${o}</button>`).join('')}</div></div>`;
+    $('view').querySelector('.opts').onclick=e=>{
+      if(e.target.tagName!='BUTTON')return;
+      const ok=e.target.textContent==ru;if(ok){score++;xp(5)}
+      [...e.currentTarget.children].forEach(b=>{b.disabled=true;if(b.textContent==ru)b.classList.add('good')});
+      if(!ok)e.target.classList.add('bad');
+      setTimeout(()=>{i++;show()},900);
+    };
+  }
+}
+function end(){
+  const n=mode=='quiz'?W[topic].length:deck.length;
+  $('view').innerHTML=`<div class="res"><div style="font-size:50px">🎉</div><div class="big">${mode=='quiz'?score+'/'+n:'+'+known*2}</div><p>${mode=='quiz'?(score==n?'Идеально!':score>n/2?'Хороший результат!':'Повторите слова ещё раз'):'Вы повторили все слова темы'}</p><button class="btn" id="again">Ещё раз</button></div>`;
+  $('again').onclick=start;
+}
+$('nav').onclick=e=>{const m=e.target.dataset.m;if(m){mode=m;[...$('nav').children].forEach(b=>b.classList.toggle('on',b==e.target));start()}};
+$('set').innerHTML=Object.keys(W).map(t=>`<button class="${t==topic?'on':''}">${t}</button>`).join('');
+$('set').onclick=e=>{if(e.target.tagName=='BUTTON'){topic=e.target.textContent;[...$('set').children].forEach(b=>b.classList.toggle('on',b==e.target));start()}};
+saveSt();start();
+</script>
+</body>
+</html>
