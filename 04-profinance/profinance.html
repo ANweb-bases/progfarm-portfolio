@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ПроФинанс — калькуляторы кредита, вклада и накоплений</title>
+<meta name="description" content="Рассчитайте платёж по кредиту, доход по вкладу с капитализацией и срок накопления на цель. График и подробная таблица.">
+<style>
+:root{--bg:#06231f;--g1:#0b3b34;--ln:#ffffff1c;--fg:#e7fbf6;--mut:#8fbfb4;--acc:#34d399;--acc2:#facc15;--bad:#fb7185}
+*{box-sizing:border-box;margin:0}
+body{background:radial-gradient(900px 500px at 85% -10%,#10b98133,transparent),radial-gradient(700px 500px at -10% 40%,#facc1514,transparent),var(--bg);color:var(--fg);font:16px/1.55 "Segoe UI",system-ui,sans-serif;min-height:100vh}
+a{color:inherit}
+.w{max-width:1080px;margin:auto;padding:0 20px}
+header .w{display:flex;justify-content:space-between;align-items:center;height:70px}
+.logo{font-weight:800;font-size:22px;letter-spacing:-.5px}.logo span{color:var(--acc)}
+.tabs{display:flex;gap:6px;background:#ffffff0d;padding:5px;border-radius:14px;margin:18px 0 22px;width:fit-content;max-width:100%;overflow:auto}
+.tabs button{border:0;background:none;color:var(--mut);padding:10px 20px;border-radius:10px;font:600 15px inherit;font-family:inherit;cursor:pointer;white-space:nowrap;transition:.2s}
+.tabs button.on{background:var(--acc);color:#052e26}
+h1{font-size:clamp(28px,4vw,42px);letter-spacing:-1px;line-height:1.1}h1 em{font-style:normal;color:var(--acc)}
+.sub{color:var(--mut);margin:8px 0 0;max-width:560px}
+.grid{display:grid;grid-template-columns:380px 1fr;gap:20px;padding-bottom:50px}
+.card{background:#ffffff0c;border:1px solid var(--ln);border-radius:20px;padding:24px;backdrop-filter:blur(10px)}
+.f{margin-bottom:20px}.f .t{display:flex;justify-content:space-between;color:var(--mut);font-size:14px;margin-bottom:6px;align-items:center}
+.f input[type=number]{width:130px;text-align:right;background:#00000030;border:1px solid var(--ln);color:var(--fg);padding:6px 10px;border-radius:8px;font:700 15px inherit;font-family:inherit}
+input[type=range]{width:100%;accent-color:var(--acc)}
+.big{background:linear-gradient(135deg,#10b98133,#facc1522);border:1px solid var(--ln);border-radius:16px;padding:20px;margin-bottom:16px}
+.big span{color:var(--mut);font-size:14px}.big b{display:block;font-size:clamp(30px,5vw,46px);line-height:1.1;letter-spacing:-1px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px}
+.stats div{background:#00000026;border-radius:12px;padding:12px 14px}.stats span{font-size:13px;color:var(--mut)}.stats b{display:block;font-size:19px}
+canvas{width:100%;height:230px;display:block}
+.tw{max-height:260px;overflow:auto;margin-top:14px;border-radius:12px}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:7px 10px;text-align:right;border-bottom:1px solid var(--ln)}th:first-child,td:first-child{text-align:left}th{position:sticky;top:0;background:var(--g1);color:var(--mut);font-weight:600}
+.lg{display:flex;gap:16px;color:var(--mut);font-size:13px;margin:8px 0}.lg i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
+.pane{display:none}.pane.on{display:contents;animation:in .35s}@keyframes in{from{opacity:0}}
+footer{text-align:center;color:var(--mut);font-size:13px;padding:10px 0 28px}footer a{text-decoration:underline}
+@media(max-width:860px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><div class="w"><div class="logo">Про<span>Финанс</span></div><a href="../01-progfarm/progfarm.html" style="color:var(--mut);font-size:14px">← ProgFarm</a></div></header>
+<div class="w">
+  <h1>Считайте деньги <em>заранее</em></h1>
+  <p class="sub">Три калькулятора для больших решений: взять кредит, открыть вклад или накопить на цель.</p>
+  <div class="tabs" id="tabs"><button class="on" data-p="loan">Кредит</button><button data-p="dep">Вклад</button><button data-p="goal">Накопить на цель</button></div>
+
+  <div class="grid" id="loan">
+    <div class="card">
+      <div class="f"><div class="t"><span>Сумма, ₽</span><input type="number" data-k="a" step="10000"></div><input type="range" data-k="a" min="50000" max="15000000" step="50000"></div>
+      <div class="f"><div class="t"><span>Ставка, %</span><input type="number" data-k="r" step="0.1"></div><input type="range" data-k="r" min="1" max="35" step="0.1"></div>
+      <div class="f"><div class="t"><span>Срок, лет</span><input type="number" data-k="y"></div><input type="range" data-k="y" min="1" max="30"></div>
+      <div class="f"><div class="t"><span>Тип платежа</span><select data-k="t" style="background:#00000030;color:var(--fg);border:1px solid var(--ln);padding:6px;border-radius:8px"><option value="a">Аннуитетный</option><option value="d">Дифференцированный</option></select></div></div>
+    </div>
+    <div class="card"><div class="big"><span id="l_lab">Платёж в месяц</span><b id="l_pay"></b></div>
+      <div class="stats"><div><span>Переплата</span><b id="l_over"></b></div><div><span>Всего выплат</span><b id="l_all"></b></div><div><span>Переплата, %</span><b id="l_pct"></b></div></div>
+      <div class="lg"><span><i style="background:#34d399"></i>Остаток долга</span><span><i style="background:#facc15"></i>Выплачено процентов</span></div><canvas id="l_cv"></canvas>
+      <div class="tw"><table><thead><tr><th>Мес.</th><th>Платёж</th><th>Долг</th><th>Проценты</th><th>Остаток</th></tr></thead><tbody id="l_tb"></tbody></table></div></div>
+  </div>
+
+  <div class="grid" id="dep" style="display:none">
+    <div class="card">
+      <div class="f"><div class="t"><span>Начальная сумма, ₽</span><input type="number" data-k="a" step="10000"></div><input type="range" data-k="a" min="0" max="10000000" step="10000"></div>
+      <div class="f"><div class="t"><span>Пополнение в месяц, ₽</span><input type="number" data-k="m" step="1000"></div><input type="range" data-k="m" min="0" max="300000" step="1000"></div>
+      <div class="f"><div class="t"><span>Ставка, % годовых</span><input type="number" data-k="r" step="0.1"></div><input type="range" data-k="r" min="1" max="25" step="0.1"></div>
+      <div class="f"><div class="t"><span>Срок, лет</span><input type="number" data-k="y"></div><input type="range" data-k="y" min="1" max="30"></div>
+    </div>
+    <div class="card"><div class="big"><span>Итоговая сумма</span><b id="d_tot"></b></div>
+      <div class="stats"><div><span>Вложено</span><b id="d_in"></b></div><div><span>Доход</span><b id="d_gain"></b></div><div><span>Рост</span><b id="d_pct"></b></div></div>
+      <div class="lg"><span><i style="background:#34d399"></i>Баланс</span><span><i style="background:#facc15"></i>Вложено</span></div><canvas id="d_cv"></canvas></div>
+  </div>
+
+  <div class="grid" id="goal" style="display:none">
+    <div class="card">
+      <div class="f"><div class="t"><span>Цель, ₽</span><input type="number" data-k="g" step="50000"></div><input type="range" data-k="g" min="50000" max="20000000" step="50000"></div>
+      <div class="f"><div class="t"><span>Уже накоплено, ₽</span><input type="number" data-k="a" step="10000"></div><input type="range" data-k="a" min="0" max="10000000" step="10000"></div>
+      <div class="f"><div class="t"><span>Откладываю в месяц, ₽</span><input type="number" data-k="m" step="1000"></div><input type="range" data-k="m" min="1000" max="300000" step="1000"></div>
+      <div class="f"><div class="t"><span>Доходность, % годовых</span><input type="number" data-k="r" step="0.1"></div><input type="range" data-k="r" min="0" max="25" step="0.1"></div>
+    </div>
+    <div class="card"><div class="big"><span>Цель будет достигнута через</span><b id="g_time"></b></div>
+      <div class="stats"><div><span>Дата</span><b id="g_date"></b></div><div><span>Ваши взносы</span><b id="g_in"></b></div><div><span>Доход от процентов</span><b id="g_gain"></b></div></div>
+      <div class="lg"><span><i style="background:#34d399"></i>Накопления</span><span><i style="background:#facc15"></i>Цель</span></div><canvas id="g_cv"></canvas></div>
+  </div>
+</div>
+<footer>Расчёты ориентировочные · разработано в <a href="../01-progfarm/progfarm.html">ProgFarm</a></footer>
+
+<script>
+const $=id=>document.getElementById(id),R=n=>Math.round(n).toLocaleString('ru-RU')+' ₽';
+const S={loan:{a:3000000,r:12.5,y:20,t:'a'},dep:{a:300000,m:15000,r:16,y:5},goal:{g:3000000,a:200000,m:40000,r:12}};
+try{Object.assign(S.loan,JSON.parse(localStorage.pf_loan||'{}'));Object.assign(S.dep,JSON.parse(localStorage.pf_dep||'{}'));Object.assign(S.goal,JSON.parse(localStorage.pf_goal||'{}'))}catch{}
+function chart(cv,series,max){ // series: [{pts:[...],c}], simple line chart with filled area
+  const dpr=devicePixelRatio||1,W=cv.clientWidth,H=cv.clientHeight;cv.width=W*dpr;cv.height=H*dpr;const g=cv.getContext('2d');g.scale(dpr,dpr);g.clearRect(0,0,W,H);
+  g.strokeStyle='#ffffff14';g.fillStyle='#8fbfb4';g.font='11px Segoe UI';
+  for(let i=0;i<=4;i++){const y=10+(H-30)*i/4;g.beginPath();g.moveTo(52,y);g.lineTo(W,y);g.stroke();g.fillText((max*(1-i/4)/1e6).toFixed(max>=1e6?1:2)+'M',4,y+4)}
+  series.forEach(s=>{const n=s.pts.length;g.beginPath();s.pts.forEach((v,i)=>{const x=52+(W-60)*i/Math.max(n-1,1),y=10+(H-30)*(1-v/max);i?g.lineTo(x,y):g.moveTo(x,y)});
+    g.strokeStyle=s.c;g.lineWidth=2.5;g.stroke();if(s.fill){g.lineTo(W-8,H-20);g.lineTo(52,H-20);g.fillStyle=s.c+'22';g.fill()}});
+}
+function loan(){const {a,r,y,t}=S.loan,i=r/1200,n=y*12;if(!(a>0&&i>0&&n>0))return;let bal=a,sum=0,paid=0,rows=[],bp=[],ip=[];
+  const ann=a*i/(1-(1+i)**-n);
+  for(let k=1;k<=n;k++){const int=bal*i,d=t=='a'?ann-int:a/n,p=int+d;bal=Math.max(0,bal-d);sum+=p;paid+=int;rows.push([k,p,d,int,bal]);bp.push(bal);ip.push(paid)}
+  $('l_pay').textContent=t=='a'?R(ann):R(rows[0][1])+' → '+R(rows[n-1][1]);$('l_lab').textContent=t=='a'?'Платёж в месяц':'Первый → последний платёж';
+  $('l_over').textContent=R(sum-a);$('l_all').textContent=R(sum);$('l_pct').textContent=Math.round((sum-a)/a*100)+'%';
+  $('l_tb').innerHTML=rows.map(x=>`<tr><td>${x[0]}</td>${x.slice(1).map(v=>`<td>${R(v)}</td>`).join('')}</tr>`).join('');
+  chart($('l_cv'),[{pts:bp,c:'#34d399',fill:1},{pts:ip,c:'#facc15'}],Math.max(a,sum-a));}
+function dep(){const {a,m,r,y}=S.dep,i=r/1200,n=y*12;let b=a,inv=a,bp=[a],ip=[a];
+  for(let k=1;k<=n;k++){b=b*(1+i)+m;inv+=m;bp.push(b);ip.push(inv)}
+  $('d_tot').textContent=R(b);$('d_in').textContent=R(inv);$('d_gain').textContent=R(b-inv);$('d_pct').textContent=inv?'+'+Math.round((b-inv)/inv*100)+'%':'—';
+  chart($('d_cv'),[{pts:bp,c:'#34d399',fill:1},{pts:ip,c:'#facc15'}],b);}
+function goal(){const {g,a,m,r}=S.goal,i=r/1200;let b=a,k=0,bp=[a],inv=a;
+  while(b<g&&k<1200){b=b*(1+i)+m;inv+=m;k++;bp.push(b)}
+  const ok=b>=g,y=Math.floor(k/12),mo=k%12;
+  $('g_time').textContent=ok?(y?y+' г. ':'')+(mo?mo+' мес.':(y?'':'сразу')):'более 100 лет';
+  const d=new Date();d.setMonth(d.getMonth()+k);$('g_date').textContent=ok?d.toLocaleDateString('ru-RU',{month:'long',year:'numeric'}):'—';
+  $('g_in').textContent=R(inv-a+Math.min(a,g));$('g_gain').textContent=R(Math.max(0,b-inv));
+  chart($('g_cv'),[{pts:bp,c:'#34d399',fill:1},{pts:bp.map(()=>g),c:'#facc15'}],Math.max(g,b));}
+const F={loan,dep,goal};
+document.querySelectorAll('.grid').forEach(p=>{const id=p.id;
+  p.querySelectorAll('[data-k]').forEach(el=>{const k=el.dataset.k;if(el.type!='range'||true)el.value=S[id][k];
+    el.oninput=()=>{S[id][k]=el.tagName=='SELECT'?el.value:+el.value;p.querySelectorAll(`[data-k="${k}"]`).forEach(o=>o!==el&&(o.value=el.value));try{localStorage['pf_'+id]=JSON.stringify(S[id])}catch{}F[id]()}})});
+$('tabs').onclick=e=>{const b=e.target.closest('button');if(!b)return;document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x==b));
+  document.querySelectorAll('.grid').forEach(p=>p.style.display=p.id==b.dataset.p?'grid':'none');F[b.dataset.p]()};
+addEventListener('resize',()=>{const on=document.querySelector('.tabs .on').dataset.p;F[on]()});
+loan();dep();goal();
+</script>
+</body>
+</html>
