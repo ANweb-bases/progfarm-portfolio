@@ -78,13 +78,14 @@ async function onCallback(q) {
     return send(chat, '💬 Напишите ваш вопрос одним сообщением — он придёт лично мне, и я отвечу прямо здесь, в боте.');
   }
   if (act === 'contacts') return edit(chat, mid,
-    '📞 <b>Контакты</b>\n\n• Заказ, оплата, вопросы — в этом боте.\n• Личный Telegram — <b>только для развёрнутых и индивидуальных вопросов</b>.\n• Почта: ' + MAIL,
-    [[{ text: '💬 Написать через бота', callback_data: 'ask' }], [{ text: '✈ Личный Telegram (развёрнутые вопросы)', url: TG }], [{ text: '✉ Почта', url: 'mailto:' + MAIL }], ...HOME]);
+    '📞 <b>Контакты</b>\n\n• Заказ, оплата, вопросы — в этом боте.\n• Личный Telegram — <b>только для развёрнутых и индивидуальных вопросов</b>.\n• Почта: <code>' + MAIL + '</code> (нажмите, чтобы скопировать)',
+    [[{ text: '💬 Написать через бота', callback_data: 'ask' }], [{ text: '✈ Личный Telegram (развёрнутые вопросы)', url: TG }], ...HOME]);
   if (act === 'pay') return send(chat, '💳 <b>Оплата</b>\n\nПриём платежей в боте подключается. Заявка зафиксирована — как только оплата заработает, пришлю реквизиты и ссылку на оплату сюда. Если срочно — нажмите «Связаться со мной лично».', MENU);
 }
 
 async function onMessage(m) {
   const chat = m.chat.id, text = m.text || '', u = m.from;
+  if (text === '/myid') console.log('myid request:', chat, who(u));
   if (text === '/myid') return send(chat, `Ваш chat id: <code>${chat}</code>`);
 
   // ответ админа на пересланное сообщение -> пользователю
