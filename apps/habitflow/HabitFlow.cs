@@ -14,10 +14,15 @@ class HabitList : Control
     public List<Habit> Items = new List<Habit>();
     public event Action Changed;
     const int RowH = 70, Sq = 24, Gap = 6, N = 14;
+    Dictionary<string, DateTime> pulse = new Dictionary<string, DateTime>(); Timer anim = new Timer { Interval = 16 };
     int hRow = -1, hSq = -2; // hSq: -1 = delete button, 0..N-1 = day square
     static readonly Color Card = Color.FromArgb(30, 34, 48), Off = Color.FromArgb(48, 53, 74), Ok = Color.FromArgb(74, 222, 128), Hot = Color.FromArgb(255, 159, 67);
 
-    public HabitList() { DoubleBuffered = true; BackColor = Color.FromArgb(16, 18, 26); }
+    public HabitList()
+    {
+        DoubleBuffered = true; BackColor = Color.FromArgb(16, 18, 26);
+        anim.Tick += (s, e) => { var now = DateTime.Now; foreach (var k in pulse.Where(x => (now - x.Value).TotalMilliseconds > 380).Select(x => x.Key).ToList()) pulse.Remove(k); Invalidate(); if (pulse.Count == 0) anim.Stop(); };
+    }
     public static string Key(DateTime d) { return d.ToString("yyyy-MM-dd"); }
     public static int Streak(Habit h)
     {
@@ -51,6 +56,7 @@ class HabitList : Control
             for (int i = 0; i < N; i++)
             {
                 var d = DateTime.Today.AddDays(i - (N - 1)); var rc = SqRect(r, i); bool on = h.Days.Contains(Key(d));
+                DateTime t0; if (pulse.TryGetValue(r + ":" + i, out t0)) { int gr = (int)(Math.Sin(Math.PI * Math.Min(1, (DateTime.Now - t0).TotalMilliseconds / 380)) * 5); rc.Inflate(gr, gr); }
                 using (var p = Round(rc, 6)) using (var b = new SolidBrush(on ? Ok : Off)) g.FillPath(b, p);
                 if (i == N - 1) using (var p = Round(rc, 6)) using (var pen = new Pen(Color.White, 1.5f)) g.DrawPath(pen, p);
                 if (r == hRow && i == hSq) using (var p = Round(rc, 6)) using (var pen = new Pen(Ok, 2)) g.DrawPath(pen, p);
@@ -78,8 +84,8 @@ class HabitList : Control
     protected override void OnMouseDown(MouseEventArgs e)
     {
         int r, s; Hit(e.Location, out r, out s); if (r < 0 || s == -2) return;
-        if (s == -1) { if (MessageBox.Show("Удалить привычку «" + Items[r].Name + "»?", "HabitFlow", MessageBoxButtons.YesNo) == DialogResult.Yes) Items.RemoveAt(r); }
-        else { var k = Key(DateTime.Today.AddDays(s - (N - 1))); if (!Items[r].Days.Remove(k)) Items[r].Days.Add(k); }
+        if (s == -1) { if (MessageBox.Show("Удалить привычку «" + Items[r].Name + "»?", "HabitFlow", MessageBoxButtons.YesNo) == DialogResult.Yes) Items.RemoveAt(r); pulse.Clear(); }
+        else { var k = Key(DateTime.Today.AddDays(s - (N - 1))); if (!Items[r].Days.Remove(k)) Items[r].Days.Add(k); pulse[r + ":" + s] = DateTime.Now; anim.Start(); }
         hRow = -1; Relayout(); if (Changed != null) Changed();
     }
 }
@@ -92,7 +98,7 @@ class MainForm : Form
 
     public MainForm()
     {
-        Text = "HabitFlow — трекер привычек"; Size = new Size(780, 600); MinimumSize = new Size(640, 400);
+        Fx.FadeIn(this); Text = "HabitFlow — трекер привычек"; Size = new Size(780, 600); MinimumSize = new Size(640, 400);
         BackColor = Color.FromArgb(16, 18, 26); ForeColor = Color.White; Font = new Font("Segoe UI", 10f); StartPosition = FormStartPosition.CenterScreen;
         try { Icon = new Icon(System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("app.ico")); } catch { }
         var title = new Label { Text = "HabitFlow", Font = new Font("Segoe UI", 20f, FontStyle.Bold), ForeColor = Color.FromArgb(74, 222, 128), AutoSize = true, Location = new Point(18, 12) };
@@ -117,6 +123,18 @@ class MainForm : Form
     void LoadData()
     {
         try { if (!File.Exists(File_)) return; foreach (var l in File.ReadAllLines(File_)) { var p = l.Split('\t'); var h = new Habit { Name = p[0] }; if (p.Length > 1) foreach (var d in p[1].Split(',')) if (d.Length > 0) h.Days.Add(d); list.Items.Add(h); } } catch { }
+    }
+}
+
+
+static class Fx
+{
+    // плавное появление окна при запуске
+    public static void FadeIn(Form f)
+    {
+        f.Opacity = 0; var t = new Timer { Interval = 15 };
+        t.Tick += (s, e) => { f.Opacity += 0.1; if (f.Opacity >= 1) { f.Opacity = 1; t.Stop(); t.Dispose(); } };
+        f.Shown += (s, e) => t.Start();
     }
 }
 
