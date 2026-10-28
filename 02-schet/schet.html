@@ -35,6 +35,11 @@ td{padding:9px 10px;border-bottom:1px solid var(--ln)}td:nth-child(n+2){text-ali
 .tot{margin:20px 0 0 auto;width:280px}.tot div{display:flex;justify-content:space-between;padding:5px 0}.tot .big{font-size:20px;font-weight:800;border-top:2px solid var(--ink);margin-top:6px;padding-top:10px}
 .note{margin-top:34px;color:var(--mut);white-space:pre-line}
 .paper .ph,.paper .cols,.paper table,.paper .tot{animation:fade .4s}@keyframes fade{from{opacity:.4;transform:translateY(3px)}}
+.panel,.paper{animation:rise .6s cubic-bezier(.2,.8,.2,1) both}.paper{animation-delay:.12s}
+@keyframes rise{from{opacity:0;transform:translateY(18px)}}
+.item,tbody tr{animation:sl .35s both}@keyframes sl{from{opacity:0;transform:translateX(-10px)}}
+.hbtn,.add{transition:transform .2s,box-shadow .2s,background .2s}.hbtn:hover{transform:translateY(-2px);box-shadow:0 8px 20px #2f5bff55}.add:hover{transform:translateY(-1px)}
+input,textarea{transition:box-shadow .2s,border-color .2s}input:focus,textarea:focus{box-shadow:0 0 0 4px #2f5bff22}
 .toast{position:fixed;bottom:20px;left:50%;transform:translate(-50%,80px);background:var(--ink);color:#fff;padding:12px 22px;border-radius:99px;transition:.3s}.toast.on{transform:translate(-50%,0)}
 footer{text-align:center;color:var(--mut);font-size:13px;padding-bottom:26px}footer a{text-decoration:underline}
 @media(max-width:900px){.grid{grid-template-columns:1fr}.paper{padding:24px}}
@@ -86,11 +91,13 @@ function draw(){
   $('paper').innerHTML=`<div class="ph"><div><h1>Счёт</h1><div class="no">№ ${esc(st.no)} от ${date}</div></div></div>
   <div class="cols"><div><small>Исполнитель</small><b>${esc(st.from)||'—'}</b><div>${esc(st.fromd)}</div></div><div><small>Заказчик</small><b>${esc(st.to)||'—'}</b><div>${esc(st.tod)}</div></div></div>
   <table><thead><tr><th>Наименование</th><th>Кол-во</th><th>Цена</th><th>Сумма</th></tr></thead><tbody>${st.items.map(i=>`<tr><td>${esc(i.n)||'—'}</td><td>${i.q}</td><td>${rub(i.p)}</td><td>${rub(i.q*i.p)}</td></tr>`).join('')}</tbody></table>
-  <div class="tot">${st.vat?`<div><span>В том числе НДС 20%</span><span>${rub(vat)}</span></div>`:'<div><span>НДС не облагается</span><span></span></div>'}<div class="big"><span>Итого</span><span>${rub(sum)}</span></div></div>
+  <div class="tot">${st.vat?`<div><span>В том числе НДС 20%</span><span>${rub(vat)}</span></div>`:'<div><span>НДС не облагается</span><span></span></div>'}<div class="big"><span>Итого</span><span id="tot">${rub(sum)}</span></div></div>
   <div class="note">${esc(st.note)}</div>`;
+  tween($('tot'),draw.prev||0,sum);draw.prev=sum;
   try{localStorage.schet=JSON.stringify(st)}catch{}
   clearTimeout(draw.t);draw.t=setTimeout(()=>{$('toast').classList.add('on');setTimeout(()=>$('toast').classList.remove('on'),900)},700);
 }
+function tween(el,a,b){const t0=performance.now();(function f(t){const p=Math.min(1,(t-t0)/450),e=1-Math.pow(1-p,3);el.textContent=rub(a+(b-a)*e);p<1&&requestAnimationFrame(f)})(t0)}
 $('print').onclick=()=>window.print();
 form();draw();
 </script>
