@@ -1,3 +1,6 @@
 .env
 orders.jsonl
 node_modules
+relay.json
+apps/dist/
+.omc/
