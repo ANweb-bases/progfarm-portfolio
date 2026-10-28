@@ -1,0 +1,624 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#05060a">
+<title>NIGHT CITY BUILD ADVISOR</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Orbitron:wght@700;900&family=Russo+One&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --y: #fcee09; --c: #00f0ff; --r: #ff003c; --p: #ff2a6d; --bg: #05060a; --panel: rgba(13, 15, 24, .9); --text: #e9f3f4; --mut: #8b97a6;
+    --font-h: "Russo One", "Bahnschrift", "Segoe UI", sans-serif; --font-b: "Exo 2", "Bahnschrift", "Segoe UI", sans-serif; --font-m: "JetBrains Mono", Consolas, monospace; --font-d: "Orbitron", "Russo One", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; min-height: 100vh; background: var(--bg); color: var(--text); font: 500 17px/1.45 var(--font-b); overflow-x: hidden; }
+  body::before { content: ""; position: fixed; inset: 0; z-index: -2; background:
+    radial-gradient(900px 500px at 85% -10%, rgba(255, 0, 60, .18), transparent 60%),
+    radial-gradient(800px 500px at -10% 20%, rgba(0, 240, 255, .12), transparent 60%),
+    linear-gradient(180deg, #05060a, #0a0b14); }
+  #rain { position: fixed; inset: 0; width: 100%; height: 100%; z-index: -1; opacity: .35; pointer-events: none; }
+  .scan { position: fixed; inset: 0; z-index: 50; pointer-events: none; background: repeating-linear-gradient(180deg, rgba(0, 0, 0, .28) 0 1px, transparent 1px 3px); opacity: .5; }
+  .scan::after { content: ""; position: absolute; left: 0; right: 0; height: 120px; top: -120px; background: linear-gradient(180deg, transparent, rgba(0, 240, 255, .07), transparent); animation: sweep 7s linear infinite; }
+  .vig { position: fixed; inset: 0; z-index: 49; pointer-events: none; background: radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, .65)); }
+  @keyframes sweep { to { transform: translateY(calc(100vh + 240px)); } }
+  a { color: var(--c); }
+
+  /* ---------- HUD ---------- */
+  .hud { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 14px; padding: 10px 18px; padding-top: calc(10px + env(safe-area-inset-top)); background: rgba(5, 6, 10, .92); border-bottom: 1px solid rgba(252, 238, 9, .35); }
+  .hud::after { content: ""; position: absolute; left: 0; bottom: -1px; height: 2px; width: var(--prog, 0%); background: linear-gradient(90deg, var(--y), var(--c)); box-shadow: 0 0 12px var(--y); transition: width .6s cubic-bezier(.2, .8, .2, 1); }
+  .logo { font: 900 15px/1 var(--font-d); letter-spacing: 2px; color: var(--y); text-shadow: 0 0 10px rgba(252, 238, 9, .6); animation: flick 5s infinite; white-space: nowrap; }
+  .logo i { font-style: normal; color: var(--c); }
+  .ticker { flex: 1; overflow: hidden; white-space: nowrap; font: 12px var(--font-m); color: var(--mut); mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+  .ticker span { display: inline-block; padding-left: 100%; animation: tick 38s linear infinite; }
+  @keyframes tick { to { transform: translateX(-100%); } }
+  @keyframes flick { 0%, 92%, 100% { opacity: 1; } 93% { opacity: .55; } 95% { opacity: 1; } 97% { opacity: .7; } }
+  html { overflow-x: hidden; }
+  .hbtn { flex-shrink: 0; white-space: nowrap; background: none; border: 1px solid rgba(0, 240, 255, .5); color: var(--c); font: 600 12px var(--font-m); padding: 5px 10px; cursor: pointer; letter-spacing: 1px; }
+  .hbtn:hover { background: rgba(0, 240, 255, .12); }
+  .hbtn.on { background: var(--c); color: #001; }
+
+  main { max-width: 1100px; margin: 0 auto; padding: 22px 16px calc(60px + env(safe-area-inset-bottom)); }
+  .step { animation: stepin .55s cubic-bezier(.2, .8, .2, 1) both; }
+  @keyframes stepin { from { opacity: 0; transform: translateY(18px) skewX(-2deg); filter: blur(4px); } to { opacity: 1; transform: none; filter: none; } }
+
+  /* ---------- panels, buttons ---------- */
+  .panel { position: relative; background: var(--panel); border: 1px solid rgba(252, 238, 9, .28); padding: 22px; margin-bottom: 18px;
+    clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 22px 100%, 0 calc(100% - 22px)); }
+  .panel::before, .panel::after { content: ""; position: absolute; width: 18px; height: 18px; border: 2px solid var(--y); pointer-events: none; }
+  .panel::before { left: 0; top: 0; border-right: 0; border-bottom: 0; }
+  .panel::after { right: 0; bottom: 0; border-left: 0; border-top: 0; }
+  .panel.cy::before, .panel.cy::after { border-color: var(--c); }
+  .panel.rd::before, .panel.rd::after { border-color: var(--r); }
+  h1, h2, h3 { font-family: var(--font-h); margin: 0 0 12px; letter-spacing: 1.5px; text-transform: uppercase; }
+  h2 { font-size: 19px; color: var(--y); display: flex; align-items: center; gap: 10px; }
+  h2::before { content: ""; width: 8px; height: 22px; background: var(--y); box-shadow: 0 0 10px var(--y); }
+  h3 { font-size: 14px; color: var(--c); }
+  .mut { color: var(--mut); }
+  .mono { font-family: var(--font-m); }
+  .btn { position: relative; border: 0; cursor: pointer; background: var(--y); color: #0a0a0a; font: 800 15px var(--font-h); letter-spacing: 2px; text-transform: uppercase; padding: 13px 26px;
+    clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px)); transition: transform .15s, filter .15s; }
+  .btn:hover { filter: brightness(1.12) drop-shadow(0 0 10px rgba(252, 238, 9, .7)); transform: translateY(-2px); animation: glt .35s steps(2) 1; }
+  .btn:active { transform: translateY(1px); }
+  .btn.ghost { background: transparent; color: var(--c); box-shadow: inset 0 0 0 1px var(--c); }
+  .btn.ghost:hover { background: rgba(0, 240, 255, .1); filter: none; }
+  .btn[disabled] { opacity: .4; cursor: not-allowed; animation: none; transform: none; filter: none; }
+  @keyframes glt { 0% { text-shadow: 2px 0 var(--r), -2px 0 var(--c); } 50% { text-shadow: -2px 0 var(--r), 2px 0 var(--c); transform: translate(2px, -2px); } 100% { text-shadow: none; } }
+  button:focus-visible, input:focus-visible { outline: 2px solid var(--c); outline-offset: 2px; }
+  .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+  .nav { display: flex; justify-content: space-between; gap: 12px; margin-top: 22px; flex-wrap: wrap; }
+
+  /* ---------- glitch title ---------- */
+  .glitch { position: relative; font: 900 clamp(34px, 8vw, 78px)/1.02 var(--font-d); color: var(--y); text-transform: uppercase; letter-spacing: 3px; text-shadow: 0 0 22px rgba(252, 238, 9, .55); margin: 0; }
+  .glitch::before, .glitch::after { content: attr(data-t); position: absolute; left: 0; top: 0; width: 100%; overflow: hidden; }
+  .glitch::before { color: var(--c); text-shadow: none; animation: g1 3.2s infinite steps(1); clip-path: inset(0 0 55% 0); transform: translate(-3px, 0); mix-blend-mode: screen; }
+  .glitch::after { color: var(--r); text-shadow: none; animation: g2 2.7s infinite steps(1); clip-path: inset(55% 0 0 0); transform: translate(3px, 0); mix-blend-mode: screen; }
+  @keyframes g1 { 0%, 90%, 100% { transform: translate(0); } 92% { transform: translate(-6px, 2px); clip-path: inset(10% 0 60% 0); } 95% { transform: translate(5px, -2px); clip-path: inset(40% 0 20% 0); } }
+  @keyframes g2 { 0%, 88%, 100% { transform: translate(0); } 90% { transform: translate(6px, 1px); clip-path: inset(60% 0 10% 0); } 94% { transform: translate(-5px, -1px); clip-path: inset(20% 0 50% 0); } }
+
+  /* ---------- boot ---------- */
+  .term { font: 14px/1.6 var(--font-m); color: var(--c); min-height: 190px; white-space: pre-wrap; }
+  .term b { color: var(--y); font-weight: 400; }
+  .term .ok { color: #39ff88; } .term .er { color: var(--r); }
+  .cursor { display: inline-block; width: 9px; height: 16px; background: var(--y); vertical-align: -2px; animation: blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* ---------- forms ---------- */
+  label.f { display: block; margin-bottom: 18px; }
+  label.f > span { display: flex; justify-content: space-between; font: 600 13px var(--font-m); letter-spacing: 1px; color: var(--c); text-transform: uppercase; margin-bottom: 6px; }
+  label.f > span em { font-style: normal; color: var(--y); font-size: 16px; }
+  input[type=number], input[type=text] { width: 100%; background: rgba(0, 0, 0, .5); border: 1px solid rgba(0, 240, 255, .45); color: var(--y); font: 700 22px var(--font-m); padding: 10px 14px; }
+  input[type=number]:focus { box-shadow: 0 0 14px rgba(0, 240, 255, .4); outline: 0; border-color: var(--c); }
+  input[type=range] { width: 100%; accent-color: var(--y); height: 26px; }
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+  .chip { background: rgba(0, 240, 255, .08); border: 1px solid rgba(0, 240, 255, .4); color: var(--c); font: 600 13px var(--font-m); padding: 5px 10px; cursor: pointer; }
+  .chip:hover { background: rgba(0, 240, 255, .2); }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+  @media (max-width: 760px) { .grid2 { grid-template-columns: 1fr; } .ticker { display: none; } .hud { justify-content: space-between; } }
+  @media (max-width: 460px) { .hs { display: none; } }
+  .toggle { display: flex; gap: 10px; align-items: center; cursor: pointer; font: 600 14px var(--font-m); }
+  .sw { width: 46px; height: 22px; border: 1px solid var(--c); position: relative; transition: .2s; }
+  .sw::after { content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; background: var(--c); transition: .2s; }
+  .toggle.on .sw { background: rgba(252, 238, 9, .2); border-color: var(--y); } .toggle.on .sw::after { left: 26px; background: var(--y); box-shadow: 0 0 8px var(--y); }
+
+  /* attributes */
+  .attr { display: grid; grid-template-columns: 1fr auto; gap: 8px 14px; align-items: center; padding: 12px 0; border-bottom: 1px dashed rgba(139, 151, 166, .25); }
+  .attr:last-child { border-bottom: 0; }
+  .attr .nm { font: 700 15px var(--font-h); letter-spacing: 1px; text-transform: uppercase; }
+  .attr .ds { grid-column: 1 / -1; font-size: 14px; color: var(--mut); }
+  .ctl { display: flex; align-items: center; gap: 8px; }
+  .ctl button { width: 34px; height: 34px; background: transparent; border: 1px solid var(--y); color: var(--y); font: 800 20px var(--font-m); cursor: pointer; }
+  .ctl button:hover { background: rgba(252, 238, 9, .15); }
+  .ctl output { min-width: 42px; text-align: center; font: 900 24px var(--font-m); color: var(--y); }
+  .meter { grid-column: 1 / -1; height: 6px; background: rgba(255, 255, 255, .08); position: relative; overflow: hidden; }
+  .meter i { position: absolute; inset: 0 auto 0 0; background: linear-gradient(90deg, var(--c), var(--y)); box-shadow: 0 0 10px var(--c); transition: width .35s; }
+  .pts { font: 700 15px var(--font-m); }
+  .pts.bad { color: var(--r); animation: blink 1s steps(1) infinite; }
+
+  /* ---------- quiz / role ---------- */
+  .qn { font: 12px var(--font-m); color: var(--r); letter-spacing: 3px; margin-bottom: 4px; }
+  .qt { font: 800 clamp(22px, 4vw, 32px)/1.15 var(--font-h); text-transform: uppercase; margin: 0 0 20px; }
+  .opts { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; }
+  .opt { position: relative; display: flex; flex-direction: column; justify-content: flex-start; align-items: flex-start; text-align: left; background: rgba(13, 15, 24, .92); color: var(--text); border: 1px solid rgba(0, 240, 255, .35); padding: 16px 16px 16px 18px; cursor: pointer; font: inherit;
+    clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px)); transition: transform .18s, border-color .18s, background .18s; }
+  .opt:hover { transform: translateY(-4px); border-color: var(--y); background: rgba(252, 238, 9, .07); }
+  .opt.sel { border-color: var(--y); background: rgba(252, 238, 9, .13); box-shadow: inset 0 0 0 1px var(--y); }
+  .opt b { display: block; font: 800 16px var(--font-h); letter-spacing: 1px; color: var(--y); text-transform: uppercase; margin-bottom: 6px; }
+  .opt p { margin: 0; color: #cdd7dc; font-size: 16px; }
+  .opt .ic { width: 42px; height: 42px; margin-bottom: 8px; color: var(--c); }
+  .opt.unk b { color: var(--p); } .opt.unk .ic { color: var(--p); }
+  .opt:nth-child(n):hover .ic { animation: icp .6s ease; }
+  @keyframes icp { 50% { transform: scale(1.18) rotate(4deg); filter: drop-shadow(0 0 8px currentColor); } }
+
+  /* ---------- scanning ---------- */
+  .scanbox { text-align: center; padding: 40px 10px; }
+  .bar { height: 14px; background: rgba(255, 255, 255, .08); border: 1px solid var(--c); margin: 18px auto; max-width: 560px; position: relative; }
+  .bar i { position: absolute; inset: 0 auto 0 0; width: 0; background: repeating-linear-gradient(90deg, var(--y) 0 10px, #b9ae00 10px 12px); box-shadow: 0 0 16px var(--y); }
+  .logs { font: 13px/1.7 var(--font-m); color: var(--c); max-width: 560px; margin: 0 auto; text-align: left; min-height: 110px; }
+
+  /* ---------- results ---------- */
+  .rv { animation: stepin .6s cubic-bezier(.2, .8, .2, 1) both; animation-delay: var(--d, 0s); }
+  .verdict { display: grid; grid-template-columns: auto 1fr auto; gap: 20px; align-items: center; }
+  @media (max-width: 760px) { .verdict { grid-template-columns: 1fr; text-align: center; justify-items: center; } }
+  .big-ic { width: 110px; height: 110px; color: var(--ac, var(--y)); filter: drop-shadow(0 0 14px var(--ac, var(--y))); animation: float 4s ease-in-out infinite; }
+  @keyframes float { 50% { transform: translateY(-8px); } }
+  .arch { font: 900 clamp(28px, 5vw, 46px)/1 var(--font-h); text-transform: uppercase; color: var(--ac, var(--y)); text-shadow: 0 0 18px var(--ac, var(--y)); margin: 0; }
+  .ring { width: 130px; height: 130px; border-radius: 50%; display: grid; place-items: center; background: conic-gradient(var(--ac, var(--y)) calc(var(--v, 0) * 1%), rgba(255, 255, 255, .08) 0); transition: --v 1s; }
+  .ring span { width: 104px; height: 104px; border-radius: 50%; background: #090b13; display: grid; place-items: center; text-align: center; font: 900 30px var(--font-h); color: var(--ac, var(--y)); line-height: 1; }
+  .ring small { display: block; font: 11px var(--font-m); color: var(--mut); letter-spacing: 1px; margin-top: 4px; }
+  .tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .tag { font: 600 12px var(--font-m); padding: 3px 9px; border: 1px solid var(--c); color: var(--c); letter-spacing: 1px; }
+  .tag.y { border-color: var(--y); color: var(--y); } .tag.r { border-color: var(--r); color: var(--r); } .tag.g { border-color: #39ff88; color: #39ff88; }
+
+  .abar { display: grid; grid-template-columns: 150px 1fr 90px; gap: 10px; align-items: center; margin: 9px 0; font: 600 14px var(--font-m); }
+  .abar .tr { position: relative; height: 12px; background: rgba(255, 255, 255, .07); }
+  .abar .tr i { position: absolute; inset: 0 auto 0 0; background: var(--c); box-shadow: 0 0 8px var(--c); width: 0; transition: width 1s cubic-bezier(.2, .8, .2, 1); }
+  .abar .tr u { position: absolute; top: -4px; bottom: -4px; width: 3px; background: var(--y); box-shadow: 0 0 8px var(--y); left: 0; transition: left 1s cubic-bezier(.2, .8, .2, 1); }
+  .abar .dl.up { color: #39ff88; } .abar .dl.dn { color: var(--r); } .abar .dl.eq { color: var(--mut); }
+  @media (max-width: 760px) { .abar { grid-template-columns: 110px 1fr 70px; font-size: 12px; } }
+
+  .split { display: grid; grid-template-columns: 330px 1fr; gap: 20px; }
+  @media (max-width: 860px) { .split { grid-template-columns: 1fr; } }
+  .body svg { width: 100%; max-width: 300px; display: block; margin: 0 auto; }
+  .node { fill: rgba(0, 240, 255, .12); stroke: var(--c); stroke-width: 1.4; cursor: pointer; transition: .2s; }
+  .node.f { fill: var(--y); stroke: var(--y); filter: drop-shadow(0 0 6px var(--y)); animation: np 2s ease-in-out infinite; }
+  @keyframes np { 50% { r: 9; opacity: .75; } }
+  .node:hover { fill: var(--r); stroke: var(--r); }
+  .cw { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; padding: 10px 0; border-bottom: 1px dashed rgba(139, 151, 166, .25); }
+  .cw:last-child { border: 0; }
+  .cw .nm { font: 800 15px var(--font-h); letter-spacing: .5px; }
+  .cw .sl { font: 12px var(--font-m); color: var(--c); letter-spacing: 1px; text-transform: uppercase; }
+  .cw .pr { font: 800 17px var(--font-m); color: var(--y); text-align: right; }
+  .cw .ds { grid-column: 1 / -1; color: var(--mut); font-size: 15px; }
+  .en { font: 500 12px var(--font-m); color: var(--mut); letter-spacing: 0; text-transform: none; }
+  .tier { display: inline-block; font: 700 11px var(--font-m); padding: 1px 7px; margin-left: 8px; letter-spacing: 1px; }
+  .t0 { background: #5a6270; color: #fff; } .t1 { background: #3ac569; color: #021; } .t2 { background: #3a8fff; color: #fff; } .t3 { background: #b64dff; color: #fff; } .t4 { background: var(--y); color: #111; } .t5 { background: var(--r); color: #fff; }
+  .budget { font: 700 16px var(--font-m); display: flex; gap: 18px; flex-wrap: wrap; margin: 4px 0 12px; }
+  .budget b { color: var(--y); font-size: 22px; }
+  .wgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 14px; }
+  .wc { border: 1px solid rgba(255, 0, 60, .4); padding: 14px; background: rgba(255, 0, 60, .04); position: relative; }
+  .wc:hover { border-color: var(--r); box-shadow: 0 0 18px rgba(255, 0, 60, .25); }
+  .wc h4 { margin: 0 0 4px; font: 800 15px var(--font-h); letter-spacing: 1px; text-transform: uppercase; }
+  .wc .ty { font: 12px var(--font-m); color: var(--r); letter-spacing: 1px; }
+  .wc p { margin: 8px 0 0; font-size: 15px; color: #cdd7dc; }
+  .wc .pr { font: 800 18px var(--font-m); color: var(--y); margin-top: 8px; }
+  .wc .ex { font-size: 14px; color: var(--c); margin-top: 6px; }
+  .bgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+  .bc { border: 1px solid rgba(0, 240, 255, .35); padding: 16px; position: relative; background: rgba(0, 240, 255, .03); }
+  .bc.ok { border-color: #39ff88; box-shadow: 0 0 22px rgba(57, 255, 136, .18); }
+  .bc.rec { border-color: var(--y); box-shadow: 0 0 26px rgba(252, 238, 9, .3); }
+  .bc h4 { margin: 0; font: 900 18px var(--font-h); letter-spacing: 1.5px; color: var(--y); }
+  .bc ul { margin: 10px 0; padding-left: 18px; font-size: 15px; } .bc li { margin: 2px 0; }
+  .bc .cost { font: 800 22px var(--font-m); color: var(--y); }
+  .why li { margin: 6px 0; }
+  .range { margin: 8px 0 4px; }
+  .foot { text-align: center; color: var(--mut); font: 12px var(--font-m); padding: 20px 16px; max-width: 900px; margin: 0 auto; }
+  .tip { position: fixed; pointer-events: none; z-index: 60; background: #000; border: 1px solid var(--y); padding: 6px 10px; font: 13px var(--font-m); color: var(--y); display: none; max-width: 240px; }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } #rain { display: none; } }
+</style>
+</head>
+<body>
+<canvas id="rain" aria-hidden="true"></canvas>
+<div class="scan" aria-hidden="true"></div><div class="vig" aria-hidden="true"></div>
+<header class="hud" id="hud">
+  <div class="logo">NIGHT CITY <i>//</i> <span class="hs">BUILD ADVISOR</span></div>
+  <div class="ticker" aria-hidden="true"><span id="tick"></span></div>
+  <button class="hbtn" id="sfx" type="button" aria-pressed="false" title="Звуки интерфейса">SFX OFF</button>
+</header>
+<main id="app"></main>
+<div class="foot">Неофициальный фанатский инструмент. Cyberpunk 2077 © CD PROJEKT RED. Данные о ценах и доступности ориентировочные (патч 2.x, Phantom Liberty): в игре цены у рипердоков и торговцев зависят от Street Cred, сверяйся с самой игрой.</div>
+<div class="tip" id="tip"></div>
+
+<script>
+// ==================== ДАННЫЕ ====================
+const ATTRS = [
+  { k: 'body', n: 'Телосложение', d: 'Здоровье, выносливость, тяжёлое оружие и ближний бой без оружия.' },
+  { k: 'ref', n: 'Рефлексы', d: 'Скорость, уклонения, пистолеты, винтовки и клинки.' },
+  { k: 'tech', n: 'Технические способности', d: 'Броня, крафт, технологическое оружие и ёмкость имплантов.' },
+  { k: 'int', n: 'Интеллект', d: 'Взлом (квикхаки), Breach Protocol, объём RAM.' },
+  { k: 'cool', n: 'Хладнокровие', d: 'Скрытность, шанс крита, снайперы и холодная кровь.' },
+];
+const ICON = {
+  net: '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="24,4 42,14 42,34 24,44 6,34 6,14"/><circle cx="24" cy="24" r="5"/><path d="M24 19V10M24 38v-9M28 21l8-5M20 27l-8 5M28 27l8 5M20 21l-8-5"/></svg>',
+  shi: '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M8 40L36 8l4 4L12 44z"/><path d="M36 8l4-4 4 4-4 4zM6 42l6-2 2 6z"/><path d="M26 26l8 8"/></svg>',
+  solo: '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M24 4l16 6v12c0 11-7 18-16 22C15 40 8 33 8 22V10z"/><path d="M16 22h16M24 14v16"/></svg>',
+  ass: '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="24" cy="24" r="14"/><circle cx="24" cy="24" r="4"/><path d="M24 2v12M24 34v12M2 24h12M34 24h12"/></svg>',
+  unk: '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 18c0-6 4-10 10-10s10 4 10 9c0 6-8 6-8 12"/><circle cx="26" cy="40" r="1.6" fill="currentColor"/><path d="M6 6l6 0M42 42l-6 0M6 42v-6M42 6v6"/></svg>',
+};
+const A = {
+  net: { ru: 'Нетраннер', c: '#00f0ff', tag: 'Призрак в сети', end: { body: 15, ref: 9, tech: 20, int: 20, cool: 17 },
+    desc: 'Ты — призрак в сети. Взламываешь врагов, камеры и турели на расстоянии, перегреваешь и обнуляешь системы, пока противник даже не поймёт, откуда удар. Сложнее в освоении, но очень мощный и разнообразный стиль.',
+    skills: ['Quickhacking и Breach Protocol (Интеллект)', 'Engineering (Тех. способности) для брони и ёмкости имплантов', 'Cold Blood или Stealth (Хладнокровие) для скрытных заходов', 'Немного Телосложения, чтобы пережить первые перестрелки'],
+    tips: ['Квикхаки Ping, Reboot Optics, Overheat, Contagion и System Reset закрывают почти любую ситуацию: начни с них.', 'Умное оружие (Smart) требует имплант Smart Link в слоте кистей, без него прицеливание будет обычным.', 'RAM решает всё: Memory Boost и Ex-Disk восстанавливают и расширяют запас, ставь их в первую очередь.', 'Первое время держи рядом обычный пистолет: хак может не сработать, а патроны всегда работают.'] },
+  shi: { ru: 'Синоби', c: '#ff2a6d', tag: 'Клинок и скорость', end: { body: 17, ref: 20, tech: 15, int: 9, cool: 20 },
+    desc: 'Скорость, клинки и точный удар. Ты возникаешь рядом с врагом в замедлении времени, рубишь мантис-клинками или катаной и исчезаешь до первого ответного выстрела. Стиль для тех, кто любит быструю, зрелищную схватку вблизи.',
+    skills: ['Blades (Рефлексы): катаны, мачете, мантис-клинки', 'Cold Blood и крит-урон (Хладнокровие)', 'Athletics (Телосложение): выносливость и уклонения', 'Engineering (Тех. способности) для брони'],
+    tips: ['Сочетание Sandevistan и Mantis Blades даёт самые эффектные и быстрые зачистки.', 'Reinforced Tendons (двойной прыжок) и Lynx Paws делают сближение быстрым и тихим.', 'Против снайперов и пулемётов лучше сближаться короткими рывками от укрытия к укрытию.', 'Держи под рукой тихий пистолет с глушителем для целей, до которых не добежать.'] },
+  solo: { ru: 'Тяжёлый соло', c: '#fcee09', tag: 'Живой танк', end: { body: 20, ref: 17, tech: 20, int: 10, cool: 14 },
+    desc: 'Ходячий танк: толстая броня, тяжёлое оружие и кибер-руки, которыми можно ломать всё на пути. Принимаешь огонь на себя и отвечаешь лавиной урона. Надёжный и понятный стиль для прямолинейных игроков.',
+    skills: ['Annihilation и Street Brawler (Телосложение): дробовики, пулемёты, кулаки', 'Engineering (Тех. способности): броня и устойчивость', 'Assault или Handguns (Рефлексы) для основного оружия', 'Немного Хладнокровия для критических попаданий'],
+    tips: ['Gorilla Arms вместе с Berserk превращают ближний бой в разрушительную атаку, но береги запас здоровья.', 'Subdermal Armor и Titanium Bones дают живучесть, на которой держится весь стиль.', 'Дробовики и LMG лучше всего работают на средней дистанции; держи Blood Pump и аптечки.', 'Не жадничай с бронёй: апгрейд до следующей редкости почти всегда выгоднее нового оружия.'] },
+  ass: { ru: 'Киллер', c: '#39ff88', tag: 'Тихий профессионал', end: { body: 9, ref: 20, tech: 20, int: 12, cool: 20 },
+    desc: 'Холодный профессионал: снайперская винтовка, бесшумное оружие, оптический камуфляж и идеально выбранный момент. Убиваешь по одному, из засады, оставаясь невидимым. Требует терпения, зато даёт полный контроль над боем.',
+    skills: ['Cold Blood и Stealth (Хладнокровие): крит и скрытность', 'Handguns / Assault (Рефлексы): оружие с глушителем', 'Engineering (Тех. способности): технологическое оружие бьёт сквозь стены', 'Минимум Телосложения, зато больше скорости'],
+    tips: ['Optical Camo и Kiroshi Optics с увеличением позволяют начать бой, когда враги ещё ничего не подозревают.', 'Технологическое оружие с зарядом пробивает укрытия, это идеальная пара к снайперской винтовке.', 'Двигайся по краю локации и убирай врагов с наивысшим приоритетом: снайперов и командиров.', 'Если враги всё же заметили тебя, отступай в тень: здоровья у такого билда мало.'] },
+};
+const KEYS = ['net', 'shi', 'solo', 'ass'];
+
+const SLOTS = {
+  os: { n: 'Операционная система', cap: 1 }, front: { n: 'Лобная кора', cap: 3 }, eyes: { n: 'Глаза', cap: 1 }, circ: { n: 'Кровеносная система', cap: 2 },
+  integ: { n: 'Кожный покров', cap: 2 }, skel: { n: 'Скелет', cap: 1 }, nerv: { n: 'Нервная система', cap: 2 }, hands: { n: 'Кисти', cap: 1 }, arms: { n: 'Руки', cap: 1 }, legs: { n: 'Ноги', cap: 1 },
+};
+// редкости: T0 обычный ... T5 легендарный+; lvl и sc - когда эта редкость обычно появляется у торговцев
+const TIER = [
+  { n: 'Обычный', lvl: 1, sc: 0 }, { n: 'Необычный', lvl: 4, sc: 4 }, { n: 'Редкий', lvl: 10, sc: 14 },
+  { n: 'Эпический', lvl: 22, sc: 25 }, { n: 'Легендарный', lvl: 38, sc: 37 }, { n: 'Легендарный+', lvl: 48, sc: 49 },
+];
+const LAD = { major: [2500, 6000, 15000, 25000, 35000, 40000], mid: [1000, 2500, 7000, 13000, 21000, 28000], minor: [300, 800, 2500, 5000, 9000, 14000] };
+const WL = [400, 1200, 3500, 8000, 15000, 25000];
+
+const CW = [
+  { id: 'deck', ru: 'Кибердека', n: 'Cyberdeck', plFrom: 5, slot: 'os', cls: 'major', w: { net: 3, shi: 0, solo: 0, ass: 1 }, d: 'Кибердека: даёт слоты RAM и усиливает квикхаки. Основа нетраннера (Tetratronic, Netwatch, Militech, Raven и др.). Дека высшей редкости доступна только с Phantom Liberty.' },
+  { id: 'sande', ru: 'Сандевистан', n: 'Sandevistan', slot: 'os', cls: 'major', w: { net: 0, shi: 3, solo: 1, ass: 2 }, d: 'Замедляет время вокруг тебя: ты атакуешь и двигаешься в разы быстрее врагов. Любимый имплант клинкового и снайперского стилей.' },
+  { id: 'berserk', ru: 'Берсерк', n: 'Berserk', slot: 'os', cls: 'major', w: { net: 0, shi: 1, solo: 3, ass: 0 }, d: 'Мощный боевой режим: больше урона и живучести на короткое время. Основа тяжёлого соло.' },
+  { id: 'mantis', ru: 'Клинки богомола', n: 'Mantis Blades', slot: 'arms', cls: 'mid', w: { net: 0, shi: 3, solo: 1, ass: 2 }, d: 'Выдвижные клинки в предплечьях: быстрые удары и рывок на цель. Главное оружие синоби.' },
+  { id: 'gorilla', ru: 'Руки гориллы', n: 'Gorilla Arms', slot: 'arms', cls: 'mid', w: { net: 0, shi: 1, solo: 3, ass: 0 }, d: 'Усиленные руки для сокрушительных ударов и силовых бросков. Идеально для тяжёлого соло.' },
+  { id: 'wire', ru: 'Моноструна', n: 'Monowire', slot: 'arms', cls: 'mid', w: { net: 3, shi: 1, solo: 0, ass: 1 }, d: 'Кибер-струна: бьёт на расстоянии и усиливает взлом (заряжает квикхаки при ударах). Любимый имплант нетраннеров.' },
+  { id: 'pls', ru: 'Система запуска снарядов', n: 'Projectile Launch System', slot: 'arms', cls: 'mid', w: { net: 0, shi: 0, solo: 2, ass: 1 }, d: 'Встроенный гранатомёт/ракетная установка в руке: взрывной урон по группам врагов.' },
+  { id: 'link', ru: 'Смарт-линк', n: 'Smart Link', slot: 'hands', cls: 'minor', w: { net: 2, shi: 0, solo: 2, ass: 2 }, d: 'Необходим для умного оружия: автонаведение по целям и меньше разброса. Дёшево и очень полезно.' },
+  { id: 'keren', ru: 'Керенчиков', n: 'Kerenzikov', slot: 'nerv', cls: 'mid', w: { net: 0, shi: 2, solo: 0, ass: 3 }, d: 'Замедление времени при прицеливании, скольжении и уклонении: больше времени на точный выстрел.' },
+  { id: 'tuner', ru: 'Настройка рефлексов', n: 'Reflex Tuner', slot: 'nerv', cls: 'minor', w: { net: 0, shi: 2, solo: 0, ass: 2 }, d: 'Повышает скорость реакции и уклонения, помогает быстро реагировать на опасность.' },
+  { id: 'pain', ru: 'Редактор боли', n: 'Pain Editor', slot: 'nerv', cls: 'minor', w: { net: 0, shi: 0, solo: 2, ass: 0 }, d: 'Снижает входящий урон и последствия ранений: страховка для тех, кто лезет в гущу боя.' },
+  { id: 'armor', ru: 'Подкожная броня', n: 'Subdermal Armor', slot: 'integ', cls: 'mid', w: { net: 1, shi: 1, solo: 3, ass: 1 }, d: 'Добавляет броню под кожей. Чем выше редкость, тем больше защиты: основа живучести.' },
+  { id: 'camo', ru: 'Оптический камуфляж', n: 'Optical Camo', slot: 'integ', cls: 'mid', w: { net: 2, shi: 0, solo: 0, ass: 3 }, d: 'Оптический камуфляж: на время делает тебя почти невидимым. Незаменим для скрытных заходов.' },
+  { id: 'bones', ru: 'Титановые кости', n: 'Titanium Bones', slot: 'skel', cls: 'mid', w: { net: 0, shi: 1, solo: 3, ass: 0 }, d: 'Усиливает скелет: больше переносимого веса и устойчивость к урону. Нужен тем, кто берёт удар на себя.' },
+  { id: 'bio', ru: 'Биомонитор', n: 'Biomonitor', slot: 'circ', cls: 'minor', w: { net: 1, shi: 1, solo: 3, ass: 1 }, d: 'Автоматически лечит при критически низком здоровье. Спасает в тяжёлых боях.' },
+  { id: 'pump', ru: 'Кровяной насос', n: 'Blood Pump', slot: 'circ', cls: 'minor', w: { net: 2, shi: 2, solo: 2, ass: 2 }, d: 'Позволяет использовать лечащие предметы эффективнее и быстрее. Подходит любому билду.' },
+  { id: 'mem', ru: 'Усилитель памяти', n: 'Memory Boost', slot: 'front', cls: 'minor', w: { net: 3, shi: 0, solo: 0, ass: 0 }, d: 'Ускоряет восстановление RAM, поэтому квикхаки можно использовать чаще.' },
+  { id: 'exd', ru: 'Экс-диск', n: 'Ex-Disk', slot: 'front', cls: 'minor', w: { net: 3, shi: 0, solo: 0, ass: 0 }, d: 'Расширяет запас RAM: можно держать больше квикхаков подряд.' },
+  { id: 'ice', ru: 'Самозащита ICE', n: 'Self-ICE', slot: 'front', cls: 'minor', w: { net: 2, shi: 0, solo: 0, ass: 0 }, d: 'Защита от вражеских взломов и перегрузок. Нужна нетраннеру в боях с враждебными хакерами.' },
+  { id: 'optics', ru: 'Оптика Kiroshi', n: 'Kiroshi Optics', slot: 'eyes', cls: 'mid', w: { net: 2, shi: 1, solo: 1, ass: 3 }, d: 'Кибер-глаза: сканирование, подсветка слабых мест и увеличение. Снайперу и взломщику это почти обязательно.' },
+  { id: 'tendon', ru: 'Усиленные сухожилия', n: 'Reinforced Tendons', slot: 'legs', cls: 'minor', w: { net: 0, shi: 3, solo: 1, ass: 1 }, d: 'Двойной прыжок: быстро сокращаешь дистанцию и уходишь из-под огня. Любимое для синоби.' },
+  { id: 'lynx', ru: 'Лапы рыси', n: 'Lynx Paws', slot: 'legs', cls: 'minor', w: { net: 1, shi: 1, solo: 0, ass: 2 }, d: 'Бесшумный шаг и гашение шума при падении. Для скрытных билдов.' },
+];
+const CWM = Object.fromEntries(CW.map(c => [c.id, c]));
+const cn = c => `${c.ru} <span class="en">(${c.n})</span>`;
+
+const WP = [
+  { id: 'spist', n: 'Умный пистолет (Smart)', ty: 'ПИСТОЛЕТ', w: { net: 3, shi: 1, solo: 0, ass: 2 }, d: 'Само подруливает пули к цели. Требует Smart Link в кистях. Главное оружие нетраннера.', ex: 'Иконическое: Skippy (умный пистолет).' },
+  { id: 'sar', n: 'Умная штурмовая винтовка', ty: 'ВИНТОВКА', w: { net: 2, shi: 0, solo: 2, ass: 2 }, d: 'Лёгкое прицеливание по движущимся целям на средней дистанции. Нужен Smart Link.', ex: 'Иконическая: Divided We Stand (побочное задание «Stadium Love»).' },
+  { id: 'ppist', n: 'Силовой револьвер / пистолет (Power)', ty: 'РЕВОЛЬВЕР', w: { net: 1, shi: 2, solo: 2, ass: 2 }, d: 'Мощные одиночные выстрелы с отскоком пуль. Хорошее запасное оружие любому билду.', ex: 'Иконический: Comrade\'s Hammer (револьвер со взрывным зарядом).' },
+  { id: 'trifle', n: 'Технологическая винтовка (Tech)', ty: 'ВИНТОВКА', w: { net: 1, shi: 0, solo: 1, ass: 3 }, d: 'Заряженные выстрелы пробивают стены и укрытия. Прекрасна для скрытных и снайперских стилей.', ex: '' },
+  { id: 'sniper', n: 'Снайперская винтовка', ty: 'СНАЙПЕРКА', w: { net: 1, shi: 0, solo: 0, ass: 3 }, d: 'Убийство одним выстрелом с большой дистанции. Основа киллера, особенно с Kiroshi Optics.', ex: '' },
+  { id: 'shot', n: 'Дробовик', ty: 'ДРОБОВИК', w: { net: 0, shi: 2, solo: 3, ass: 0 }, d: 'Сокрушительный урон вблизи. Лучший друг тяжёлого соло в тесных перестрелках.', ex: '' },
+  { id: 'lmg', n: 'Лёгкий пулемёт (LMG)', ty: 'ПУЛЕМЁТ', w: { net: 0, shi: 0, solo: 3, ass: 0 }, d: 'Шквал огня с большим магазином. Подавляет группы врагов и держит позицию.', ex: '' },
+  { id: 'kat', n: 'Катана', ty: 'БЛИЖНИЙ БОЙ', w: { net: 0, shi: 3, solo: 0, ass: 1 }, d: 'Быстрые рубящие удары и красивые добивания. Основа синоби, если не берёшь мантис-клинки.', ex: 'Иконическая: Satori (катана).' },
+  { id: 'mach', n: 'Мачете и ножи', ty: 'БЛИЖНИЙ БОЙ', w: { net: 0, shi: 2, solo: 0, ass: 1 }, d: 'Тихие и быстрые удары: подходят для скрытных зачисток и экономии патронов.', ex: '' },
+  { id: 'blunt', n: 'Дубина / молот / бита', ty: 'ТУПОЕ ОРУЖИЕ', w: { net: 0, shi: 0, solo: 3, ass: 0 }, d: 'Тяжёлые удары, оглушающие и ломающие защиту. Особенно хороши в паре с Gorilla Arms.', ex: '' },
+];
+
+// готовые сборки: [id импланта, редкость], [id оружия, редкость]
+const BUILDS = {
+  net: [
+    { n: 'Скрипт-кидди', lv: [1, 14], need: { int: 8 }, cw: [['deck', 1], ['mem', 1], ['link', 0], ['optics', 0]], wp: [['spist', 1]], d: 'Первая дека и умный пистолет: хаки на тихих целях.' },
+    { n: 'Блэкволл-рейдер', lv: [15, 34], need: { int: 14, tech: 10 }, cw: [['deck', 3], ['mem', 2], ['exd', 2], ['wire', 2], ['link', 2], ['optics', 2], ['camo', 2]], wp: [['spist', 3], ['sar', 2]], d: 'Хорошая дека, моно-струна и камуфляж: уже полноценный нетраннер.' },
+    { n: 'Призрак Сети', lv: [35, 60], need: { int: 20, tech: 18 }, cw: [['deck', 5], ['mem', 4], ['exd', 4], ['ice', 3], ['wire', 4], ['link', 3], ['optics', 4], ['camo', 4], ['armor', 3], ['pump', 3]], wp: [['spist', 4], ['sar', 4]], d: 'Лучшая дека и усиленная защита: контролируешь любое поле боя.' },
+  ],
+  shi: [
+    { n: 'Ученик клинка', lv: [1, 14], need: { ref: 8 }, cw: [['mantis', 1], ['tendon', 0], ['pump', 0]], wp: [['kat', 1], ['ppist', 1]], d: 'Мантис-клинки и двойной прыжок. Простой и быстрый старт.' },
+    { n: 'Теневой самурай', lv: [15, 34], need: { ref: 14, cool: 12 }, cw: [['sande', 3], ['mantis', 2], ['keren', 2], ['tendon', 2], ['tuner', 2], ['pump', 2]], wp: [['kat', 3], ['ppist', 2]], d: 'Sandevistan и клинки: заходишь в замедлении и срезаешь цели.' },
+    { n: 'Тень Найт-Сити', lv: [35, 60], need: { ref: 20, cool: 20, body: 15 }, cw: [['sande', 5], ['mantis', 4], ['keren', 4], ['tendon', 4], ['tuner', 3], ['armor', 3], ['bio', 3], ['pump', 3]], wp: [['kat', 4], ['ppist', 4]], d: 'Лучшая скорость и живучесть: быстрые добивания без потерь.' },
+  ],
+  solo: [
+    { n: 'Громила', lv: [1, 14], need: { body: 10 }, cw: [['gorilla', 1], ['armor', 1], ['bio', 0]], wp: [['shot', 1], ['blunt', 1]], d: 'Кибер-руки, броня и дробовик: идёшь вперёд и ломаешь всё вокруг.' },
+    { n: 'Берсерк', lv: [15, 34], need: { body: 15, tech: 12 }, cw: [['berserk', 3], ['gorilla', 2], ['armor', 3], ['bones', 2], ['bio', 2], ['pain', 2], ['pump', 2]], wp: [['shot', 3], ['lmg', 2]], d: 'Berserk, броня и скелет: держишь удар и отвечаешь лавиной урона.' },
+    { n: 'Танк Найт-Сити', lv: [35, 60], need: { body: 20, tech: 20 }, cw: [['berserk', 5], ['gorilla', 4], ['armor', 4], ['bones', 4], ['bio', 3], ['pain', 3], ['pls', 3], ['link', 2]], wp: [['lmg', 4], ['shot', 4]], d: 'Максимальная броня и огневая мощь: тебя почти невозможно остановить.' },
+  ],
+  ass: [
+    { n: 'Наёмник-новичок', lv: [1, 14], need: { cool: 8 }, cw: [['optics', 1], ['link', 0], ['lynx', 0]], wp: [['sniper', 1], ['ppist', 1]], d: 'Кибер-глаза и бесшумный шаг: учишься убивать из тени.' },
+    { n: 'Профессионал', lv: [15, 34], need: { cool: 14, ref: 14, tech: 12 }, cw: [['sande', 3], ['optics', 2], ['camo', 2], ['keren', 2], ['lynx', 2], ['pump', 2]], wp: [['sniper', 3], ['trifle', 2]], d: 'Камуфляж и замедление времени: снайпер, который выбирает момент.' },
+    { n: 'Призрачный палач', lv: [35, 60], need: { cool: 20, ref: 20, tech: 20 }, cw: [['sande', 5], ['optics', 4], ['camo', 4], ['keren', 4], ['tuner', 3], ['lynx', 3], ['pump', 3]], wp: [['sniper', 4], ['trifle', 4]], d: 'Невидимый и мгновенный: убиваешь, пока враги даже не поняли, что произошло.' },
+  ],
+};
+
+// вопросы: каждый ответ добавляет баллы архетипам
+const QUIZ = [
+  { pl: true, q: 'У тебя есть дополнение Phantom Liberty?', o: [
+    { t: 'Да, есть', d: 'Доступны Догтаун с его торговцами, дерево навыков Relic и самые мощные импланты, например дека высшей редкости. Приложение учтёт всё это в билде и в готовых сборках.', s: {} },
+    { t: 'Нет, только основная игра', d: 'Расчёт строится только по базовой игре: торговцы Найт-Сити и снаряжение, которое в ней можно получить. Часть топовых имплантов тогда будет недоступна, и приложение предупредит об этом.', s: {} } ] },
+  { q: 'Как ты обычно начинаешь бой?', o: [
+    { t: 'Врываюсь в лоб', d: 'Прямая атака и много огня.', s: { solo: 2, shi: 1 } },
+    { t: 'Из тени, тихо', d: 'Сначала разведка и бесшумное устранение целей.', s: { ass: 2, net: 1 } },
+    { t: 'Взламываю всё вокруг', d: 'Камеры, турели и враги: пусть сами себе навредят.', s: { net: 3 } },
+    { t: 'Сближаюсь на скорости', d: 'Рывок, клинок, и враг уже не опасен.', s: { shi: 3 } } ] },
+  { q: 'Что для тебя важнее всего?', o: [
+    { t: 'Выжить любой ценой', d: 'Броня, здоровье и запас прочности.', s: { solo: 3, net: 1 } },
+    { t: 'Максимальный урон', d: 'Убивать быстро и эффективно.', s: { ass: 2, solo: 1, shi: 1 } },
+    { t: 'Скорость и реакция', d: 'Быть быстрее и точнее всех.', s: { shi: 3, ass: 1 } },
+    { t: 'Контроль поля боя', d: 'Решать, кто и когда будет сражаться.', s: { net: 3, ass: 1 } } ] },
+  { q: 'Твой опыт в играх с прокачкой?', o: [
+    { t: 'Новичок', d: 'Хочу простой и понятный стиль.', s: { solo: 2, shi: 1 } },
+    { t: 'Бывалый', d: 'Разбираюсь, готов к разным механикам.', s: { shi: 1, ass: 1, net: 1 } },
+    { t: 'Хардкорщик', d: 'Люблю сложное и тонкую настройку.', s: { net: 2, ass: 2 } } ] },
+  { q: 'Любишь копаться в билде: хаки, RAM, крафт?', o: [
+    { t: 'Да, это интересно', d: 'Хочу продумывать детали.', s: { net: 2, ass: 1 } },
+    { t: 'Нет, хочу просто играть', d: 'Меньше менеджмента, больше экшена.', s: { solo: 1, shi: 1, ass: 1 } } ] },
+];
+const ROLES = [
+  { k: 'net', t: 'Нетраннер', d: A.net.desc },
+  { k: 'shi', t: 'Синоби', d: A.shi.desc },
+  { k: 'solo', t: 'Тяжёлый соло', d: A.solo.desc },
+  { k: 'ass', t: 'Киллер', d: A.ass.desc },
+  { k: 'unk', t: 'Не знаю', d: 'Ничего страшного: приложение само подберёт стиль по твоим ответам и характеристикам и объяснит выбор.' },
+];
+
+// ==================== СОСТОЯНИЕ ====================
+const $ = s => document.querySelector(s);
+const fmt = n => Math.round(n).toLocaleString('ru-RU').replace(/ /g, ' ');
+const eur = n => fmt(n) + ' €$';
+const store = { get(k) { try { return localStorage.getItem(k); } catch { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch {} } };
+let S = { step: 0, level: 15, sc: 12, eddies: 25000, pl: true, attrs: { body: 3, ref: 3, tech: 3, int: 3, cool: 3 }, ans: [], role: null, split: 60 };
+try { const j = JSON.parse(store.get('cp_state') || 'null'); if (j) Object.assign(S, { level: j.level, sc: j.sc, eddies: j.eddies, pl: j.pl, attrs: j.attrs }); } catch {}
+const save = () => store.set('cp_state', JSON.stringify({ level: S.level, sc: S.sc, eddies: S.eddies, pl: S.pl, attrs: S.attrs }));
+const STEPS = ['boot', 'profile', 'attrs', 'quiz', 'role', 'scan', 'result'];
+
+// ==================== ЗВУК ====================
+let actx = null, sfx = store.get('cp_sfx') === '1';
+function beep(f = 520, d = .06, type = 'square', v = .03) {
+  if (!sfx) return;
+  try { actx = actx || new (window.AudioContext || window.webkitAudioContext)(); const o = actx.createOscillator(), g = actx.createGain(); o.type = type; o.frequency.value = f; g.gain.value = v; o.connect(g); g.connect(actx.destination); o.start(); g.gain.exponentialRampToValueAtTime(.0001, actx.currentTime + d); o.stop(actx.currentTime + d); } catch {}
+}
+function paintSfx() { const b = $('#sfx'); b.textContent = sfx ? 'SFX ON' : 'SFX OFF'; b.classList.toggle('on', sfx); b.setAttribute('aria-pressed', sfx); }
+$('#sfx').onclick = () => { sfx = !sfx; store.set('cp_sfx', sfx ? '1' : '0'); paintSfx(); beep(880, .1); };
+paintSfx();
+document.addEventListener('click', e => { if (e.target.closest('button')) beep(600 + Math.random() * 200, .04); });
+
+// ==================== ФОН ====================
+(function rain() {
+  const cv = $('#rain'), cx = cv.getContext('2d'); let w, h, cols, drops;
+  const chars = 'アイウエオカキクケコサシスセソ0123456789ABCDEF<>/#$'.split('');
+  function size() { w = cv.width = innerWidth; h = cv.height = innerHeight; cols = Math.floor(w / 18); drops = Array.from({ length: cols }, () => Math.random() * -50); }
+  size(); addEventListener('resize', size);
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  setInterval(() => {
+    cx.fillStyle = 'rgba(5,6,10,.14)'; cx.fillRect(0, 0, w, h); cx.font = '14px "Share Tech Mono", monospace';
+    drops.forEach((y, i) => { cx.fillStyle = Math.random() > .97 ? '#00f0ff' : '#fcee09'; cx.fillText(chars[Math.random() * chars.length | 0], i * 18, y * 18); drops[i] = y * 18 > h && Math.random() > .975 ? 0 : y + .6; });
+  }, 70);
+})();
+$('#tick').textContent = '  //  NIGHT CITY NEWS: Арасака повысила цены на импланты  //  Рипердоки советуют не экономить на броне  //  Совет: Smart Link нужен для умного оружия  //  Предупреждение: киберпсихоз не лечится  //  Вайп Найт-Сити: Street Cred решает, что тебе продадут  //  ';
+
+// ==================== ВСПОМОГАТЕЛЬНОЕ ====================
+const wait = ms => new Promise(r => setTimeout(r, ms));
+async function typeInto(el, html, speed = 14) {
+  el.innerHTML = '<span class="cursor"></span>'; let out = '';
+  const tokens = html.match(/<[^>]+>|[^<]/g) || [];
+  for (const t of tokens) { out += t; el.innerHTML = out + '<span class="cursor"></span>'; if (!t.startsWith('<')) await wait(speed); if (S.skip) { el.innerHTML = html; return; } }
+  el.innerHTML = out;
+}
+function countUp(el, to, ms = 900, f = fmt) {
+  const t0 = performance.now(); (function s(t) { const k = Math.min(1, (t - t0) / ms); el.textContent = f(to * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(s); })(t0);
+}
+function go(step) { S.step = step; S.skip = false; render(); scrollTo(0, 0); $('#hud').style.setProperty('--prog', (step / (STEPS.length - 1) * 100) + '%'); }
+const pointsTotal = () => Math.min(81, 22 + S.level - 1);
+const pointsUsed = () => Object.values(S.attrs).reduce((a, b) => a + b, 0);
+
+// ==================== ДВИЖОК ====================
+const maxTier = () => { let t = 0; TIER.forEach((x, i) => { if (S.sc >= x.sc && S.level >= x.lvl) t = i; }); return t; };
+const cwPrice = (c, t) => LAD[c.cls][t];
+
+function scoreArch() {
+  const q = { net: 0, shi: 0, solo: 0, ass: 0 }, qmax = { net: 0, shi: 0, solo: 0, ass: 0 };
+  QUIZ.forEach((qq, i) => { const a = S.ans[i]; if (a == null) return; KEYS.forEach(k => { q[k] += qq.o[a].s[k] || 0; }); KEYS.forEach(k => { qmax[k] += Math.max(...qq.o.map(o => o.s[k] || 0)); }); });
+  const dev = KEYS.map(k => ATTRS.map(a => A[k].end[a.k] - 3));
+  const u = ATTRS.map(a => S.attrs[a.k] - 3), un = Math.hypot(...u);
+  const res = {};
+  KEYS.forEach((k, i) => {
+    const sq = qmax[k] ? q[k] / qmax[k] : 0;
+    let sa = 0; if (un > 0) { const dn = Math.hypot(...dev[i]); sa = Math.max(0, u.reduce((s, x, j) => s + x * dev[i][j], 0) / (un * dn)); }
+    res[k] = { q: sq, a: sa, total: un > 0 ? .62 * sq + .38 * sa : sq };
+  });
+  return res;
+}
+function recommendedAttrs(k) {
+  const pts = pointsTotal(), f = Math.max(0, Math.min(1, (pts - 15) / (81 - 15)));
+  const raw = ATTRS.map(a => 3 + (A[k].end[a.k] - 3) * f), base = raw.map(Math.floor); let left = pts - base.reduce((a, b) => a + b, 0);
+  raw.map((v, i) => [v - base[i], i]).sort((a, b) => b[0] - a[0]).forEach(([, i]) => { if (left > 0 && base[i] < 20) { base[i]++; left--; } });
+  return Object.fromEntries(ATTRS.map((a, i) => [a.k, base[i]]));
+}
+const itemMax = c => (c.plFrom !== undefined && !S.pl) ? Math.min(maxTier(), c.plFrom - 1) : maxTier();
+function planCyber(k, budget) {
+  const chosen = [];
+  Object.entries(SLOTS).forEach(([slot, def]) => CW.filter(c => c.slot === slot && c.w[k] >= 2).sort((a, b) => b.w[k] - a.w[k]).slice(0, def.cap).forEach(c => chosen.push({ c, t: -1 })));
+  chosen.sort((a, b) => b.c.w[k] - a.c.w[k]);
+  let left = budget;
+  chosen.forEach(x => { const p = cwPrice(x.c, 0); if (p <= left) { x.t = 0; left -= p; } });
+  let ch = true;
+  while (ch) { ch = false; chosen.forEach(x => { if (x.t < 0) return; const steps = x.c.w[k] === 3 ? 2 : 1; for (let s = 0; s < steps; s++) { const nt = x.t + 1; if (nt > itemMax(x.c)) break; const d = cwPrice(x.c, nt) - cwPrice(x.c, x.t); if (d <= left) { left -= d; x.t = nt; ch = true; } else break; } }); }
+  return { items: chosen.filter(x => x.t >= 0), miss: chosen.filter(x => x.t < 0), left, spent: budget - left };
+}
+function planWeapons(k, budget) {
+  const mt = maxTier(); let list = WP.filter(w => w.w[k] >= 2).sort((a, b) => b.w[k] - a.w[k]).slice(0, 4);
+  if (list.length < 3) list = WP.filter(w => w.w[k] >= 1).sort((a, b) => b.w[k] - a.w[k]).slice(0, 4);
+  const per = budget / list.length;
+  return list.map(w => { let t = -1; for (let i = 0; i <= mt; i++) if (WL[i] <= per + 0.0001) t = i; return { w, t }; });
+}
+function buildStatus(b) {
+  let cost = 0, minSc = 0, minLv = 0;
+  let needPl = false;
+  b.cw.forEach(([id, t]) => { cost += cwPrice(CWM[id], t); minSc = Math.max(minSc, TIER[t].sc); minLv = Math.max(minLv, TIER[t].lvl); if (CWM[id].plFrom !== undefined && t >= CWM[id].plFrom) needPl = true; });
+  b.wp.forEach(([, t]) => { cost += WL[t]; minSc = Math.max(minSc, TIER[t].sc); minLv = Math.max(minLv, TIER[t].lvl); });
+  const problems = [];
+  if (cost > S.eddies) problems.push('не хватает ' + eur(cost - S.eddies));
+  if (S.sc < minSc) problems.push('нужен Street Cred ' + minSc + '+');
+  if (S.level < minLv) problems.push('нужен уровень ' + minLv + '+');
+  if (needPl && !S.pl) problems.push('нужен Phantom Liberty');
+  Object.entries(b.need).forEach(([a, v]) => { if (S.attrs[a] < v) problems.push(ATTRS.find(x => x.k === a).n + ' ' + v + '+ (сейчас ' + S.attrs[a] + ')'); });
+  return { cost, problems, ok: !problems.length };
+}
+
+// ==================== ЭКРАНЫ ====================
+const app = $('#app');
+function render() { ({ 0: boot, 1: profile, 2: attrs, 3: quiz, 4: role, 5: scan, 6: result })[S.step](); }
+
+async function boot() {
+  app.innerHTML = `<section class="step panel"><div class="term" id="term"></div>
+    <div id="bootend" style="display:none;margin-top:12px"><h1 class="glitch" data-t="CYBERPUNK 2077">CYBERPUNK 2077</h1>
+    <p class="mut" style="font:600 18px var(--font-h);letter-spacing:4px;margin:6px 0 18px">BUILD ADVISOR // ПОМОЩНИК ПО БИЛДАМ</p>
+    <p style="max-width:680px">Ответь на несколько вопросов о персонаже, и приложение подберёт стиль игры, импланты, оружие и готовые сборки под твой уровень, характеристики и количество евродолларов.</p>
+    <div class="row" style="margin-top:20px"><button class="btn" id="enter" type="button">Войти в сеть</button><span class="mono mut">нажми любую клавишу, чтобы пропустить анимацию</span></div></div></section>`;
+  const term = $('#term');
+  const skip = () => { S.skip = true; }; addEventListener('keydown', skip, { once: true });
+  const lines = ['<b>></b> ИНИЦИАЛИЗАЦИЯ ЯДРА NETWATCH......... <span class="ok">OK</span>', '<b>></b> ПОДКЛЮЧЕНИЕ К СЕТИ НАЙТ-СИТИ........ <span class="ok">OK</span>', '<b>></b> ЗАГРУЗКА БАЗЫ ИМПЛАНТОВ (' + CW.length + ' ПОЗИЦИЙ)... <span class="ok">OK</span>', '<b>></b> ЗАГРУЗКА БАЗЫ ОРУЖИЯ (' + WP.length + ' КЛАССОВ)..... <span class="ok">OK</span>', '<b>></b> ОБХОД BLACKWALL.................... <span class="er">ПРЕДУПРЕЖДЕНИЕ</span>', '<b>></b> ДОБРО ПОЖАЛОВАТЬ, ИНФОРМАТОР.'];
+  for (const l of lines) { if (S.step !== 0) return; const d = document.createElement('div'); term.appendChild(d); await typeInto(d, l, S.skip ? 0 : 10); if (!S.skip) await wait(110); }
+  if (S.step !== 0) return;
+  $('#bootend').style.display = 'block'; $('#bootend').classList.add('rv');
+  $('#enter').onclick = () => go(1); $('#enter').focus();
+}
+
+function profile() {
+  app.innerHTML = `<section class="step panel cy"><div class="qn">ШАГ 1 // ДАННЫЕ ПЕРСОНАЖА</div><h2>Кто ты, чумба?</h2>
+  <div class="grid2"><div>
+    <label class="f"><span>Уровень персонажа <em id="lvv">${S.level}</em></span><input type="range" id="lv" min="1" max="60" value="${S.level}"></label>
+    <label class="f"><span>Уличная репутация (Street Cred) <em id="scv">${S.sc}</em></span><input type="range" id="sc" min="0" max="50" value="${S.sc}"></label>
+    <p class="mut" style="margin:-8px 0 14px;font-size:15px">От Street Cred зависит, какие импланты и оружие тебе продадут. Обычно он растёт вместе с уровнем, но не всегда. Про дополнение Phantom Liberty я спрошу в следующих вопросах.</p>
+  </div><div>
+    <label class="f"><span>Евродоллары на сборку <em>€$</em></span><input type="number" id="ed" min="0" max="99999999" step="500" value="${S.eddies}"></label>
+    <div class="chips">${[5000, 15000, 40000, 100000, 250000, 500000].map(v => `<button class="chip" data-v="${v}" type="button">${fmt(v)}</button>`).join('')}</div>
+    <p class="mut" style="margin-top:14px;font-size:15px">Сколько ты готов потратить на импланты и оружие. Приложение предложит лучшее, что можно собрать на эту сумму.</p>
+  </div></div>
+  <div class="nav"><button class="btn ghost" id="b" type="button">← Назад</button><button class="btn" id="n" type="button">Далее →</button></div></section>`;
+  const lv = $('#lv'), sc = $('#sc'), ed = $('#ed');
+  lv.oninput = () => { S.level = +lv.value; $('#lvv').textContent = S.level; if (S.sc > Math.min(50, S.level + 15)) { S.sc = Math.min(50, S.level + 15); sc.value = S.sc; $('#scv').textContent = S.sc; } save(); };
+  sc.oninput = () => { S.sc = +sc.value; $('#scv').textContent = S.sc; save(); };
+  ed.oninput = () => { S.eddies = Math.max(0, +ed.value || 0); save(); };
+  document.querySelectorAll('.chip').forEach(c => c.onclick = () => { S.eddies = +c.dataset.v; ed.value = S.eddies; save(); });
+  $('#b').onclick = () => go(0); $('#n').onclick = () => go(2);
+}
+
+function attrs() {
+  const draw = () => {
+    const tot = pointsTotal(), used = pointsUsed(), over = used > tot;
+    $('#pts').innerHTML = `Очков использовано: ${used} из ${tot}`; $('#pts').className = 'pts' + (over ? ' bad' : '');
+    ATTRS.forEach(a => { $('#v_' + a.k).textContent = S.attrs[a.k]; $('#m_' + a.k).style.width = (S.attrs[a.k] - 3) / 17 * 100 + '%'; });
+  };
+  app.innerHTML = `<section class="step panel cy"><div class="qn">ШАГ 2 // ХАРАКТЕРИСТИКИ</div><h2>Атрибуты персонажа</h2>
+  <p class="mut" style="margin-top:-4px">Введи значения из игры (от 3 до 20). Если не помнишь, оставь как есть: приложение всё равно подскажет, куда вкладывать очки.</p>
+  <div id="pts" class="pts"></div>
+  ${ATTRS.map(a => `<div class="attr"><div class="nm">${a.n}</div><div class="ctl"><button type="button" data-a="${a.k}" data-d="-1" aria-label="Уменьшить">−</button><output id="v_${a.k}">${S.attrs[a.k]}</output><button type="button" data-a="${a.k}" data-d="1" aria-label="Увеличить">+</button></div><div class="ds">${a.d}</div><div class="meter"><i id="m_${a.k}"></i></div></div>`).join('')}
+  <div class="row" style="margin-top:12px"><button class="chip" id="rst" type="button">Сбросить всё к 3</button></div>
+  <div class="nav"><button class="btn ghost" id="b" type="button">← Назад</button><button class="btn" id="n" type="button">Далее →</button></div></section>`;
+  draw();
+  document.querySelectorAll('.ctl button').forEach(b => b.onclick = () => { const k = b.dataset.a; S.attrs[k] = Math.max(3, Math.min(20, S.attrs[k] + +b.dataset.d)); save(); draw(); });
+  $('#rst').onclick = () => { ATTRS.forEach(a => S.attrs[a.k] = 3); save(); draw(); };
+  $('#b').onclick = () => go(1); $('#n').onclick = () => { S.qi = 0; go(3); };
+}
+
+function quiz() {
+  const i = S.qi || 0, q = QUIZ[i];
+  app.innerHTML = `<section class="step panel"><div class="qn">ВОПРОС ${i + 1} ИЗ ${QUIZ.length + 1}</div><h1 class="qt">${q.q}</h1>
+  <div class="opts">${q.o.map((o, j) => `<button class="opt ${S.ans[i] === j ? 'sel' : ''}" data-j="${j}" type="button"><b>${o.t}</b><p>${o.d}</p></button>`).join('')}</div>
+  <div class="nav"><button class="btn ghost" id="b" type="button">← Назад</button><span></span></div></section>`;
+  document.querySelectorAll('.opt').forEach(o => o.onclick = () => { S.ans[i] = +o.dataset.j; if (q.pl) { S.pl = S.ans[i] === 0; save(); } o.classList.add('sel'); setTimeout(() => { if (i + 1 < QUIZ.length) { S.qi = i + 1; render(); } else go(4); }, 220); });
+  $('#b').onclick = () => { if (i > 0) { S.qi = i - 1; render(); } else go(2); };
+}
+
+function role() {
+  app.innerHTML = `<section class="step panel rd"><div class="qn">ПОСЛЕДНИЙ ВОПРОС // САМЫЙ ВАЖНЫЙ</div><h1 class="qt">Кем ты собираешься быть в игре?</h1>
+  <div class="opts">${ROLES.map(r => `<button class="opt ${r.k === 'unk' ? 'unk' : ''} ${S.role === r.k ? 'sel' : ''}" data-k="${r.k}" type="button"><div class="ic" ${r.k !== 'unk' ? `style="color:${A[r.k].c}"` : ''}>${ICON[r.k]}</div><b>${r.t}</b><p>${r.d}</p></button>`).join('')}</div>
+  <div class="nav"><button class="btn ghost" id="b" type="button">← Назад</button><span></span></div></section>`;
+  document.querySelectorAll('.opt').forEach(o => o.onclick = () => { S.role = o.dataset.k; o.classList.add('sel'); setTimeout(() => go(5), 240); });
+  $('#b').onclick = () => { S.qi = QUIZ.length - 1; go(3); };
+}
+
+async function scan() {
+  app.innerHTML = `<section class="step panel cy scanbox"><h2 style="justify-content:center">Анализ профиля</h2><div class="mono mut">ВЗЛОМ ПРОФИЛЯ // СБОРКА БИЛДА</div><div class="bar"><i id="pb"></i></div><div class="logs" id="lg"></div></section>`;
+  const msgs = ['Считываю характеристики...', 'Сопоставляю ответы с архетипами...', 'Проверяю Street Cred и доступность торговцев...', 'Подбираю импланты под бюджет ' + eur(S.eddies) + '...', 'Подбираю оружие...', 'Сверяю с готовыми сборками...', 'Готово.'];
+  for (let i = 0; i < msgs.length; i++) { if (S.step !== 5) return; $('#pb').style.transition = 'width .35s'; $('#pb').style.width = ((i + 1) / msgs.length * 100) + '%'; const d = document.createElement('div'); d.innerHTML = '<span style="color:var(--y)">></span> ' + msgs[i]; $('#lg').appendChild(d); beep(300 + i * 90, .05); await wait(420); }
+  go(6);
+}
+
+function bodySvg(items) {
+  const P = { front: [100, 24], eyes: [100, 42], circ: [90, 106], os: [112, 100], integ: [62, 104], skel: [100, 168], nerv: [100, 138], hands: [146, 176], arms: [146, 124], legs: [90, 300] };
+  const by = {}; items.forEach(x => { (by[x.c.slot] = by[x.c.slot] || []).push(x); });
+  return `<svg viewBox="0 0 200 400" role="img" aria-label="Схема имплантов"><g fill="none" stroke="rgba(0,240,255,.45)" stroke-width="1.6">
+    <circle cx="100" cy="42" r="22"/><path d="M78 64l-30 16v90l14 4 8-58M122 64l30 16v90l-14 4-8-58M78 64h44v120H78z"/><path d="M80 184l-8 150h22l6-110 6 110h22l-8-150"/></g>
+    <rect x="0" y="0" width="200" height="6" fill="rgba(252,238,9,.25)"><animate attributeName="y" values="0;400;0" dur="6s" repeatCount="indefinite"/></rect>
+    ${Object.entries(P).map(([s, [x, y]]) => { const f = by[s]; return `<circle class="node ${f ? 'f' : ''}" cx="${x}" cy="${y}" r="7" data-tip="${SLOTS[s].n}: ${f ? f.map(z => z.c.ru).join(', ') : 'пусто'}"/>`; }).join('')}</svg>`;
+}
+
+function result() {
+  const sc = scoreArch(); let k = S.role; const chosenRole = k !== 'unk';
+  const ranked = KEYS.slice().sort((a, b) => sc[b].total - sc[a].total);
+  if (!chosenRole) k = ranked[0];
+  const second = ranked.find(x => x !== k);
+  const hasAttr = pointsUsed() > 15 + 0;
+  const match = Math.round(Math.max(35, Math.min(99, (chosenRole ? (.5 + .5 * (hasAttr ? sc[k].a : sc[k].q)) : (.45 + .55 * sc[k].total)) * 100)));
+  const ar = A[k], rec = recommendedAttrs(k);
+  const cwB = S.eddies * S.split / 100, wpB = S.eddies - cwB;
+  const cp = planCyber(k, cwB), wp = planWeapons(k, wpB + cp.left);
+  const bl = BUILDS[k].map(b => ({ b, st: buildStatus(b) }));
+  let recIdx = -1; bl.forEach((x, i) => { if (x.st.ok) recIdx = i; });
+  const why = [];
+  if (!chosenRole) why.push(`Ты ответил «Не знаю», поэтому стиль подобран по ответам на вопросы${hasAttr ? ' и твоим характеристикам' : ''}: лучше всего подходит ${ar.ru} (${match}%), следом ${A[second].ru}.`);
+  else why.push(`Ты выбрал стиль «${ar.ru}». ${hasAttr ? `Твои текущие характеристики совпадают с ним на ${Math.round(sc[k].a * 100)}%.` : 'Характеристики не заданы, поэтому оценка идёт по ответам.'}`);
+  if (hasAttr && sc[k].a < .6) why.push('Твои очки сейчас распределены не под этот стиль: сверься с рекомендованными значениями ниже, пока ещё не поздно перераспределить.');
+  if (S.eddies < 3000) why.push('С таким бюджетом хватит только на самые дешёвые импланты: сначала накопи денег на заданиях.');
+  if (S.pl) why.push('С Phantom Liberty в Догтауне есть дополнительные торговцы и иконическое снаряжение, а дерево навыков Relic даёт дополнительные очки перков. Загляни туда ближе к середине игры.');
+  else why.push('Без Phantom Liberty часть топового снаряжения (например, дека высшей редкости) недоступна, поэтому билд подобран по основной игре.');
+
+  const tierBadge = t => `<span class="tier t${t}">${TIER[t].n.toUpperCase()}</span>`;
+  const abar = ATTRS.map(a => `<div class="abar"><span>${a.n.split(' ')[0]}</span><div class="tr"><i style="--w:${(S.attrs[a.k] - 3) / 17 * 100}%" data-w="${(S.attrs[a.k] - 3) / 17 * 100}"></i><u data-l="${(rec[a.k] - 3) / 17 * 100}"></u></div><span class="dl ${S.attrs[a.k] < rec[a.k] ? 'up' : S.attrs[a.k] > rec[a.k] ? 'dn' : 'eq'}">${S.attrs[a.k]} → ${rec[a.k]}</span></div>`).join('');
+  const next = ATTRS.filter(a => S.attrs[a.k] < rec[a.k]).sort((a, b) => (rec[b.k] - S.attrs[b.k]) - (rec[a.k] - S.attrs[a.k])).slice(0, 2);
+
+  app.style.setProperty('--ac', ar.c);
+  app.innerHTML = `
+  <section class="panel rv" style="--ac:${ar.c};--d:0s"><div class="verdict"><div class="big-ic">${ICON[k]}</div><div><div class="qn" style="color:${ar.c}">ТВОЙ БИЛД</div><h1 class="arch">${ar.ru}</h1><div class="mut" style="font:700 16px var(--font-h);letter-spacing:2px;text-transform:uppercase">${ar.tag}</div>
+    <p style="margin:10px 0 0">${ar.desc}</p><div class="tags"><span class="tag y">УР. ${S.level}</span><span class="tag">STREET CRED ${S.sc}</span><span class="tag g">${eur(S.eddies)}</span>${S.pl ? '<span class="tag r">PHANTOM LIBERTY</span>' : ''}</div></div>
+    <div class="ring" style="--v:${match}"><span><div>${match}%<small>СОВПАДЕНИЕ</small></div></span></div></div>
+    <ul class="why" style="margin:14px 0 0;padding-left:20px">${why.map(x => `<li>${x}</li>`).join('')}</ul></section>
+
+  <section class="panel cy rv" style="--d:.12s"><h2>Характеристики под твой уровень</h2><p class="mut" style="margin-top:-6px">Голубая полоса: твои значения, жёлтая отметка: рекомендация для уровня ${S.level} (всего ${pointsTotal()} очков).</p>${abar}
+    ${next.length ? `<p style="margin-top:12px">Следующие очки вкладывай в: ${next.map(a => `<b style="color:var(--y)">${a.n}</b> (+${rec[a.k] - S.attrs[a.k]})`).join(' и ')}.</p>` : '<p style="margin-top:12px;color:#39ff88">Твои характеристики уже соответствуют рекомендации.</p>'}
+    <h3 style="margin-top:14px">Ключевые ветки навыков</h3><ul>${ar.skills.map(s => `<li>${s}</li>`).join('')}</ul></section>
+
+  <section class="panel rv" style="--d:.24s"><h2>Импланты и бюджет</h2>
+    <label class="f" style="max-width:520px"><span>Как делить бюджет <em id="spv">${S.split}% импланты / ${100 - S.split}% оружие</em></span><input type="range" id="sp" min="20" max="85" step="5" value="${S.split}"></label>
+    <div class="split"><div class="body">${bodySvg(cp.items)}<div class="mut mono" style="text-align:center;margin-top:6px;font-size:12px">ТОЧКИ СВЕТЯТСЯ: ЗАНЯТЫЕ СЛОТЫ</div></div>
+    <div><div class="budget"><span>ПОТРАЧЕНО <b data-n="${cp.spent}">0</b></span><span>ОСТАТОК <b>${eur(cp.left)}</b></span></div>
+      ${cp.items.length ? cp.items.map(x => `<div class="cw"><div><div class="nm">${cn(x.c)}${tierBadge(x.t)}</div><div class="sl">${SLOTS[x.c.slot].n}</div></div><div class="pr">${eur(cwPrice(x.c, x.t))}</div><div class="ds">${x.c.d}</div></div>`).join('') : '<p class="mut">На такой бюджет импланты пока недоступны.</p>'}
+      ${cp.miss.length ? `<p class="mut" style="margin-top:10px">Не хватило денег: ${cp.miss.map(x => x.c.ru).join(', ')}.</p>` : ''}
+      ${cp.left > 30000 && !cp.miss.length ? `<p style="margin-top:10px;color:#39ff88">Остаётся ${eur(cp.left)}: потрать на улучшение предметов до максимальной редкости, расходники, боеприпасы и новые моды для оружия.</p>` : ''}
+      <p class="mut" style="font-size:14px;margin-top:8px">Редкость ограничена твоим Street Cred и уровнем (сейчас доступно до: ${TIER[maxTier()].n}). Русские названия приблизительные: в игре ищи по английскому названию в скобках. Улучшать уже купленное часто выгоднее, чем покупать сразу редкое.</p></div></div></section>
+
+  <section class="panel rd rv" style="--d:.36s"><h2>Оружие</h2><div class="wgrid">${wp.map(x => `<div class="wc"><div class="ty">${x.w.ty}</div><h4>${x.w.n}</h4><p>${x.w.d}</p>${x.w.ex ? `<div class="ex">${x.w.ex}</div>` : ''}<div class="pr">${x.t >= 0 ? `${tierBadge(x.t)} ≈ ${eur(WL[x.t])}` : 'не хватает бюджета'}</div></div>`).join('')}</div>
+    <p class="mut" style="font-size:14px;margin-top:12px">Цены оружия ориентировочные и сильно зависят от конкретной модели и торговца. Иконическое оружие обычно не покупают, а получают за задания и находят.</p></section>
+
+  <section class="panel cy rv" style="--d:.48s"><h2>Готовые сборки</h2><div class="bgrid">${bl.map((x, i) => `<div class="bc ${i === recIdx ? 'rec' : x.st.ok ? 'ok' : ''}"><h4>${x.b.n}</h4><div class="mono mut" style="font-size:12px;margin:2px 0 8px">УРОВНИ ${x.b.lv[0]}–${x.b.lv[1]}</div><p style="margin:0 0 8px">${x.b.d}</p>
+    <ul>${x.b.cw.map(([id, t]) => `<li>${cn(CWM[id])} <span class="mut">(${TIER[t].n})</span></li>`).join('')}${x.b.wp.map(([id, t]) => `<li>${WP.find(w => w.id === id).n} <span class="mut">(${TIER[t].n})</span></li>`).join('')}</ul>
+    <div class="cost">${eur(x.st.cost)}</div>
+    <div class="tags">${i === recIdx ? '<span class="tag y">РЕКОМЕНДУЮ СЕЙЧАС</span>' : ''}${x.st.ok ? '<span class="tag g">ДОСТУПНА</span>' : x.st.problems.map(p => `<span class="tag r">${p}</span>`).join('')}</div></div>`).join('')}</div></section>
+
+  <section class="panel rv" style="--d:.6s"><h2>Советы</h2><ul class="why">${ar.tips.map(t => `<li>${t}</li>`).join('')}</ul>
+    <div class="row" style="margin-top:16px"><button class="btn" id="copy" type="button">Скопировать билд</button><button class="btn ghost" id="again" type="button">Пройти заново</button></div><div id="cp" class="mono" style="margin-top:8px;color:#39ff88"></div></section>`;
+
+  requestAnimationFrame(() => { document.querySelectorAll('.abar .tr i').forEach(i => i.style.width = i.dataset.w + '%'); document.querySelectorAll('.abar .tr u').forEach(u => u.style.left = u.dataset.l + '%'); document.querySelectorAll('.budget b[data-n]').forEach(b => countUp(b, +b.dataset.n, 900, eur)); });
+  const sp = $('#sp'); sp.oninput = () => { S.split = +sp.value; $('#spv').textContent = S.split + '% импланты / ' + (100 - S.split) + '% оружие'; clearTimeout(sp._t); sp._t = setTimeout(() => { const y = scrollY; result(); scrollTo(0, y); }, 250); };
+  $('#again').onclick = () => { S.ans = []; S.role = null; S.qi = 0; go(1); };
+  $('#copy').onclick = async () => {
+    const txt = [`CYBERPUNK 2077 — билд: ${ar.ru} (${match}%)`, `Уровень ${S.level}, Street Cred ${S.sc}, бюджет ${eur(S.eddies)}`, `Характеристики → рекомендация: ` + ATTRS.map(a => `${a.n.split(' ')[0]} ${S.attrs[a.k]}→${rec[a.k]}`).join(', '), '', 'Импланты:', ...cp.items.map(x => `- ${x.c.ru} (${x.c.n}), ${TIER[x.t].n}, ${eur(cwPrice(x.c, x.t))}`), '', 'Оружие:', ...wp.map(x => `- ${x.w.n}${x.t >= 0 ? ' (' + TIER[x.t].n + ')' : ''}`)].join('\n');
+    try { await navigator.clipboard.writeText(txt); $('#cp').textContent = '> Билд скопирован в буфер обмена'; } catch { $('#cp').textContent = '> Не удалось скопировать (разреши доступ к буферу)'; }
+  };
+}
+
+// подсказки по слотам тела
+const tip = $('#tip');
+document.addEventListener('mousemove', e => { const n = e.target.closest && e.target.closest('.node'); if (n) { tip.style.display = 'block'; tip.textContent = n.dataset.tip; tip.style.left = (e.clientX + 14) + 'px'; tip.style.top = (e.clientY + 14) + 'px'; } else tip.style.display = 'none'; });
+document.addEventListener('click', e => { const n = e.target.closest && e.target.closest('.node'); if (n) { tip.style.display = 'block'; tip.textContent = n.dataset.tip; const r = n.getBoundingClientRect(); tip.style.left = Math.min(innerWidth - 250, r.left + 20) + 'px'; tip.style.top = (r.top + 20) + 'px'; setTimeout(() => tip.style.display = 'none', 2500); } });
+
+go(0);
+</script>
+</body>
+</html>
