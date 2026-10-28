@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Счёт — генератор счетов для фрилансеров и ИП</title>
+<meta name="description" content="Бесплатный генератор счетов: заполните реквизиты и позиции, получите готовый документ и сохраните его в PDF. Данные хранятся только в вашем браузере.">
+<style>
+:root{--bg:#eef2f9;--card:#fff;--ink:#0f1b33;--mut:#6a7792;--ln:#dbe3f1;--acc:#2f5bff;--acc2:#1e3fd1}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 "Segoe UI",system-ui,sans-serif}
+header{background:var(--ink);color:#fff}
+header .w{display:flex;justify-content:space-between;align-items:center;height:60px}
+.w{max-width:1240px;margin:auto;padding:0 20px}
+.logo{font-weight:800;font-size:20px}.logo span{color:#7fa0ff}
+.hbtn{background:var(--acc);color:#fff;border:0;padding:10px 20px;border-radius:10px;font:600 14px inherit;font-family:inherit;cursor:pointer}.hbtn:hover{background:var(--acc2)}
+.grid{display:grid;grid-template-columns:420px 1fr;gap:22px;padding:24px 0 50px;align-items:start}
+.panel{background:var(--card);border:1px solid var(--ln);border-radius:16px;padding:20px;box-shadow:0 4px 20px #0f1b330d}
+h3{font-size:13px;text-transform:uppercase;letter-spacing:1px;color:var(--mut);margin:16px 0 8px}h3:first-child{margin-top:0}
+label{display:block;font-size:12px;color:var(--mut);margin:8px 0 3px}
+input,textarea,select{width:100%;padding:9px 11px;border:1px solid var(--ln);border-radius:9px;font:inherit;background:#fbfcff;color:var(--ink)}
+input:focus,textarea:focus,select:focus{outline:2px solid var(--acc);border-color:transparent}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.item{display:grid;grid-template-columns:1fr 54px 80px 28px;gap:6px;margin-bottom:6px}
+.item button{border:0;background:#fee;color:#d33;border-radius:8px;cursor:pointer;font-size:16px}
+.add{margin-top:6px;background:none;border:1.5px dashed var(--acc);color:var(--acc);padding:9px;border-radius:10px;width:100%;cursor:pointer;font:600 14px inherit;font-family:inherit}.add:hover{background:#2f5bff10}
+.chk{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:14px}.chk input{width:auto}
+.paper{background:#fff;border:1px solid var(--ln);border-radius:6px;padding:46px 50px;min-height:700px;box-shadow:0 10px 40px #0f1b3314;font-size:14px}
+.ph{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:30px}
+.ph h1{font-size:30px;letter-spacing:-.5px}.ph .no{color:var(--mut)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-bottom:28px}.cols small{display:block;color:var(--mut);text-transform:uppercase;font-size:11px;letter-spacing:1px;margin-bottom:4px}
+.cols div div{white-space:pre-line}
+table{width:100%;border-collapse:collapse}th{background:var(--ink);color:#fff;text-align:left;padding:9px 10px;font-size:12px}th:nth-child(n+2){text-align:right}
+td{padding:9px 10px;border-bottom:1px solid var(--ln)}td:nth-child(n+2){text-align:right}
+.tot{margin:20px 0 0 auto;width:280px}.tot div{display:flex;justify-content:space-between;padding:5px 0}.tot .big{font-size:20px;font-weight:800;border-top:2px solid var(--ink);margin-top:6px;padding-top:10px}
+.note{margin-top:34px;color:var(--mut);white-space:pre-line}
+.paper .ph,.paper .cols,.paper table,.paper .tot{animation:fade .4s}@keyframes fade{from{opacity:.4;transform:translateY(3px)}}
+.toast{position:fixed;bottom:20px;left:50%;transform:translate(-50%,80px);background:var(--ink);color:#fff;padding:12px 22px;border-radius:99px;transition:.3s}.toast.on{transform:translate(-50%,0)}
+footer{text-align:center;color:var(--mut);font-size:13px;padding-bottom:26px}footer a{text-decoration:underline}
+@media(max-width:900px){.grid{grid-template-columns:1fr}.paper{padding:24px}}
+@media print{body{background:#fff}header,.panel,footer,.toast{display:none}.grid{display:block;padding:0}.paper{border:0;box-shadow:0;padding:0}}
+</style>
+</head>
+<body>
+<header><div class="w"><div class="logo">Счёт<span>.</span></div><button class="hbtn" id="print">Скачать PDF / Печать</button></div></header>
+<div class="w"><div class="grid">
+<div class="panel">
+  <h3>Счёт</h3>
+  <div class="r2"><div><label>Номер</label><input id="no"></div><div><label>Дата</label><input id="dt" type="date"></div></div>
+  <h3>Исполнитель</h3>
+  <label>Название / ФИО ИП</label><input id="from" placeholder="ИП Иванов Иван Иванович">
+  <label>Реквизиты (ИНН, банк, счёт)</label><textarea id="fromd" rows="3" placeholder="ИНН 7700000000&#10;Р/с 4080..., Банк ..."></textarea>
+  <h3>Заказчик</h3>
+  <label>Название</label><input id="to" placeholder="ООО «Ромашка»">
+  <label>Реквизиты</label><textarea id="tod" rows="2"></textarea>
+  <h3>Позиции</h3>
+  <div id="items"></div>
+  <button class="add" id="addi">+ Добавить позицию</button>
+  <div class="chk"><input type="checkbox" id="vat"><label for="vat" style="margin:0;font-size:14px;color:var(--ink)">Включить НДС 20%</label></div>
+  <h3>Примечание</h3><textarea id="note" rows="2" placeholder="Оплата в течение 5 банковских дней"></textarea>
+</div>
+<div class="paper" id="paper"></div>
+</div></div>
+<footer>Данные сохраняются только в вашем браузере · разработано в <a href="../01-progfarm/progfarm.html">ProgFarm</a></footer>
+<div class="toast" id="toast">Сохранено</div>
+
+<script>
+const $=id=>document.getElementById(id),esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const rub=n=>n.toLocaleString('ru-RU',{minimumFractionDigits:2,maximumFractionDigits:2})+' ₽';
+let st={no:'',dt:'',from:'',fromd:'',to:'',tod:'',vat:false,note:'',items:[{n:'Разработка сайта',q:1,p:15000}]};
+try{Object.assign(st,JSON.parse(localStorage.schet||'{}'))}catch{}
+if(!st.no){const d=new Date();st.no=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-001`}
+if(!st.dt)st.dt=new Date().toISOString().slice(0,10);
+const ids=['no','dt','from','fromd','to','tod','note'];
+ids.forEach(i=>{$(i).value=st[i];$(i).oninput=()=>{st[i]=$(i).value;draw()}});
+$('vat').checked=st.vat;$('vat').onchange=()=>{st.vat=$('vat').checked;draw()};
+function form(){
+  $('items').innerHTML=st.items.map((it,i)=>`<div class="item"><input data-i="${i}" data-k="n" value="${esc(it.n)}" placeholder="Наименование"><input data-i="${i}" data-k="q" type="number" min="0" value="${it.q}"><input data-i="${i}" data-k="p" type="number" min="0" value="${it.p}"><button data-d="${i}" title="Удалить">×</button></div>`).join('');
+}
+$('items').oninput=e=>{const d=e.target.dataset;if(d.k){st.items[d.i][d.k]=d.k=='n'?e.target.value:+e.target.value||0;draw()}};
+$('items').onclick=e=>{if(e.target.dataset.d!=null){st.items.splice(e.target.dataset.d,1);form();draw()}};
+$('addi').onclick=()=>{st.items.push({n:'',q:1,p:0});form();draw()};
+function draw(){
+  const sum=st.items.reduce((s,i)=>s+i.q*i.p,0),vat=st.vat?sum*20/120:0;
+  const date=st.dt?new Date(st.dt).toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'}):'';
+  $('paper').innerHTML=`<div class="ph"><div><h1>Счёт</h1><div class="no">№ ${esc(st.no)} от ${date}</div></div></div>
+  <div class="cols"><div><small>Исполнитель</small><b>${esc(st.from)||'—'}</b><div>${esc(st.fromd)}</div></div><div><small>Заказчик</small><b>${esc(st.to)||'—'}</b><div>${esc(st.tod)}</div></div></div>
+  <table><thead><tr><th>Наименование</th><th>Кол-во</th><th>Цена</th><th>Сумма</th></tr></thead><tbody>${st.items.map(i=>`<tr><td>${esc(i.n)||'—'}</td><td>${i.q}</td><td>${rub(i.p)}</td><td>${rub(i.q*i.p)}</td></tr>`).join('')}</tbody></table>
+  <div class="tot">${st.vat?`<div><span>В том числе НДС 20%</span><span>${rub(vat)}</span></div>`:'<div><span>НДС не облагается</span><span></span></div>'}<div class="big"><span>Итого</span><span>${rub(sum)}</span></div></div>
+  <div class="note">${esc(st.note)}</div>`;
+  try{localStorage.schet=JSON.stringify(st)}catch{}
+  clearTimeout(draw.t);draw.t=setTimeout(()=>{$('toast').classList.add('on');setTimeout(()=>$('toast').classList.remove('on'),900)},700);
+}
+$('print').onclick=()=>window.print();
+form();draw();
+</script>
+</body>
+</html>
