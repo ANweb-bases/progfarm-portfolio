@@ -64,7 +64,7 @@ footer{border-top:1px solid var(--b);padding:26px 0;color:var(--mut);font-size:1
 <header><div class="wrap">
   <a href="#top" class="logo">&lt;<b>Prog</b>Farm/&gt;</a>
   <nav><a href="#services">Услуги</a><a href="#process">Как работаем</a><a href="#faq">Вопросы</a><a href="#contact">Контакты</a><a href="https://github.com/ANweb-bases" target="_blank" rel="noopener">GitHub</a></nav>
-  <a class="btn" href="https://t.me/rivvva_la_viddda" target="_blank" rel="noopener">Написать в Telegram</a>
+  <a class="btn" href="https://t.me/ProgFarmBot" target="_blank" rel="noopener">Заказать в боте</a>
 </div></header>
 
 <div class="hero" id="top"><div class="wrap">
@@ -77,7 +77,7 @@ footer{border-top:1px solid var(--b);padding:26px 0;color:var(--mut);font-size:1
 
 <section id="services"><div class="wrap">
   <h2>Услуги и цены</h2>
-  <p class="sub">Цена — ориентир «от». Точную стоимость назову после короткого обсуждения задачи. Оплата и договорённости — в Telegram-боте ProgFarm.</p>
+  <p class="sub">Цена — ориентир «от». Точную стоимость назову после короткого обсуждения задачи. Заказ и оплата — только через Telegram-бота ProgFarm.</p>
   <div class="tabs" id="tabs"></div>
   <div class="grid" id="grid"></div>
 </div></section>
@@ -94,19 +94,20 @@ footer{border-top:1px solid var(--b);padding:26px 0;color:var(--mut);font-size:1
 
 <section id="faq"><div class="wrap">
   <h2>Частые вопросы</h2><p class="sub"></p>
-  <details><summary>Как происходит оплата?</summary><p>Оплата будет проходить через бота ProgFarm. Обычно 50% предоплата, остальное после сдачи.</p></details>
+  <details><summary>Как происходит оплата?</summary><p>Заказ и оплата проходят только через Telegram-бота ProgFarm: выберите услугу, оставьте заявку и оплатите в боте. Обычно 50% предоплата, остальное после сдачи.</p></details>
   <details><summary>Можно ли что-то изменить после сдачи?</summary><p>Да. Мелкие правки в течение 7 дней бесплатны, дальнейшая доработка — по услуге «Доработка сайта».</p></details>
   <details><summary>Вы делаете хостинг и домен?</summary><p>Помогу выбрать и настроить хостинг и домен. Сами услуги хостинга оплачиваются отдельно, напрямую провайдеру.</p></details>
-  <details><summary>Что если задачи нет в списке?</summary><p>Напишите — оценю индивидуально. Большинство веб-задач решаются в рамках перечисленных услуг.</p></details>
+  <details><summary>Что если задачи нет в списке?</summary><p>Напишите мне через бота (кнопка «Связаться лично») — оценю индивидуально. Большинство веб-задач решаются в рамках перечисленных услуг.</p></details>
 </div></section>
 
 <section id="contact"><div class="wrap">
   <div class="contact">
     <div>
       <h2>Обсудим ваш проект?</h2>
-      <p class="sub">Заполните форму — откроется письмо с вашей заявкой. Либо сразу напишите в Telegram.</p>
+      <p class="sub">Заказать и оплатить услугу можно в Telegram-боте. Личные сообщения — только по развёрнутым и индивидуальным вопросам.</p>
       <div class="links">
-        <a href="https://t.me/rivvva_la_viddda" target="_blank" rel="noopener">✈ Telegram: @rivvva_la_viddda</a>
+        <a href="https://t.me/ProgFarmBot" target="_blank" rel="noopener">🤖 Бот ProgFarm — заказ, оплата, связь со мной</a>
+        <a href="https://t.me/rivvva_la_viddda" target="_blank" rel="noopener">✈ Личный Telegram: @rivvva_la_viddda <small style="color:var(--mut)">— только развёрнутые и индивидуальные вопросы</small></a>
         <a href="mailto:tolyan.berd2008@gmail.com">✉ Почта: tolyan.berd2008@gmail.com</a>
         <a href="https://github.com/ANweb-bases" target="_blank" rel="noopener">⌥ GitHub: ANweb-bases</a>
       </div>
@@ -115,7 +116,7 @@ footer{border-top:1px solid var(--b);padding:26px 0;color:var(--mut);font-size:1
       <input id="n" placeholder="Ваше имя" required>
       <select id="s"></select>
       <textarea id="m" rows="4" placeholder="Опишите задачу" required></textarea>
-      <button class="btn">Отправить заявку на почту</button>
+      <button class="btn">Отправить письмо</button>
     </form>
   </div>
 </div></section>
@@ -123,7 +124,7 @@ footer{border-top:1px solid var(--b);padding:26px 0;color:var(--mut);font-size:1
 <footer>© <span id="y"></span> ProgFarm · Сайты, боты, базы данных · <a href="https://github.com/ANweb-bases" target="_blank" rel="noopener">GitHub</a></footer>
 
 <script>
-const TG='https://t.me/rivvva_la_viddda',MAIL='tolyan.berd2008@gmail.com';
+const BOT='https://t.me/ProgFarmBot',TG='https://t.me/rivvva_la_viddda',MAIL='tolyan.berd2008@gmail.com';
 const S=[
 {c:'Сайты',t:'Лендинг (одностраничный сайт)',p:4500,d:'3–5 дней',a:'Продающая страница для одного товара, услуги или акции.',l:['Дизайн под ваш бренд','Адаптив под телефон и планшет','Форма заявки с отправкой на почту/в Telegram','Базовая SEO-разметка и быстрая загрузка']},
 {c:'Сайты',t:'Сайт-визитка (многостраничный)',p:7000,d:'5–8 дней',a:'Сайт компании или специалиста: о себе, услуги, цены, контакты.',l:['До 5 страниц','Уникальный дизайн и анимации','Карта, соцсети, кнопки связи','Помощь с подключением домена']},
@@ -143,10 +144,9 @@ let cur='Все';
 function draw(){
   $('tabs').innerHTML=cats.map(c=>`<button class="${c==cur?'on':''}" data-c="${c}">${c}</button>`).join('');
   $('grid').innerHTML=S.filter(x=>cur=='Все'||x.c==cur).map(x=>{
-    const msg=encodeURIComponent(`Здравствуйте! Интересует услуга «${x.t}». Хочу обсудить задачу.`);
     return `<article class="card"><span class="cat">${x.c}</span><h3>${x.t}</h3><p>${x.a}</p><ul>${x.l.map(i=>`<li>${i}</li>`).join('')}</ul>
     <div class="meta"><div class="price"><small>от </small>${fmt(x.p)} ₽</div><div class="term">⏱ ${x.d}</div></div>
-    <a class="btn" href="${TG}?text=${msg}" target="_blank" rel="noopener">Заказать в Telegram</a></article>`}).join('');
+    <a class="btn" href="${BOT}?start=svc${S.indexOf(x)+1}" target="_blank" rel="noopener">Заказать и оплатить в боте</a></article>`}).join('');
 }
 $('tabs').onclick=e=>{if(e.target.dataset.c){cur=e.target.dataset.c;draw()}};
 draw();
