@@ -3,88 +3,161 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ProgFarm — сайты, боты и базы данных на заказ</title>
-<meta property="og:title" content="ProgFarm — сайты, боты и базы данных на заказ"><meta property="og:type" content="website"><meta name="description" content="ProgFarm: создание сайтов на заказ, Telegram-боты для продаж, верстка, доработка и починка сайтов, базы данных. Цены от 1500 ₽.">
+<title>ProgFarm — сайты, приложения, боты и базы данных на заказ</title>
+<meta name="description" content="ProgFarm: создание сайтов и приложений на заказ, Telegram-боты для продаж, верстка, доработка и починка сайтов, базы данных. Цены от 1500 ₽. Готовые проекты можно открыть и установить прямо на сайте.">
+<meta property="og:title" content="ProgFarm — сайты, приложения, боты и базы данных на заказ"><meta property="og:type" content="website">
 <style>
-:root{--bg:#0b0f0c;--card:#121a14;--line:#22302500;--b:#223027;--fg:#e8f0ea;--mut:#8aa093;--acc:#b6ff3b;--acc2:#3bffb0}
+:root{--bg:#06070c;--card:#0e1018;--b:#ffffff1a;--fg:#eef2f7;--mut:#8b94a7;--acc:#b6ff3b;--c2:#38e8ff;--c3:#ff4fd8;--mx:50vw;--my:30vh}
 *{box-sizing:border-box;margin:0}
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--fg);font:16px/1.6 "Segoe UI",system-ui,sans-serif}
+body{background:var(--bg);color:var(--fg);font:16px/1.6 "Segoe UI",system-ui,sans-serif;overflow-x:hidden}
 a{color:inherit;text-decoration:none}
-.wrap{max-width:1120px;margin:auto;padding:0 20px}
+::selection{background:var(--acc);color:#000}
+.wrap{max-width:1180px;margin:auto;padding:0 22px;position:relative;z-index:2}
 .mono{font-family:Consolas,"Courier New",monospace}
-header{position:sticky;top:0;z-index:9;background:#0b0f0ccc;backdrop-filter:blur(10px);border-bottom:1px solid var(--b)}
-header .wrap{display:flex;align-items:center;justify-content:space-between;height:60px}
-.logo{font:700 20px Consolas,monospace}.logo b{color:var(--acc)}
-nav{display:flex;gap:22px;font-size:15px;color:var(--mut)}nav a:hover{color:var(--acc)}
-.btn{display:inline-block;background:var(--acc);color:#0b0f0c;font-weight:700;padding:12px 22px;border-radius:8px;border:0;cursor:pointer;font-size:15px;transition:.2s}
-.btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px #b6ff3b44}
-.btn.o{background:none;color:var(--fg);border:1px solid var(--b)}.btn.o:hover{border-color:var(--acc);box-shadow:none}
-.hero{padding:90px 0 70px;background:radial-gradient(600px 300px at 80% 0,#3bffb01f,transparent),radial-gradient(500px 300px at 10% 20%,#b6ff3b18,transparent)}
-.tag{color:var(--acc);font-size:14px}
-h1{font-size:clamp(34px,6vw,64px);line-height:1.1;margin:14px 0 18px;max-width:800px}
-h1 em{font-style:normal;color:var(--acc)}
-.hero p{color:var(--mut);max-width:560px;font-size:18px;margin-bottom:28px}
-.hero .row{display:flex;gap:12px;flex-wrap:wrap}
-.stats{display:flex;gap:40px;margin-top:50px;flex-wrap:wrap}.stats div b{display:block;font-size:30px;color:var(--acc)}.stats span{color:var(--mut);font-size:14px}
-section{padding:70px 0}
-h2{font-size:clamp(26px,4vw,38px);margin-bottom:10px}
-.sub{color:var(--mut);margin-bottom:30px;max-width:620px}
-.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:26px}
-.tabs button{background:none;border:1px solid var(--b);color:var(--mut);padding:8px 16px;border-radius:99px;cursor:pointer;font-size:14px}
-.tabs button.on,.tabs button:hover{border-color:var(--acc);color:var(--acc)}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px}
-.card{background:var(--card);border:1px solid var(--b);border-radius:14px;padding:24px;display:flex;flex-direction:column;transition:.25s}
-.card:hover{border-color:var(--acc);transform:translateY(-4px)}
-.card .cat{font-size:12px;color:var(--acc2);text-transform:uppercase;letter-spacing:1px}
-.card h3{font-size:20px;margin:6px 0 8px}
-.card p{color:var(--mut);font-size:15px}
-.card ul{margin:14px 0;padding-left:18px;font-size:14px;color:#c4d3c9}
-.card li{margin:3px 0}.card li::marker{color:var(--acc)}
+#bg{position:fixed;inset:0;z-index:0;pointer-events:none}
+.glow{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(520px circle at var(--mx) var(--my),#b6ff3b1c,transparent 60%)}
+.blob{position:fixed;z-index:0;border-radius:50%;filter:blur(90px);opacity:.35;pointer-events:none;animation:float 18s ease-in-out infinite}
+.b1{width:480px;height:480px;background:#38e8ff;top:-120px;right:-80px}.b2{width:420px;height:420px;background:#ff4fd8;bottom:10%;left:-140px;animation-delay:-6s}.b3{width:380px;height:380px;background:#b6ff3b;top:45%;right:5%;animation-delay:-11s;opacity:.18}
+@keyframes float{50%{transform:translate(60px,-50px) scale(1.15)}}
+/* cursor */
+#cur,#dot{position:fixed;top:0;left:0;z-index:100;pointer-events:none;border-radius:50%;mix-blend-mode:difference;opacity:0;transition:opacity .3s}
+#cur{width:38px;height:38px;border:1.5px solid #fff;margin:-19px 0 0 -19px;transition:width .25s,height .25s,margin .25s,opacity .3s,background .25s}
+#dot{width:6px;height:6px;background:#fff;margin:-3px 0 0 -3px}
+#cur.big{width:70px;height:70px;margin:-35px 0 0 -35px;background:#fff}
+body.fine #cur,body.fine #dot{opacity:1}body.fine,body.fine a,body.fine button,body.fine summary{cursor:none}
+/* header */
+header{position:fixed;top:0;left:0;right:0;z-index:50;transition:.4s}
+header.s{background:#06070ccc;backdrop-filter:blur(14px);border-bottom:1px solid var(--b)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;height:68px}
+.logo{font:800 21px Consolas,monospace}.logo b{color:var(--acc)}
+nav{display:flex;gap:6px}nav a{padding:8px 14px;border-radius:99px;color:var(--mut);font-size:15px;position:relative;transition:.25s}
+nav a:hover{color:#000;background:var(--acc)}
+.btn{display:inline-block;background:var(--acc);color:#06070c;font-weight:700;padding:13px 24px;border-radius:99px;border:0;cursor:pointer;font-size:15px;font-family:inherit;transition:box-shadow .3s,background .3s;will-change:transform;position:relative}
+.btn:hover{box-shadow:0 0 0 6px #b6ff3b30,0 10px 40px #b6ff3b55}
+.btn.o{background:#ffffff10;color:var(--fg);border:1px solid var(--b)}.btn.o:hover{background:#ffffff1c;box-shadow:0 0 0 6px #ffffff10}
+.btn.s{padding:10px 18px;font-size:14px}
+/* hero */
+.hero{min-height:100vh;display:flex;align-items:center;padding:110px 0 70px}
+.tag{display:inline-flex;gap:10px;align-items:center;color:var(--acc);font-size:14px;border:1px solid #b6ff3b44;background:#b6ff3b10;padding:6px 14px;border-radius:99px}
+.tag i{width:8px;height:8px;border-radius:50%;background:var(--acc);box-shadow:0 0 0 0 var(--acc);animation:ping 1.6s infinite}@keyframes ping{70%{box-shadow:0 0 0 10px #b6ff3b00}}
+h1{font-size:clamp(40px,8vw,104px);line-height:1;letter-spacing:-3px;margin:22px 0;font-weight:800}
+h1 .ch{display:inline-block;opacity:0;transform:translateY(60%) rotate(8deg);animation:ch .7s cubic-bezier(.2,.9,.2,1) forwards}@keyframes ch{to{opacity:1;transform:none}}
+h1 .rot{display:inline-block;color:var(--acc);text-shadow:0 0 40px #b6ff3b66;animation:hue 8s linear infinite;min-width:1ch}
+@keyframes hue{to{filter:hue-rotate(360deg)}}
+.hero p{color:var(--mut);max-width:560px;font-size:19px;margin-bottom:32px}
+.hero .row{display:flex;gap:14px;flex-wrap:wrap}
+.stats{display:flex;gap:44px;margin-top:56px;flex-wrap:wrap}.stats b{display:block;font-size:34px;color:var(--acc);letter-spacing:-1px}.stats span{color:var(--mut);font-size:14px}
+.scroll{position:absolute;bottom:26px;left:50%;color:var(--mut);font-size:12px;letter-spacing:3px;animation:bob 2s infinite}@keyframes bob{50%{transform:translateY(8px)}}
+/* marquee */
+.mq{overflow:hidden;border-block:1px solid var(--b);padding:16px 0;position:relative;z-index:2;background:#06070c99;backdrop-filter:blur(6px)}
+.mq div{display:flex;gap:44px;width:max-content;animation:mq 30s linear infinite;font:700 22px Consolas,monospace;color:#ffffff40;white-space:nowrap}
+.mq:hover div{animation-play-state:paused}.mq span:nth-child(3n){color:var(--acc)}
+@keyframes mq{to{transform:translateX(-50%)}}
+/* sections */
+section{padding:100px 0;position:relative}
+.eyebrow{color:var(--acc);font:14px Consolas,monospace;margin-bottom:10px}
+h2{font-size:clamp(32px,5vw,58px);letter-spacing:-2px;line-height:1.05;margin-bottom:14px}
+.sub{color:var(--mut);margin-bottom:38px;max-width:640px}
+.rv{opacity:0;transform:translateY(40px);transition:opacity .8s,transform .8s cubic-bezier(.2,.8,.2,1)}.rv.in{opacity:1;transform:none}
+/* cards */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:22px}
+.card{--px:50%;--py:50%;position:relative;background:var(--card);border:1px solid var(--b);border-radius:22px;padding:0;overflow:hidden;display:flex;flex-direction:column;transform-style:preserve-3d;transition:transform .25s ease-out,border-color .3s;will-change:transform}
+.card::before{content:"";position:absolute;inset:0;background:radial-gradient(380px circle at var(--px) var(--py),#b6ff3b1f,transparent 55%);opacity:0;transition:.3s;pointer-events:none;z-index:1}
+.card:hover{border-color:#b6ff3b66}.card:hover::before{opacity:1}
+.card .bd{padding:22px;display:flex;flex-direction:column;flex:1;position:relative;z-index:2}
+.cat{font-size:12px;color:var(--c2);text-transform:uppercase;letter-spacing:1.5px}
+.card h3{font-size:21px;margin:6px 0 8px;letter-spacing:-.4px}.card p{color:var(--mut);font-size:15px}
+.card ul{margin:14px 0;padding-left:18px;font-size:14px;color:#c4ccdb}.card li{margin:3px 0}.card li::marker{color:var(--acc)}
 .meta{margin-top:auto;padding-top:14px;border-top:1px dashed var(--b);display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
-.price{font-size:22px;font-weight:700;color:var(--acc)}.price small{font-size:13px;color:var(--mut);font-weight:400}
-.term{font-size:13px;color:var(--mut)}
-.card .btn{width:100%;text-align:center;margin-top:14px;padding:10px}
-.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;counter-reset:s}
-.step{border-left:2px solid var(--acc);padding:4px 0 4px 18px;counter-increment:s}
-.step::before{content:"0" counter(s);font:700 14px Consolas,monospace;color:var(--acc)}
-.step h4{margin:4px 0}.step p{color:var(--mut);font-size:14px}
-details{background:var(--card);border:1px solid var(--b);border-radius:12px;padding:16px 20px;margin-bottom:10px}
-summary{cursor:pointer;font-weight:600}details p{color:var(--mut);margin-top:10px}
-.contact{background:linear-gradient(135deg,#142016,#0f1a14);border:1px solid var(--b);border-radius:20px;padding:40px;display:grid;gap:30px;grid-template-columns:1fr 1fr}
-.contact form{display:grid;gap:12px}
-input,textarea,select{background:#0b0f0c;border:1px solid var(--b);color:var(--fg);padding:12px;border-radius:8px;font:inherit;width:100%}
-input:focus,textarea:focus,select:focus{outline:0;border-color:var(--acc)}
-.links a{display:block;padding:14px 18px;border:1px solid var(--b);border-radius:10px;margin-bottom:10px}.links a:hover{border-color:var(--acc);color:var(--acc)}
-footer{border-top:1px solid var(--b);padding:26px 0;color:var(--mut);font-size:14px;text-align:center}
-@media(max-width:760px){nav{display:none}.contact{grid-template-columns:1fr;padding:24px}}
+.price{font-size:24px;font-weight:800;color:var(--acc)}.price small{font-size:13px;color:var(--mut);font-weight:400}.term{font-size:13px;color:var(--mut)}
+.card .btn{width:100%;text-align:center;margin-top:14px;padding:11px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:26px}
+.tabs button{background:none;border:1px solid var(--b);color:var(--mut);padding:9px 18px;border-radius:99px;cursor:pointer;font-size:14px;font-family:inherit;transition:.25s}
+.tabs button.on,.tabs button:hover{border-color:var(--acc);color:#06070c;background:var(--acc)}
+.kind{display:flex;align-items:center;gap:14px;margin:46px 0 22px}.kind h3{font-size:26px;letter-spacing:-.6px}.kind i{flex:1;height:1px;background:linear-gradient(90deg,var(--b),transparent)}
+.pbadge{display:inline-flex;gap:6px;align-items:center;font-size:12px;padding:3px 10px;border-radius:99px;background:#ffffff10;color:var(--mut);margin-bottom:8px;width:fit-content}
+.pbadge.exe{background:#38e8ff1a;color:var(--c2)}.pbadge.web{background:#b6ff3b1a;color:var(--acc)}
+.btns{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}.btns .btn{flex:1;text-align:center;margin:0;min-width:140px}
+/* previews */
+.scr{height:190px;background:linear-gradient(160deg,#141828,#0a0c14);border-bottom:1px solid var(--b);position:relative;overflow:hidden;padding:14px;font-size:12px}
+.scr::after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 80%,#0e1018);pointer-events:none}
+.dots{display:flex;gap:5px;margin-bottom:10px}.dots i{width:8px;height:8px;border-radius:50%;background:#ffffff30}.dots i:nth-child(1){background:#ff5f57}.dots i:nth-child(2){background:#febc2e}.dots i:nth-child(3){background:#28c840}
+/* invoice */
+.inv{background:#fff;color:#0f1b33;border-radius:6px;padding:12px;height:140px}.inv .h{display:flex;justify-content:space-between;font-weight:800;font-size:13px;margin-bottom:8px}
+.inv .r{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #e4e9f4;animation:slide .5s both}@keyframes slide{from{opacity:0;transform:translateX(-14px)}}
+.inv .t{display:flex;justify-content:space-between;font-weight:800;margin-top:8px;font-size:14px;color:#2f5bff}
+/* terminal */
+.term2{font:12px/1.5 Consolas,monospace;color:#c4b5fd;white-space:pre;height:140px;overflow:hidden}.term2 .k{color:#38e8ff}.term2 .s{color:#b6ff3b}.term2 .n{color:#ff4fd8}.term2 .c{display:inline-block;width:7px;height:13px;background:#c4b5fd;vertical-align:-2px;animation:bl 1s steps(2) infinite}@keyframes bl{50%{opacity:0}}
+/* chart */
+.fin svg{width:100%;height:110px}.fin path{fill:none;stroke:#34d399;stroke-width:3;stroke-dasharray:420;stroke-dashoffset:420;animation:dr 4s ease-in-out infinite}.fin .a{fill:#34d39922;stroke:none;stroke-dasharray:0;animation:fa 4s ease-in-out infinite;opacity:0}
+@keyframes dr{50%,100%{stroke-dashoffset:0}}@keyframes fa{40%,100%{opacity:1}0%{opacity:0}}
+.fin b{font-size:22px;color:#34d399;letter-spacing:-.5px}.fin small{color:var(--mut);display:block}
+/* habits */
+.hb{display:grid;gap:7px}.hb div{display:flex;gap:4px;align-items:center}.hb span{width:78px;color:#fff;font-weight:600;font-size:11px}.hb i{flex:1;height:18px;border-radius:5px;background:#30354a;transition:background .3s,transform .3s}.hb i.on{background:#4ade80;transform:scale(1.06)}
+/* clip */
+.clp{display:grid;gap:6px;position:relative}.clp div{background:#1d2133;border-left:3px solid #60a5fa;padding:7px 10px;border-radius:5px;color:#dbe4ff;animation:pop .5s both;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.clp div:nth-child(n+5){display:none}@keyframes pop{from{opacity:0;transform:translateY(-14px) scale(.96)}}
+/* kopilka */
+.kp{display:flex;align-items:flex-end;gap:10px;height:112px}.kp i{flex:1;border-radius:6px 6px 0 0;transition:height 1s cubic-bezier(.3,1.4,.4,1)}.kp-t{display:flex;justify-content:space-between;margin-bottom:8px;font-size:12px}.kp-t b{color:#fb7185;font-size:16px}
+/* steps/faq/contact */
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px;counter-reset:s}
+.step{border-left:2px solid var(--acc);padding:6px 0 6px 20px;counter-increment:s;transition:.3s}.step:hover{padding-left:32px;border-color:var(--c2)}
+.step::before{content:"0" counter(s);font:700 14px Consolas,monospace;color:var(--acc)}.step h4{margin:4px 0;font-size:19px}.step p{color:var(--mut);font-size:15px}
+details{background:var(--card);border:1px solid var(--b);border-radius:14px;padding:16px 22px;margin-bottom:10px;transition:.3s}details[open]{border-color:#b6ff3b55}summary{cursor:pointer;font-weight:600;list-style:none;display:flex;justify-content:space-between}summary::after{content:"+";color:var(--acc);font-size:22px;line-height:1;transition:.3s}details[open] summary::after{transform:rotate(45deg)}details p{color:var(--mut);margin-top:10px}
+.contact{background:linear-gradient(135deg,#121a14,#0d1220);border:1px solid var(--b);border-radius:26px;padding:44px;display:grid;gap:34px;grid-template-columns:1fr 1fr;position:relative;overflow:hidden}
+.contact::after{content:"";position:absolute;width:300px;height:300px;right:-80px;top:-80px;background:radial-gradient(#b6ff3b33,transparent 70%);animation:float 12s infinite}
+.contact form{display:grid;gap:12px;position:relative;z-index:2}
+input,textarea,select{background:#06070c;border:1px solid var(--b);color:var(--fg);padding:13px;border-radius:12px;font:inherit;width:100%;transition:.25s}
+input:focus,textarea:focus,select:focus{outline:0;border-color:var(--acc);box-shadow:0 0 0 4px #b6ff3b1f}
+.links{position:relative;z-index:2}.links a{display:block;padding:15px 20px;border:1px solid var(--b);border-radius:14px;margin-bottom:10px;transition:.3s;background:#ffffff05}.links a:hover{border-color:var(--acc);color:var(--acc);transform:translateX(8px)}
+footer{border-top:1px solid var(--b);padding:28px 0;color:var(--mut);font-size:14px;text-align:center;position:relative;z-index:2;background:#06070c}footer a{text-decoration:underline}
+/* modal */
+dialog{background:var(--card);color:var(--fg);border:1px solid var(--b);border-radius:22px;padding:30px;max-width:480px;width:calc(100% - 32px);margin:auto}dialog::backdrop{background:#000a;backdrop-filter:blur(6px)}
+dialog ol{margin:14px 0 20px 20px;color:#c4ccdb}dialog li{margin:8px 0}dialog h3{font-size:24px;letter-spacing:-.5px}
+@media(max-width:820px){nav{display:none}.contact{grid-template-columns:1fr;padding:26px}.grid{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01s!important;animation-iteration-count:1!important;transition-duration:.01s!important}}
 </style>
 </head>
 <body>
-<header><div class="wrap">
+<canvas id="bg"></canvas><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="glow"></div><div id="cur"></div><div id="dot"></div>
+
+<header id="hd"><div class="wrap">
   <a href="#top" class="logo">&lt;<b>Prog</b>Farm/&gt;</a>
-  <nav><a href="#services">Услуги</a><a href="#process">Как работаем</a><a href="#faq">Вопросы</a><a href="#contact">Контакты</a><a href="https://github.com/ANweb-bases" target="_blank" rel="noopener">GitHub</a></nav>
-  <a class="btn" href="https://t.me/ProgFarmBot" target="_blank" rel="noopener">Заказать в боте</a>
+  <nav><a href="#projects">Проекты</a><a href="#services">Услуги</a><a href="#process">Как работаем</a><a href="#faq">Вопросы</a><a href="#contact">Контакты</a><a href="https://github.com/ANweb-bases" target="_blank" rel="noopener">GitHub</a></nav>
+  <a class="btn s" data-mag href="https://t.me/ProgFarmBot" target="_blank" rel="noopener">Заказать в боте</a>
 </div></header>
 
 <div class="hero" id="top"><div class="wrap">
-  <div class="tag mono">// разработка под ключ</div>
-  <h1>Выращиваем <em>сайты, ботов</em> и базы данных, которые приносят деньги</h1>
-  <p>Делаю сайты на заказ, Telegram-ботов для продаж, верстаю, дорабатываю и чиню чужие проекты. Понятные цены от 1500 ₽ и сроки без сюрпризов.</p>
-  <div class="row"><a class="btn" href="#services">Смотреть услуги</a><a class="btn o" href="#contact">Обсудить проект</a></div>
-  <div class="stats"><div><b>11</b><span>услуг в каталоге</span></div><div><b>от 1 500 ₽</b><span>стоимость старта</span></div><div><b>1–14 дней</b><span>типовые сроки</span></div></div>
-</div></div>
+  <span class="tag mono"><i></i>принимаю заказы · ответ в течение дня</span>
+  <h1 id="h1"></h1>
+  <p>Делаю сайты и приложения на заказ, Telegram-ботов для продаж, верстаю, дорабатываю и чиню чужие проекты. Понятные цены от 1500 ₽ и сроки без сюрпризов.</p>
+  <div class="row"><a class="btn" data-mag href="#projects">Смотреть проекты</a><a class="btn o" data-mag href="#services">Услуги и цены</a></div>
+  <div class="stats"><div><b data-n="11">0</b><span>услуг в каталоге</span></div><div><b data-n="6">0</b><span>готовых проектов</span></div><div><b>от 1 500 ₽</b><span>стоимость старта</span></div></div>
+</div><div class="scroll mono">SCROLL ↓</div></div>
+
+<div class="mq"><div id="mq"></div></div>
+
+<section id="projects"><div class="wrap">
+  <div class="eyebrow rv">// проекты</div>
+  <h2 class="rv">Работает, а не просто выглядит</h2>
+  <p class="sub rv">Шесть полезных проектов, которые можно открыть или установить прямо отсюда. Так выглядит работа, которую я делаю на заказ.</p>
+  <div class="kind rv"><h3>Сайты</h3><i></i></div>
+  <div class="grid" id="sites"></div>
+  <div class="kind rv"><h3>Приложения для Windows</h3><i></i></div>
+  <div class="grid" id="apps"></div>
+</div></section>
 
 <section id="services"><div class="wrap">
-  <h2>Услуги и цены</h2>
-  <p class="sub">Цена — ориентир «от». Точную стоимость назову после короткого обсуждения задачи. Заказ и оплата — только через Telegram-бота ProgFarm.</p>
+  <div class="eyebrow rv">// услуги</div>
+  <h2 class="rv">Услуги и цены</h2>
+  <p class="sub rv">Цена — ориентир «от». Точную стоимость назову после короткого обсуждения задачи. Заказ и оплата — только через Telegram-бота ProgFarm.</p>
   <div class="tabs" id="tabs"></div>
   <div class="grid" id="grid"></div>
 </div></section>
 
 <section id="process"><div class="wrap">
-  <h2>Как мы работаем</h2><p class="sub">Простой процесс без бюрократии.</p>
-  <div class="steps">
+  <h2 class="rv">Как мы работаем</h2><p class="sub rv">Простой процесс без бюрократии.</p>
+  <div class="steps rv">
     <div class="step"><h4>Заявка</h4><p>Пишете в Telegram или на почту, коротко описываете задачу.</p></div>
     <div class="step"><h4>ТЗ и цена</h4><p>Уточняю детали, фиксирую объём работ, срок и стоимость.</p></div>
     <div class="step"><h4>Работа</h4><p>Показываю промежуточные результаты, вносим правки.</p></div>
@@ -93,15 +166,15 @@ footer{border-top:1px solid var(--b);padding:26px 0;color:var(--mut);font-size:1
 </div></section>
 
 <section id="faq"><div class="wrap">
-  <h2>Частые вопросы</h2><p class="sub"></p>
-  <details><summary>Как происходит оплата?</summary><p>Заказ и оплата проходят только через Telegram-бота ProgFarm: выберите услугу, оставьте заявку и оплатите в боте. Обычно 50% предоплата, остальное после сдачи.</p></details>
-  <details><summary>Можно ли что-то изменить после сдачи?</summary><p>Да. Мелкие правки в течение 7 дней бесплатны, дальнейшая доработка — по услуге «Доработка сайта».</p></details>
-  <details><summary>Вы делаете хостинг и домен?</summary><p>Помогу выбрать и настроить хостинг и домен. Сами услуги хостинга оплачиваются отдельно, напрямую провайдеру.</p></details>
-  <details><summary>Что если задачи нет в списке?</summary><p>Напишите мне через бота (кнопка «Связаться лично») — оценю индивидуально. Большинство веб-задач решаются в рамках перечисленных услуг.</p></details>
+  <h2 class="rv">Частые вопросы</h2><p class="sub"></p>
+  <details class="rv"><summary>Как происходит оплата?</summary><p>Заказ и оплата проходят только через Telegram-бота ProgFarm: выберите услугу, оставьте заявку и оплатите в боте. Обычно 50% предоплата, остальное после сдачи.</p></details>
+  <details class="rv"><summary>Можно ли что-то изменить после сдачи?</summary><p>Да. Мелкие правки в течение 7 дней бесплатны, дальнейшая доработка — по услуге «Доработка сайта».</p></details>
+  <details class="rv"><summary>Вы делаете хостинг и домен?</summary><p>Помогу выбрать и настроить хостинг и домен. Сами услуги хостинга оплачиваются отдельно, напрямую провайдеру.</p></details>
+  <details class="rv"><summary>Что если задачи нет в списке?</summary><p>Напишите мне через бота (кнопка «Связаться лично») — оценю индивидуально. Большинство веб-задач решаются в рамках перечисленных услуг.</p></details>
 </div></section>
 
 <section id="contact"><div class="wrap">
-  <div class="contact">
+  <div class="contact rv">
     <div>
       <h2>Обсудим ваш проект?</h2>
       <p class="sub">Заказать и оплатить услугу можно в Telegram-боте. Личные сообщения — только по развёрнутым и индивидуальным вопросам.</p>
@@ -116,15 +189,70 @@ footer{border-top:1px solid var(--b);padding:26px 0;color:var(--mut);font-size:1
       <input id="n" placeholder="Ваше имя" required>
       <select id="s"></select>
       <textarea id="m" rows="4" placeholder="Опишите задачу" required></textarea>
-      <button class="btn">Отправить письмо</button>
+      <button class="btn" data-mag>Отправить письмо</button>
     </form>
   </div>
 </div></section>
 
-<footer>© <span id="y"></span> ProgFarm · Сайты, боты, базы данных · <a href="https://github.com/ANweb-bases" target="_blank" rel="noopener">GitHub</a></footer>
+<footer>© <span id="y"></span> ProgFarm · Сайты, приложения, боты, базы данных · <a href="https://github.com/ANweb-bases" target="_blank" rel="noopener">GitHub</a></footer>
+
+<dialog id="dlg"><h3 id="dt"></h3>
+  <ol><li>Файл <b>.exe</b> скачается автоматически — установка не нужна, он запускается сразу.</li><li>Если Windows покажет синее окно «Защитник Windows предотвратил запуск», нажмите <b>Подробнее → Выполнить в любом случае</b>. Так бывает со всеми программами без платной цифровой подписи.</li><li>Данные хранятся только на вашем компьютере.</li></ol>
+  <div class="btns"><a class="btn" id="dl" href="#">Скачать</a><button class="btn o" id="dc">Закрыть</button></div></dialog>
 
 <script>
-const BOT='https://t.me/ProgFarmBot',TG='https://t.me/rivvva_la_viddda',MAIL='tolyan.berd2008@gmail.com';
+const BOT='https://t.me/ProgFarmBot',MAIL='tolyan.berd2008@gmail.com';
+const REL='https://github.com/ANweb-bases/progfarm-portfolio/releases/latest/download/';
+const $=id=>document.getElementById(id),fmt=n=>n.toLocaleString('ru-RU');
+const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+/* ---------- данные: проекты ---------- */
+const SITES=[
+ {id:'schet',t:'Счёт',cat:'Для фрилансеров и ИП',d:'Генератор счетов: заполняете реквизиты и позиции — справа сразу готовый документ. Сохраните в PDF или распечатайте.',l:['Живой предпросмотр','Автоматический НДС 20%','Данные хранятся только в браузере'],url:'../02-schet/schet.html'},
+ {id:'devkit',t:'DevKit',cat:'Для разработчиков',d:'Семь инструментов в одной вкладке: JSON, Base64, хеши, UUID, цвета, пароли и Unix-время. Всё считается локально.',l:['Без регистрации и рекламы','Криптостойкие пароли','Работает офлайн'],url:'../03-devkit/devkit.html'},
+ {id:'fin',t:'ПроФинанс',cat:'Финансы',d:'Кредит, вклад и накопление на цель: ползунки, график и подробная таблица платежей.',l:['Аннуитет и дифференцированный платёж','Вклад с капитализацией и пополнением','Срок накопления на цель'],url:'../04-profinance/profinance.html'}];
+const APPS=[
+ {id:'HabitFlow',t:'HabitFlow',cat:'Трекер привычек',d:'Отмечайте привычки кликом по дням, следите за сериями и лучшим результатом. Ничего не уходит в интернет.',l:['Серии дней и статистика','Тёмная тема, 14 дней на виду','Данные в папке пользователя'],size:'31 КБ'},
+ {id:'ClipFlow',t:'ClipFlow',cat:'История буфера обмена',d:'Запоминает всё, что вы копируете: ищите, закрепляйте и возвращайте в буфер. Живёт в трее, открывается Ctrl+Shift+V.',l:['Поиск и закрепление записей','Быстрый вызов Ctrl+Shift+V','Кнопка «Пауза» для паролей'],size:'32 КБ'},
+ {id:'Kopilka',t:'Копилка',cat:'Учёт доходов и расходов',d:'Заносите траты и доходы, смотрите баланс по месяцам и диаграмму по категориям. Выгрузка в Excel одной кнопкой.',l:['Баланс и диаграмма по категориям','Месяцы листаются стрелками','Экспорт в CSV для Excel'],size:'40 КБ'}];
+
+/* ---------- превью-анимации ---------- */
+const PV={
+ schet:()=>`<div class="inv"><div class="h"><span>Счёт № 2026-014</span><span>Итого</span></div><div class="rs"></div><div class="t"><span>К оплате</span><b class="sm">0 ₽</b></div></div>`,
+ devkit:()=>`<div class="dots"><i></i><i></i><i></i></div><div class="term2"><span class="tx"></span><span class="c"></span></div>`,
+ fin:()=>`<div class="fin"><small>Итоговая сумма</small><b class="fv">0 ₽</b><svg viewBox="0 0 300 110" preserveAspectRatio="none"><path class="a" d="M0 100 C60 96 100 80 150 60 S250 20 300 8 L300 110 L0 110Z"/><path d="M0 100 C60 96 100 80 150 60 S250 20 300 8"/></svg></div>`,
+ HabitFlow:()=>`<div class="hb">${['Вода','Спорт','Чтение','Сон'].map(n=>`<div><span>${n}</span>${'<i></i>'.repeat(10)}</div>`).join('')}</div>`,
+ ClipFlow:()=>`<div class="clp"></div>`,
+ Kopilka:()=>`<div class="kp-t"><span>Расходы · октябрь</span><b class="kv">0 ₽</b></div><div class="kp">${['#fb923c','#60a5fa','#4ade80','#f472b6','#facc15','#a78bfa'].map(c=>`<i style="background:${c};height:8%"></i>`).join('')}</div>`
+};
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+const count=(el,to,ms=1100,suf=' ₽')=>{const t0=performance.now();(function f(t){const p=Math.min(1,(t-t0)/ms);el.textContent=fmt(Math.round(to*(1-Math.pow(1-p,3))))+suf;p<1&&requestAnimationFrame(f)})(t0)};
+const RUN={
+ async schet(c){const rs=c.querySelector('.rs'),sm=c.querySelector('.sm');const rows=[['Дизайн сайта',15000],['Вёрстка',12000],['Подключение формы',3000]];
+  for(;;){rs.innerHTML='';sm.textContent='0 ₽';let s=0;for(const [n,p] of rows){rs.insertAdjacentHTML('beforeend',`<div class="r"><span>${n}</span><b>${fmt(p)} ₽</b></div>`);s+=p;count(sm,s,500);await wait(700)}await wait(2400)}},
+ async devkit(c){const tx=c.querySelector('.tx');const min='{"name":"ProgFarm","apps":3,"price":1500}';
+  const pretty='{\n  <span class="k">"name"</span>: <span class="s">"ProgFarm"</span>,\n  <span class="k">"apps"</span>: <span class="n">3</span>,\n  <span class="k">"price"</span>: <span class="n">1500</span>\n}';
+  for(;;){tx.textContent='';for(const ch of min){tx.textContent+=ch;await wait(35)}await wait(600);tx.innerHTML=pretty;await wait(2600)}},
+ async fin(c){const fv=c.querySelector('.fv');for(;;){fv.textContent='0 ₽';count(fv,2480000,2600);await wait(4000)}},
+ async HabitFlow(c){const rows=[...c.querySelectorAll('.hb div')];const pat=[[1,1,1,1,1,1,1,1,1,1],[1,0,1,1,0,1,1,1,0,1],[0,1,1,1,1,0,1,1,1,1],[1,1,0,1,1,1,1,0,1,1]];
+  for(;;){rows.forEach(r=>r.querySelectorAll('i').forEach(i=>i.classList.remove('on')));for(let d=0;d<10;d++){rows.forEach((r,i)=>pat[i][d]&&r.querySelectorAll('i')[d].classList.add('on'));await wait(280)}await wait(2200)}},
+ async ClipFlow(c){const box=c.querySelector('.clp'),L=['https://progfarm.dev/order','npm install express','+7 900 123-45-67','SELECT * FROM clients;','#b6ff3b','Спасибо за заказ!','git commit -m "fix"'];let i=0;
+  for(;;){const d=document.createElement('div');d.textContent=(i%3==1?'★ ':'')+L[i++%L.length];box.prepend(d);while(box.children.length>5)box.lastChild.remove();await wait(1300)}},
+ async Kopilka(c){const bars=[...c.querySelectorAll('.kp i')],kv=c.querySelector('.kv');for(;;){let s=0;bars.forEach(b=>{const h=15+Math.random()*80;b.style.height=h+'%';s+=h*420});count(kv,Math.round(s),1000);await wait(2600)}}
+};
+function projCard(x,kind){
+  const web=kind=='web',pv=PV[x.id]();
+  return `<article class="card rv" data-pv="${x.id}"><div class="scr">${pv}</div><div class="bd"><span class="pbadge ${kind}">${web?'🌐 Сайт · открывается в браузере':'💻 Windows .exe · '+x.size}</span><span class="cat">${x.cat}</span><h3>${x.t}</h3><p>${x.d}</p><ul>${x.l.map(i=>`<li>${i}</li>`).join('')}</ul>
+  <div class="btns">${web?`<a class="btn" data-mag href="${x.url}">Открыть сайт →</a>`:`<button class="btn" data-mag data-dl="${x.id}">⬇ Установить</button>`}</div></div></article>`;
+}
+$('sites').innerHTML=SITES.map(x=>projCard(x,'web')).join('');
+$('apps').innerHTML=APPS.map(x=>projCard(x,'exe')).join('');
+document.querySelectorAll('[data-pv]').forEach(c=>{let go=false;new IntersectionObserver(([e])=>{if(e.isIntersecting&&!go){go=true;RUN[c.dataset.pv](c)}}).observe(c)});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-dl]');if(!b)return;const a=APPS.find(x=>x.id==b.dataset.dl);
+  $('dt').textContent='Установка: '+a.t;$('dl').href=REL+a.id+'.exe';$('dl').textContent='⬇ Скачать '+a.id+'.exe';$('dlg').showModal()});
+$('dc').onclick=()=>$('dlg').close();$('dl').onclick=()=>setTimeout(()=>$('dlg').close(),600);$('dlg').onclick=e=>{if(e.target.id=='dlg')$('dlg').close()};
+
+/* ---------- услуги (содержимое без изменений) ---------- */
 const S=[
 {c:'Сайты',t:'Лендинг (одностраничный сайт)',p:4500,d:'3–5 дней',a:'Продающая страница для одного товара, услуги или акции.',l:['Дизайн под ваш бренд','Адаптив под телефон и планшет','Форма заявки с отправкой на почту/в Telegram','Базовая SEO-разметка и быстрая загрузка']},
 {c:'Сайты',t:'Сайт-визитка (многостраничный)',p:7000,d:'5–8 дней',a:'Сайт компании или специалиста: о себе, услуги, цены, контакты.',l:['До 5 страниц','Уникальный дизайн и анимации','Карта, соцсети, кнопки связи','Помощь с подключением домена']},
@@ -138,23 +266,55 @@ const S=[
 {c:'Базы данных',t:'Проектирование и создание базы данных',p:6000,d:'3–7 дней',a:'Продумаю структуру и создам базу под ваш бизнес: клиенты, заказы, товары, склад.',l:['Схема таблиц и связей','Создание БД (SQLite, PostgreSQL, MySQL)','Тестовые данные','Документация по структуре']},
 {c:'Базы данных',t:'Работа с базами данных',p:3500,d:'1–5 дней',a:'Импорт и очистка данных, SQL-запросы, оптимизация, отчёты и выгрузки.',l:['Импорт из Excel/CSV','Написание и оптимизация SQL-запросов','Отчёты и выгрузки','Резервные копии и миграции']}
 ];
-const cats=['Все',...new Set(S.map(x=>x.c))],$=id=>document.getElementById(id);
-const fmt=n=>n.toLocaleString('ru-RU');
-let cur='Все';
+const cats=['Все',...new Set(S.map(x=>x.c))];let cur='Все';
 function draw(){
   $('tabs').innerHTML=cats.map(c=>`<button class="${c==cur?'on':''}" data-c="${c}">${c}</button>`).join('');
-  $('grid').innerHTML=S.filter(x=>cur=='Все'||x.c==cur).map(x=>{
-    return `<article class="card"><span class="cat">${x.c}</span><h3>${x.t}</h3><p>${x.a}</p><ul>${x.l.map(i=>`<li>${i}</li>`).join('')}</ul>
+  $('grid').innerHTML=S.filter(x=>cur=='Все'||x.c==cur).map(x=>`<article class="card rv in"><div class="bd"><span class="cat">${x.c}</span><h3>${x.t}</h3><p>${x.a}</p><ul>${x.l.map(i=>`<li>${i}</li>`).join('')}</ul>
     <div class="meta"><div class="price"><small>от </small>${fmt(x.p)} ₽</div><div class="term">⏱ ${x.d}</div></div>
-    <a class="btn" href="${BOT}?start=svc${S.indexOf(x)+1}" target="_blank" rel="noopener">Заказать и оплатить в боте</a></article>`}).join('');
+    <a class="btn" data-mag href="${BOT}?start=svc${S.indexOf(x)+1}" target="_blank" rel="noopener">Заказать и оплатить в боте</a></div></article>`).join('');
 }
-$('tabs').onclick=e=>{if(e.target.dataset.c){cur=e.target.dataset.c;draw()}};
-draw();
+$('tabs').onclick=e=>{if(e.target.dataset.c){cur=e.target.dataset.c;draw()}};draw();
 $('s').innerHTML=S.map(x=>`<option>${x.t}</option>`).join('')+'<option>Другое</option>';
 $('f').onsubmit=e=>{e.preventDefault();
   const b=`Имя: ${$('n').value}\nУслуга: ${$('s').value}\n\n${$('m').value}`;
   location.href=`mailto:${MAIL}?subject=${encodeURIComponent('Заявка с сайта ProgFarm')}&body=${encodeURIComponent(b)}`};
 $('y').textContent=new Date().getFullYear();
+
+/* ---------- заголовок: побуквенное появление + меняющееся слово ---------- */
+const words=['сайты','приложения','Telegram-ботов','базы данных'];let wi=0,k=0;
+const mk=(t,cls)=>[...t].map(c=>`<span class="ch" style="animation-delay:${(k++)*.035}s">${c==' '?'&nbsp;':c}</span>`).join('');
+$('h1').innerHTML=mk('Выращиваем')+'<br><span class="rot" id="rot">'+mk(words[0])+'</span><br>'+mk('которые работают');
+(async()=>{await wait(2500);for(;;){await wait(2600);const r=$('rot');r.style.transition='.35s';r.style.opacity=0;r.style.transform='translateY(-20px)';await wait(350);wi=(wi+1)%words.length;k=0;r.innerHTML=mk(words[wi]);r.style.transition='none';r.style.transform='translateY(20px)';r.offsetHeight;r.style.transition='.35s';r.style.opacity=1;r.style.transform='none'}})();
+$('mq').innerHTML=[...Array(2)].map(()=>['HTML','CSS','JavaScript','Node.js','C#','SQL','Telegram Bot API','WinForms','Git','GitHub Pages','Python','PostgreSQL'].map(x=>`<span>${x} ✦</span>`).join('')).join('');
+
+/* ---------- движение: курсор, магнит, наклон карточек, фон ---------- */
+const fine=matchMedia('(pointer:fine)').matches&&!reduce;if(fine)document.body.classList.add('fine');
+let mx=innerWidth/2,my=innerHeight/3,cx=mx,cy=my;
+addEventListener('pointermove',e=>{mx=e.clientX;my=e.clientY;document.documentElement.style.setProperty('--mx',mx+'px');document.documentElement.style.setProperty('--my',my+'px');$('dot').style.transform=`translate(${mx}px,${my}px)`});
+(function loop(){cx+=(mx-cx)*.18;cy+=(my-cy)*.18;$('cur').style.transform=`translate(${cx}px,${cy}px)`;requestAnimationFrame(loop)})();
+document.addEventListener('pointerover',e=>{$('cur').classList.toggle('big',!!e.target.closest('a,button,summary,.card'))});
+document.addEventListener('pointermove',e=>{
+  const c=e.target.closest('.card');if(c&&fine){const r=c.getBoundingClientRect(),x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;
+    c.style.setProperty('--px',x*100+'%');c.style.setProperty('--py',y*100+'%');c.style.transform=`perspective(900px) rotateX(${(.5-y)*7}deg) rotateY(${(x-.5)*9}deg) translateZ(0)`}
+  document.querySelectorAll('.card').forEach(o=>{if(o!==c)o.style.transform=''});
+  document.querySelectorAll('[data-mag]').forEach(b=>{const r=b.getBoundingClientRect(),dx=e.clientX-(r.left+r.width/2),dy=e.clientY-(r.top+r.height/2),d=Math.hypot(dx,dy);
+    b.style.transform=fine&&d<90?`translate(${dx*.25}px,${dy*.35}px)`:''});
+});
+document.addEventListener('pointerleave',()=>document.querySelectorAll('.card').forEach(o=>o.style.transform=''));
+/* частицы */
+const cv=$('bg'),g=cv.getContext('2d');let P=[];
+function rs(){cv.width=innerWidth;cv.height=innerHeight;P=[...Array(Math.min(70,Math.floor(innerWidth/22)))].map(()=>({x:Math.random()*cv.width,y:Math.random()*cv.height,vx:(Math.random()-.5)*.35,vy:(Math.random()-.5)*.35}))}rs();addEventListener('resize',rs);
+(function f(){g.clearRect(0,0,cv.width,cv.height);
+  for(const p of P){p.x+=p.vx;p.y+=p.vy;const dx=p.x-mx,dy=p.y-my,d=Math.hypot(dx,dy);if(d<170){p.x+=dx/d*1.3;p.y+=dy/d*1.3}
+    if(p.x<0||p.x>cv.width)p.vx*=-1;if(p.y<0||p.y>cv.height)p.vy*=-1;g.fillStyle='#b6ff3b99';g.fillRect(p.x,p.y,2,2);
+    for(const q of P){const l=Math.hypot(p.x-q.x,p.y-q.y);if(l<110){g.strokeStyle=`rgba(182,255,59,${.16*(1-l/110)})`;g.beginPath();g.moveTo(p.x,p.y);g.lineTo(q.x,q.y);g.stroke()}}
+    if(d<170){g.strokeStyle=`rgba(56,232,255,${.35*(1-d/170)})`;g.beginPath();g.moveTo(p.x,p.y);g.lineTo(mx,my);g.stroke()}}
+  if(!reduce)requestAnimationFrame(f)})();
+/* появление при прокрутке, счётчики, шапка */
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
+const watch=()=>document.querySelectorAll('.rv:not(.in)').forEach(el=>io.observe(el));watch();new MutationObserver(watch).observe(document.body,{childList:true,subtree:true});
+document.querySelectorAll('[data-n]').forEach(el=>{const to=+el.dataset.n;let i=0;const t=setInterval(()=>{el.textContent=++i;if(i>=to)clearInterval(t)},90)});
+addEventListener('scroll',()=>$('hd').classList.toggle('s',scrollY>20),{passive:true});
 </script>
 </body>
 </html>
