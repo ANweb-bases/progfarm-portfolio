@@ -15,6 +15,7 @@
 | [HabitFlow](apps/habitflow) | Windows-приложение: трекер привычек |
 | [ClipFlow](apps/clipflow) | Windows-приложение: история буфера обмена |
 | [Копилка](apps/kopilka) | Windows-приложение: учёт доходов и расходов |
+| [Night City Build Advisor](cyberpunk-builder) | Помощник по билдам Cyberpunk 2077 (сайт и .exe) |
 | [bot](bot) | Telegram-бот ProgFarm (Node.js) |
 
 Готовые `.exe` лежат в [Releases](../../releases/latest). Сборка из исходников: `apps/build.bat` (нужен только .NET Framework 4, он есть в Windows 10/11).
