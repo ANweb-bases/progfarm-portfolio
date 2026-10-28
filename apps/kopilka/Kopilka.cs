@@ -13,7 +13,9 @@ class Chart : Control
 {
     public Dictionary<string, decimal> Data = new Dictionary<string, decimal>();
     static readonly Color[] Pal = { Color.FromArgb(251, 146, 60), Color.FromArgb(96, 165, 250), Color.FromArgb(74, 222, 128), Color.FromArgb(244, 114, 182), Color.FromArgb(250, 204, 21), Color.FromArgb(167, 139, 250), Color.FromArgb(148, 163, 184) };
-    public Chart() { DoubleBuffered = true; BackColor = Color.FromArgb(24, 27, 39); }
+    double prog = 1; Timer anim = new Timer { Interval = 16 };
+    public Chart() { DoubleBuffered = true; BackColor = Color.FromArgb(24, 27, 39); anim.Tick += (s, e) => { prog += 0.06; if (prog >= 1) { prog = 1; anim.Stop(); } Invalidate(); }; }
+    public void Animate() { prog = 0; anim.Start(); }
     protected override void OnPaint(PaintEventArgs e)
     {
         var g = e.Graphics; g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
@@ -23,7 +25,7 @@ class Chart : Control
         using (var f = new Font("Segoe UI", 9f)) for (int i = 0; i < list.Count; i++)
         {
             g.DrawString(list[i].Key + "  " + (list[i].Value * 100 / total).ToString("0") + "%", f, Brushes.White, 12, y);
-            int w = (int)((Width - 40) * list[i].Value / max);
+            int w = (int)((double)((Width - 40) * list[i].Value / max) * (1 - Math.Pow(1 - prog, 3)));
             using (var b = new SolidBrush(Pal[i % Pal.Length])) g.FillRectangle(b, 12, y + 20, Math.Max(w, 4), 12);
             g.DrawString(list[i].Value.ToString("N0") + " ₽", f, Brushes.Gray, Width - 80, y + 1);
             y += 46;
@@ -44,7 +46,7 @@ class MainForm : Form
 
     public MainForm()
     {
-        Text = "Копилка — учёт расходов"; Size = new Size(980, 640); MinimumSize = new Size(900, 560); StartPosition = FormStartPosition.CenterScreen;
+        Fx.FadeIn(this); Text = "Копилка — учёт расходов"; Size = new Size(980, 640); MinimumSize = new Size(900, 560); StartPosition = FormStartPosition.CenterScreen;
         BackColor = Bg; ForeColor = Color.White; Font = new Font("Segoe UI", 10f);
         try { Icon = new Icon(System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("app.ico")); } catch { }
 
@@ -96,7 +98,7 @@ class MainForm : Form
         decimal inc = cur.Where(r => r.Sum > 0).Sum(r => r.Sum), exp = -cur.Where(r => r.Sum < 0).Sum(r => r.Sum);
         lblInc.Text = "Доходы\n" + inc.ToString("N0") + " ₽"; lblInc.ForeColor = Green; lblExp.Text = "Расходы\n" + exp.ToString("N0") + " ₽"; lblExp.ForeColor = Red;
         lblBal.Text = "Баланс\n" + (inc - exp).ToString("N0") + " ₽"; lblBal.ForeColor = inc - exp >= 0 ? Color.White : Red;
-        chart.Data = cur.Where(r => r.Sum < 0).GroupBy(r => r.Cat).ToDictionary(g => g.Key, g => -g.Sum(r => r.Sum)); chart.Invalidate();
+        chart.Data = cur.Where(r => r.Sum < 0).GroupBy(r => r.Cat).ToDictionary(g => g.Key, g => -g.Sum(r => r.Sum)); chart.Animate();
     }
     void Del() { if (grid.CurrentRow == null) return; var r = grid.CurrentRow.Tag as Rec; if (r != null) { recs.Remove(r); Save(); Redraw(); } }
     void Export()
@@ -108,6 +110,18 @@ class MainForm : Form
     void LoadData()
     {
         try { if (File.Exists(F)) foreach (var l in File.ReadAllLines(F)) { var p = l.Split('\t'); if (p.Length >= 3) recs.Add(new Rec { Date = DateTime.ParseExact(p[0], "yyyy-MM-dd", CultureInfo.InvariantCulture), Sum = decimal.Parse(p[1], CultureInfo.InvariantCulture), Cat = p[2], Note = p.Length > 3 ? p[3] : "" }); } } catch { }
+    }
+}
+
+
+static class Fx
+{
+    // плавное появление окна при запуске
+    public static void FadeIn(Form f)
+    {
+        f.Opacity = 0; var t = new Timer { Interval = 15 };
+        t.Tick += (s, e) => { f.Opacity += 0.1; if (f.Opacity >= 1) { f.Opacity = 1; t.Stop(); t.Dispose(); } };
+        f.Shown += (s, e) => t.Start();
     }
 }
 
