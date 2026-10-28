@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DevKit — онлайн-инструменты для разработчика</title>
+<meta name="description" content="JSON, Base64, хеши, UUID, цвета, пароли, Unix-время — всё в одной вкладке. Работает офлайн, данные не покидают браузер.">
+<style>
+:root{--bg:#0d0b14;--p:#171326;--ln:#2a2440;--fg:#e9e6f5;--mut:#8b84a8;--acc:#a78bfa;--ok:#4ade80;--err:#fb7185}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--fg);font:15px/1.5 "Segoe UI",system-ui,sans-serif;min-height:100vh}
+a{color:inherit}
+.app{display:grid;grid-template-columns:230px 1fr;min-height:100vh}
+aside{background:var(--p);border-right:1px solid var(--ln);padding:18px 12px;position:sticky;top:0;height:100vh}
+.logo{font:700 20px Consolas,monospace;padding:4px 10px 18px}.logo b{color:var(--acc)}
+aside button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:none;border:0;color:var(--mut);padding:10px 12px;border-radius:9px;cursor:pointer;font:inherit;margin-bottom:2px}
+aside button:hover{background:#ffffff0a;color:var(--fg)}aside button.on{background:#a78bfa22;color:var(--acc)}
+main{padding:30px;max-width:980px;width:100%}
+h1{font-size:26px;margin-bottom:4px}.sub{color:var(--mut);margin-bottom:20px}
+.mono,textarea,input,pre{font-family:Consolas,"Courier New",monospace}
+textarea,input,select{width:100%;background:#0d0b14;border:1px solid var(--ln);color:var(--fg);border-radius:10px;padding:12px;font-size:14px}
+textarea{min-height:200px;resize:vertical}
+textarea:focus,input:focus,select:focus{outline:0;border-color:var(--acc)}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0;align-items:center}
+.b{background:var(--acc);color:#14102a;border:0;padding:10px 18px;border-radius:9px;font:600 14px inherit;font-family:"Segoe UI";cursor:pointer;transition:.15s}.b:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.b.g{background:#ffffff10;color:var(--fg)}
+.msg{font-size:13px;min-height:20px;color:var(--mut)}.msg.ok{color:var(--ok)}.msg.err{color:var(--err)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.sw{height:90px;border-radius:12px;border:1px solid var(--ln);margin-bottom:12px}
+.pw{font-size:20px;background:#0d0b14;border:1px solid var(--ln);border-radius:10px;padding:14px;word-break:break-all;margin:12px 0}
+label.c{display:inline-flex;gap:6px;align-items:center;color:var(--mut);font-size:14px}label.c input{width:auto}
+.out{display:grid;grid-template-columns:90px 1fr auto;gap:8px;align-items:center;margin-bottom:8px}.out span{color:var(--mut);font-size:13px}
+footer{margin-top:40px;color:var(--mut);font-size:13px}footer a{text-decoration:underline}
+.tool{display:none;animation:in .3s}.tool.on{display:block}@keyframes in{from{opacity:0;transform:translateY(8px)}}
+@media(max-width:760px){.app{grid-template-columns:1fr}aside{position:static;height:auto;display:flex;flex-wrap:wrap;gap:4px}aside .logo{width:100%}aside button{width:auto}.cols{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside id="nav"><div class="logo">Dev<b>Kit</b></div></aside>
+<main>
+
+<section class="tool" id="json"><h1>JSON</h1><p class="sub">Форматирование, минификация и проверка.</p>
+  <textarea id="jin" placeholder='{"name":"ProgFarm","services":[1,2,3]}'></textarea>
+  <div class="row"><button class="b" id="jf">Форматировать</button><button class="b g" id="jm">Минифицировать</button><button class="b g" data-copy="jin">Копировать</button></div><div class="msg" id="jmsg"></div></section>
+
+<section class="tool" id="b64"><h1>Base64</h1><p class="sub">Кодирование и декодирование с поддержкой кириллицы.</p>
+  <div class="cols"><textarea id="bin" placeholder="Текст или Base64"></textarea><textarea id="bout" placeholder="Результат" readonly></textarea></div>
+  <div class="row"><button class="b" id="be">Кодировать</button><button class="b g" id="bd">Декодировать</button><button class="b g" data-copy="bout">Копировать результат</button></div><div class="msg" id="bmsg"></div></section>
+
+<section class="tool" id="hash"><h1>Хеш</h1><p class="sub">SHA-1, SHA-256 и SHA-512 прямо в браузере.</p>
+  <textarea id="hin" placeholder="Введите текст" style="min-height:120px"></textarea><div id="hout" style="margin-top:14px"></div></section>
+
+<section class="tool" id="uuid"><h1>UUID и URL</h1><p class="sub">Генерация UUID v4 и кодирование ссылок.</p>
+  <div class="row"><button class="b" id="ug">Сгенерировать UUID</button></div><div class="pw" id="uv">—</div><div class="row"><button class="b g" data-copy="uv">Копировать</button></div>
+  <input id="uin" placeholder="Текст для URL-кодирования, например: привет мир"><div class="pw" id="uo" style="font-size:14px">—</div></section>
+
+<section class="tool" id="color"><h1>Цвет</h1><p class="sub">HEX, RGB и HSL одновременно.</p>
+  <div class="sw" id="csw"></div><input type="color" id="cp" value="#a78bfa" style="height:48px;padding:4px;margin-bottom:12px">
+  <div id="cout"></div></section>
+
+<section class="tool" id="pass"><h1>Пароль</h1><p class="sub">Криптостойкий генератор.</p>
+  <div class="pw" id="pv">—</div>
+  <div class="row"><label class="c">Длина <input type="number" id="pl" value="16" min="6" max="64" style="width:80px"></label>
+  <label class="c"><input type="checkbox" id="pu" checked>A–Z</label><label class="c"><input type="checkbox" id="pn" checked>0–9</label><label class="c"><input type="checkbox" id="ps" checked>!@#</label></div>
+  <div class="row"><button class="b" id="pg">Сгенерировать</button><button class="b g" data-copy="pv">Копировать</button></div></section>
+
+<section class="tool" id="time"><h1>Unix-время</h1><p class="sub">Конвертация в обе стороны.</p>
+  <div class="pw" id="tn">—</div>
+  <div class="cols"><div><input id="tin" placeholder="Unix timestamp, например 1700000000"><div class="pw" id="tout" style="font-size:14px">—</div></div>
+  <div><input id="tdate" type="datetime-local"><div class="pw" id="tout2" style="font-size:14px">—</div></div></div></section>
+
+<footer>Всё работает локально в вашем браузере · разработано в <a href="../01-progfarm/progfarm.html">ProgFarm</a></footer>
+</main></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const T=[['json','{ }','JSON'],['b64','⇄','Base64'],['hash','#','Хеш'],['uuid','◇','UUID / URL'],['color','◐','Цвет'],['pass','🔑','Пароль'],['time','⏱','Unix-время']];
+$('nav').innerHTML+=T.map(([id,i,n])=>`<button data-t="${id}"><span class="mono">${i}</span>${n}</button>`).join('');
+function show(id){document.querySelectorAll('.tool').forEach(t=>t.classList.toggle('on',t.id==id));document.querySelectorAll('aside button').forEach(b=>b.classList.toggle('on',b.dataset.t==id));try{location.hash=id}catch{}}
+$('nav').onclick=e=>{const b=e.target.closest('button');if(b)show(b.dataset.t)};
+document.addEventListener('click',e=>{const c=e.target.dataset.copy;if(c){const el=$(c),t=el.value??el.textContent;navigator.clipboard.writeText(t);e.target.textContent='Скопировано ✓';setTimeout(()=>e.target.textContent=e.target.dataset.l||'Копировать',1200)}});
+const msg=(id,t,ok)=>{$(id).textContent=t;$(id).className='msg '+(ok?'ok':'err')};
+// JSON
+$('jf').onclick=()=>{try{$('jin').value=JSON.stringify(JSON.parse($('jin').value),null,2);msg('jmsg','Корректный JSON ✓',1)}catch(e){msg('jmsg','Ошибка: '+e.message,0)}};
+$('jm').onclick=()=>{try{$('jin').value=JSON.stringify(JSON.parse($('jin').value));msg('jmsg','Минифицировано ✓',1)}catch(e){msg('jmsg','Ошибка: '+e.message,0)}};
+// Base64 (UTF-8 safe)
+const enc=s=>btoa(String.fromCharCode(...new TextEncoder().encode(s))),dec=s=>new TextDecoder().decode(Uint8Array.from(atob(s),c=>c.charCodeAt(0)));
+$('be').onclick=()=>{try{$('bout').value=enc($('bin').value);msg('bmsg','Готово ✓',1)}catch(e){msg('bmsg',e.message,0)}};
+$('bd').onclick=()=>{try{$('bout').value=dec($('bin').value.trim());msg('bmsg','Готово ✓',1)}catch{msg('bmsg','Это не корректный Base64',0)}};
+// Hash
+$('hin').oninput=async()=>{const d=new TextEncoder().encode($('hin').value);let h='';
+  for(const a of ['SHA-1','SHA-256','SHA-512']){const x=[...new Uint8Array(await crypto.subtle.digest(a,d))].map(b=>b.toString(16).padStart(2,'0')).join('');h+=`<div class="out"><span>${a}</span><input readonly value="${x}"><button class="b g" onclick="navigator.clipboard.writeText('${x}')">⧉</button></div>`}$('hout').innerHTML=h};
+$('hin').oninput();
+// UUID / URL
+$('ug').onclick=()=>$('uv').textContent=crypto.randomUUID();$('ug').onclick();
+$('uin').oninput=()=>$('uo').textContent=$('uin').value?encodeURIComponent($('uin').value):'—';
+// Color
+function color(){const hex=$('cp').value,n=parseInt(hex.slice(1),16),r=n>>16,g=n>>8&255,b=n&255,
+  mx=Math.max(r,g,b)/255,mn=Math.min(r,g,b)/255,l=(mx+mn)/2,d=mx-mn;let h=0,s=0;
+  if(d){s=d/(1-Math.abs(2*l-1));const R=r/255,G=g/255,B=b/255;h=mx==R?((G-B)/d)%6:mx==G?(B-R)/d+2:(R-G)/d+4;h=Math.round(h*60);if(h<0)h+=360}
+  $('csw').style.background=hex;
+  $('cout').innerHTML=[['HEX',hex.toUpperCase()],['RGB',`rgb(${r}, ${g}, ${b})`],['HSL',`hsl(${h}, ${Math.round(s*100)}%, ${Math.round(l*100)}%)`]].map(([k,v])=>`<div class="out"><span>${k}</span><input readonly value="${v}"><button class="b g" onclick="navigator.clipboard.writeText('${v}')">⧉</button></div>`).join('')}
+$('cp').oninput=color;color();
+// Password
+$('pg').onclick=()=>{let set='abcdefghijklmnopqrstuvwxyz';if($('pu').checked)set+='ABCDEFGHIJKLMNOPQRSTUVWXYZ';if($('pn').checked)set+='0123456789';if($('ps').checked)set+='!@#$%^&*-_=+?';
+  const n=Math.min(64,Math.max(6,+$('pl').value||16)),a=new Uint32Array(n);crypto.getRandomValues(a);$('pv').textContent=[...a].map(x=>set[x%set.length]).join('')};$('pg').onclick();
+// Time
+setInterval(()=>$('tn').textContent='Сейчас: '+Math.floor(Date.now()/1000),500);
+$('tin').oninput=()=>{const v=+$('tin').value;$('tout').textContent=v?new Date((v>1e12?v:v*1000)).toLocaleString('ru-RU'):'—'};
+$('tdate').oninput=()=>{const d=new Date($('tdate').value);$('tout2').textContent=isNaN(d)?'—':Math.floor(d/1000)};
+show(location.hash.slice(1)||'json');
+</script>
+</body>
+</html>
