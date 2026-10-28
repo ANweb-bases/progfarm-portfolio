@@ -16,9 +16,11 @@ header .w{display:flex;justify-content:space-between;align-items:center;height:7
 .tabs{display:flex;gap:6px;background:#ffffff0d;padding:5px;border-radius:14px;margin:18px 0 22px;width:fit-content;max-width:100%;overflow:auto}
 .tabs button{border:0;background:none;color:var(--mut);padding:10px 20px;border-radius:10px;font:600 15px inherit;font-family:inherit;cursor:pointer;white-space:nowrap;transition:.2s}
 .tabs button.on{background:var(--acc);color:#052e26}
+h1 em{display:inline-block;animation:bob 3s ease-in-out infinite}@keyframes bob{50%{transform:translateY(-4px)}}
 h1{font-size:clamp(28px,4vw,42px);letter-spacing:-1px;line-height:1.1}h1 em{font-style:normal;color:var(--acc)}
 .sub{color:var(--mut);margin:8px 0 0;max-width:560px}
 .grid{display:grid;grid-template-columns:380px 1fr;gap:20px;padding-bottom:50px}
+.grid>.card{animation:up .6s cubic-bezier(.2,.8,.2,1) both}.grid>.card+.card{animation-delay:.1s}@keyframes up{from{opacity:0;transform:translateY(20px)}}
 .card{background:#ffffff0c;border:1px solid var(--ln);border-radius:20px;padding:24px;backdrop-filter:blur(10px)}
 .f{margin-bottom:20px}.f .t{display:flex;justify-content:space-between;color:var(--mut);font-size:14px;margin-bottom:6px;align-items:center}
 .f input[type=number]{width:130px;text-align:right;background:#00000030;border:1px solid var(--ln);color:var(--fg);padding:6px 10px;border-radius:8px;font:700 15px inherit;font-family:inherit}
@@ -84,32 +86,36 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:10px 0 28px}foo
 
 <script>
 const $=id=>document.getElementById(id),R=n=>Math.round(n).toLocaleString('ru-RU')+' ₽';
+const prevN={};function put(id,v,suf){const el=$(id),a=prevN[id]||0;prevN[id]=v;cancelAnimationFrame(el._a);const t0=performance.now();const f=t=>{const p=Math.min(1,(t-t0)/500);el.textContent=R(a+(v-a)*(1-Math.pow(1-p,3)));if(p<1)el._a=requestAnimationFrame(f)};f(t0)}
 const S={loan:{a:3000000,r:12.5,y:20,t:'a'},dep:{a:300000,m:15000,r:16,y:5},goal:{g:3000000,a:200000,m:40000,r:12}};
 try{Object.assign(S.loan,JSON.parse(localStorage.pf_loan||'{}'));Object.assign(S.dep,JSON.parse(localStorage.pf_dep||'{}'));Object.assign(S.goal,JSON.parse(localStorage.pf_goal||'{}'))}catch{}
-function chart(cv,series,max){ // series: [{pts:[...],c}], simple line chart with filled area
+function chart(cv,series,max){ // линия рисуется слева направо
+  cancelAnimationFrame(cv._a);const t0=performance.now();const run=t=>{const p=Math.min(1,(t-t0)/900);draw(cv,series,max,1-Math.pow(1-p,3));if(p<1)cv._a=requestAnimationFrame(run)};run(t0)}
+function draw(cv,series,max,k){
   const dpr=devicePixelRatio||1,W=cv.clientWidth,H=cv.clientHeight;cv.width=W*dpr;cv.height=H*dpr;const g=cv.getContext('2d');g.scale(dpr,dpr);g.clearRect(0,0,W,H);
+  g.save();g.beginPath();g.rect(0,0,52+(W-52)*k,H);g.clip();
   g.strokeStyle='#ffffff14';g.fillStyle='#8fbfb4';g.font='11px Segoe UI';
   for(let i=0;i<=4;i++){const y=10+(H-30)*i/4;g.beginPath();g.moveTo(52,y);g.lineTo(W,y);g.stroke();g.fillText((max*(1-i/4)/1e6).toFixed(max>=1e6?1:2)+'M',4,y+4)}
   series.forEach(s=>{const n=s.pts.length;g.beginPath();s.pts.forEach((v,i)=>{const x=52+(W-60)*i/Math.max(n-1,1),y=10+(H-30)*(1-v/max);i?g.lineTo(x,y):g.moveTo(x,y)});
-    g.strokeStyle=s.c;g.lineWidth=2.5;g.stroke();if(s.fill){g.lineTo(W-8,H-20);g.lineTo(52,H-20);g.fillStyle=s.c+'22';g.fill()}});
+    g.strokeStyle=s.c;g.lineWidth=2.5;g.stroke();if(s.fill){g.lineTo(W-8,H-20);g.lineTo(52,H-20);g.fillStyle=s.c+'22';g.fill()}});g.restore();
 }
 function loan(){const {a,r,y,t}=S.loan,i=r/1200,n=y*12;if(!(a>0&&i>0&&n>0))return;let bal=a,sum=0,paid=0,rows=[],bp=[],ip=[];
   const ann=a*i/(1-(1+i)**-n);
   for(let k=1;k<=n;k++){const int=bal*i,d=t=='a'?ann-int:a/n,p=int+d;bal=Math.max(0,bal-d);sum+=p;paid+=int;rows.push([k,p,d,int,bal]);bp.push(bal);ip.push(paid)}
   $('l_pay').textContent=t=='a'?R(ann):R(rows[0][1])+' → '+R(rows[n-1][1]);$('l_lab').textContent=t=='a'?'Платёж в месяц':'Первый → последний платёж';
-  $('l_over').textContent=R(sum-a);$('l_all').textContent=R(sum);$('l_pct').textContent=Math.round((sum-a)/a*100)+'%';
+  put('l_over',sum-a);put('l_all',sum);$('l_pct').textContent=Math.round((sum-a)/a*100)+'%';
   $('l_tb').innerHTML=rows.map(x=>`<tr><td>${x[0]}</td>${x.slice(1).map(v=>`<td>${R(v)}</td>`).join('')}</tr>`).join('');
   chart($('l_cv'),[{pts:bp,c:'#34d399',fill:1},{pts:ip,c:'#facc15'}],Math.max(a,sum-a));}
 function dep(){const {a,m,r,y}=S.dep,i=r/1200,n=y*12;let b=a,inv=a,bp=[a],ip=[a];
   for(let k=1;k<=n;k++){b=b*(1+i)+m;inv+=m;bp.push(b);ip.push(inv)}
-  $('d_tot').textContent=R(b);$('d_in').textContent=R(inv);$('d_gain').textContent=R(b-inv);$('d_pct').textContent=inv?'+'+Math.round((b-inv)/inv*100)+'%':'—';
+  put('d_tot',b);put('d_in',inv);put('d_gain',b-inv);$('d_pct').textContent=inv?'+'+Math.round((b-inv)/inv*100)+'%':'—';
   chart($('d_cv'),[{pts:bp,c:'#34d399',fill:1},{pts:ip,c:'#facc15'}],b);}
 function goal(){const {g,a,m,r}=S.goal,i=r/1200;let b=a,k=0,bp=[a],inv=a;
   while(b<g&&k<1200){b=b*(1+i)+m;inv+=m;k++;bp.push(b)}
   const ok=b>=g,y=Math.floor(k/12),mo=k%12;
   $('g_time').textContent=ok?(y?y+' г. ':'')+(mo?mo+' мес.':(y?'':'сразу')):'более 100 лет';
   const d=new Date();d.setMonth(d.getMonth()+k);$('g_date').textContent=ok?d.toLocaleDateString('ru-RU',{month:'long',year:'numeric'}):'—';
-  $('g_in').textContent=R(inv-a+Math.min(a,g));$('g_gain').textContent=R(Math.max(0,b-inv));
+  put('g_in',inv-a+Math.min(a,g));put('g_gain',Math.max(0,b-inv));
   chart($('g_cv'),[{pts:bp,c:'#34d399',fill:1},{pts:bp.map(()=>g),c:'#facc15'}],Math.max(g,b));}
 const F={loan,dep,goal};
 document.querySelectorAll('.grid').forEach(p=>{const id=p.id;
