@@ -9,7 +9,7 @@ const env = Object.fromEntries(
 const TOKEN = env.BOT_TOKEN, ADMIN = env.ADMIN_ID;
 if (!TOKEN) throw new Error('BOT_TOKEN не задан в .env');
 const API = `https://api.telegram.org/bot${TOKEN}/`;
-const TG = 'https://t.me/rivvva_la_viddda', MAIL = 'tolyan.berd2008@gmail.com';
+const TG = 'https://t.me/boombap_lo', MAIL = 'progfarm604@gmail.com';
 
 const S = [
   { id: 1, c: 'Сайты', t: 'Лендинг', p: 4500, d: '3–5 дней', a: 'Одностраничный продающий сайт: дизайн, адаптив, форма заявки, базовое SEO.' },
