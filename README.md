@@ -21,4 +21,4 @@
 Готовые `.exe` лежат в [Releases](../../releases/latest). Сборка из исходников: `apps/build.bat` (нужен только .NET Framework 4, он есть в Windows 10/11).
 
 ## Контакты
-Заказ и оплата — [@ProgFarmBot](https://t.me/ProgFarmBot). Личный Telegram [@rivvva_la_viddda](https://t.me/rivvva_la_viddda) — только для развёрнутых и индивидуальных вопросов. Почта: tolyan.berd2008@gmail.com
+Заказ и оплата — [@ProgFarmBot](https://t.me/ProgFarmBot). Личный Telegram [@boombap_lo](https://t.me/boombap_lo) — только для развёрнутых и индивидуальных вопросов. Почта: progfarm604@gmail.com
