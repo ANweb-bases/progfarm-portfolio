@@ -1,4 +1,5 @@
 .env
+data/
 orders.jsonl
-node_modules
 relay.json
+node_modules
