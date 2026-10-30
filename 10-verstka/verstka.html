@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Вёрстка по макету — сравнение макета и результата</title>
+<meta name="description" content="Демонстрация вёрстки по макету: тяните ползунок и сравнивайте дизайн с готовой адаптивной страницей, проверяйте размеры и отступы.">
+<style>
+:root{--bg:#f1f3f8;--ink:#14182b;--mut:#6b7392;--p:#6c5ce7;--p2:#a29bfe}
+*{box-sizing:border-box;margin:0}body{background:var(--bg);color:var(--ink);font:16px/1.5 "Segoe UI",system-ui,sans-serif}
+.w{max-width:1100px;margin:auto;padding:30px 20px}h1{font-size:36px;letter-spacing:-1px}h1 em{font-style:normal;color:var(--p)}.lead{color:var(--mut);margin:8px 0 24px;max-width:620px}
+.tools{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;align-items:center}.tools button{border:1.5px solid #d4d8e8;background:#fff;padding:9px 18px;border-radius:99px;cursor:pointer;font:inherit;transition:.2s}.tools button.on{background:var(--p);color:#fff;border-color:var(--p)}.tools span{color:var(--mut);font-size:14px;margin-left:auto}
+.cmp{position:relative;border-radius:20px;overflow:hidden;box-shadow:0 20px 60px #14182b22;background:#fff;user-select:none;touch-action:none;cursor:ew-resize}
+.pane{padding:34px;min-height:430px}
+.mock{position:absolute;inset:0;background:#fafafa repeating-linear-gradient(0deg,transparent 0 23px,#6c5ce711 23px 24px);clip-path:inset(0 var(--cut,50%) 0 0);z-index:2;padding:34px;color:#555}
+.mock *{font-family:"Courier New",monospace!important}.mock .spec{position:absolute;font:11px "Courier New";background:#ff4d6d;color:#fff;padding:2px 6px;border-radius:4px;white-space:nowrap}
+.hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:34px}.hd b{font-size:22px}.hd nav{display:flex;gap:22px;color:var(--mut)}
+.hero{display:grid;grid-template-columns:1.2fr 1fr;gap:30px;align-items:center}.hero h2{font-size:44px;line-height:1.05;letter-spacing:-2px}.hero p{color:var(--mut);margin:14px 0 22px}
+.btn{display:inline-block;background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;padding:14px 28px;border-radius:12px;font-weight:700}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.c{background:#fff;border-radius:16px;padding:16px;box-shadow:0 6px 20px #6c5ce71a}.c b{font-size:22px;color:var(--p)}.c span{display:block;color:var(--mut);font-size:13px}
+.blob{aspect-ratio:1;border-radius:36% 64% 60% 40%/50% 40% 60% 50%;background:linear-gradient(135deg,var(--p),var(--p2));display:grid;place-items:center;font-size:80px;animation:mo 8s ease-in-out infinite}@keyframes mo{50%{border-radius:60% 40% 40% 60%/40% 60% 40% 60%}}
+.h{position:absolute;top:0;bottom:0;left:calc(100% - var(--cut,50%));width:3px;background:var(--p);z-index:5;margin-left:-1.5px}.h::after{content:"↔";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:42px;height:42px;border-radius:50%;background:var(--p);color:#fff;display:grid;place-items:center;box-shadow:0 6px 20px #6c5ce766}
+.lb{position:absolute;top:10px;z-index:6;font:700 12px system-ui;letter-spacing:1px;background:#14182bcc;color:#fff;padding:4px 12px;border-radius:99px}.l1{left:10px}.l2{right:10px}
+.mini{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:22px}.mini div{background:#fff;border-radius:16px;padding:18px;box-shadow:0 6px 20px #14182b10}.mini b{color:var(--p)}
+footer{text-align:center;color:var(--mut);padding:24px;font-size:14px}footer a{text-decoration:underline}
+@media(max-width:760px){.hero{grid-template-columns:1fr}.cards,.mini{grid-template-columns:1fr}.hd nav{display:none}.mock .spec{display:none}}
+</style>
+</head>
+<body>
+<div class="w">
+ <h1>Макет → <em>вёрстка</em></h1><p class="lead">Слева-направо двигайте ползунок: на одной стороне исходный макет с размерами, на другой — готовая страница. Пиксель в пиксель, адаптивная и с анимациями.</p>
+ <div class="tools"><button class="on" data-m="slide">Сравнение</button><button data-m="auto">Автоанимация</button><button data-w="1">Десктоп</button><button data-w="2">Планшет</button><button data-w="3">Телефон</button><span id="wd">1100 px</span></div>
+ <div class="cmp" id="cmp" style="--cut:50%">
+  <span class="lb l1">ВЁРСТКА</span><span class="lb l2">МАКЕТ</span><div class="h"></div>
+  <div class="pane" id="live"><div class="hd"><b>● Orbit</b><nav><span>Продукт</span><span>Цены</span><span>Блог</span></nav></div>
+   <div class="hero"><div><h2>Управляйте проектами легче</h2><p>Орбита собирает задачи, сроки и команду в одном месте.</p><span class="btn">Попробовать бесплатно</span></div><div class="blob">🚀</div></div>
+   <div class="cards" style="margin-top:34px"><div class="c"><b>12k+</b><span>команд</span></div><div class="c"><b>99,9%</b><span>аптайм</span></div><div class="c"><b>4,9</b><span>рейтинг</span></div></div></div>
+  <div class="mock" id="mock"><div class="hd"><b>● Orbit</b><nav><span>Продукт</span><span>Цены</span><span>Блог</span></nav></div>
+   <div class="hero"><div><h2>Управляйте проектами легче</h2><p>Орбита собирает задачи, сроки и команду в одном месте.</p><span class="btn" style="background:#ddd;color:#555">Попробовать бесплатно</span></div><div class="blob" style="background:#ddd;animation:none">🚀</div></div>
+   <div class="cards" style="margin-top:34px"><div class="c" style="box-shadow:none;border:1px dashed #aaa"><b style="color:#555">12k+</b><span>команд</span></div><div class="c" style="box-shadow:none;border:1px dashed #aaa"><b style="color:#555">99,9%</b><span>аптайм</span></div><div class="c" style="box-shadow:none;border:1px dashed #aaa"><b style="color:#555">4,9</b><span>рейтинг</span></div></div>
+   <span class="spec" style="left:34px;top:84px">H1 · 44/46 · −2%</span><span class="spec" style="left:34px;top:258px">CTA · r12 · 14/28</span><span class="spec" style="left:calc(50% + 60px);top:150px">gap 30</span></div>
+ </div>
+ <div class="mini"><div><b>Pixel-perfect</b><br>Сверяю отступы, размеры шрифтов и цвета с макетом.</div><div><b>Адаптив</b><br>Десктоп, планшет и телефон — проверьте кнопками выше.</div><div><b>Живая страница</b><br>Анимации, hover-эффекты и чистый код без лишнего.</div></div>
+</div>
+<footer>Демонстрация · разработано в <a href="../01-progfarm/progfarm.html">ProgFarm</a></footer>
+<script>
+const $=id=>document.getElementById(id),cmp=$('cmp');let auto=null,cut=50;
+const set=c=>{cut=Math.max(0,Math.min(100,c));cmp.style.setProperty('--cut',cut+'%')};
+const move=e=>{const r=cmp.getBoundingClientRect();set(100-((e.clientX-r.left)/r.width)*100)};
+cmp.onpointerdown=e=>{stop();move(e);cmp.setPointerCapture(e.pointerId);cmp.onpointermove=move};cmp.onpointerup=()=>cmp.onpointermove=null;
+function stop(){clearInterval(auto);auto=null;document.querySelectorAll('[data-m]').forEach(b=>b.classList.toggle('on',b.dataset.m=='slide'))}
+document.querySelector('.tools').onclick=e=>{const b=e.target.closest('button');if(!b)return;
+ if(b.dataset.m=='auto'){stop();document.querySelectorAll('[data-m]').forEach(x=>x.classList.toggle('on',x==b));let t=0;auto=setInterval(()=>set(50+48*Math.sin(t+=.04)),30)}
+ if(b.dataset.m=='slide')stop();
+ if(b.dataset.w){const w={1:'100%',2:'720px',3:'390px'}[b.dataset.w];cmp.style.maxWidth=w;cmp.style.margin='0 auto';$('wd').textContent={1:'1100 px',2:'720 px',3:'390 px'}[b.dataset.w];document.querySelectorAll('[data-w]').forEach(x=>x.classList.toggle('on',x==b))}};
+set(50);
+</script>
+</body>
+</html>
