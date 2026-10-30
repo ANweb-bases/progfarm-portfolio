@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Работа с базами данных — импорт, очистка, запросы, отчёты</title>
+<meta name="description" content="Демонстрация работы с данными: импорт CSV, автоматическая очистка, SQL-запросы с результатом и отчёт с диаграммой.">
+<style>
+:root{--bg:#0d1016;--p:#161b25;--ln:#ffffff15;--fg:#e8ecf4;--mut:#8591a6;--a:#7c9cff;--g:#4ade80;--r:#ff6b81;--y:#fbbf24}
+*{box-sizing:border-box;margin:0}body{background:radial-gradient(800px 500px at 100% 0,#7c9cff14,transparent),var(--bg);color:var(--fg);font:15px/1.5 "Segoe UI",system-ui,sans-serif}
+.w{max-width:1160px;margin:auto;padding:28px 20px}h1{font-size:36px;letter-spacing:-1px}h1 em{font-style:normal;color:var(--a)}.lead{color:var(--mut);margin:8px 0 20px;max-width:660px}
+.steps{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}.steps button{border:1px solid var(--ln);background:none;color:var(--mut);padding:9px 18px;border-radius:99px;cursor:pointer;font:inherit;transition:.25s}.steps button.on{background:var(--a);color:#0a1030;border-color:var(--a);font-weight:700}.steps button.dn{border-color:#4ade8066;color:var(--g)}
+.card{background:var(--p);border:1px solid var(--ln);border-radius:20px;padding:20px;animation:in .45s both}@keyframes in{from{opacity:0;transform:translateY(12px)}}
+.row{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap;align-items:center}
+.btn{background:var(--a);color:#0a1030;border:0;padding:10px 20px;border-radius:99px;font:700 14px inherit;cursor:pointer;transition:.2s}.btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px #7c9cff44}.btn.g{background:#ffffff12;color:var(--fg)}
+textarea{width:100%;height:150px;background:#0b0e14;border:1px solid var(--ln);border-radius:12px;color:#9fe;padding:12px;font:13px/1.5 Consolas,monospace;resize:vertical}
+.tw{max-height:320px;overflow:auto;border-radius:12px;border:1px solid var(--ln)}table{width:100%;border-collapse:collapse;font-size:14px}th{position:sticky;top:0;background:#1d2433;text-align:left;padding:8px 12px;color:var(--mut);font-weight:600}td{padding:7px 12px;border-top:1px solid #ffffff0d}tr.bad td{background:#ff6b8114}tr.fixed td{animation:fx 1.2s}@keyframes fx{from{background:#4ade8033}}td.x{color:var(--r)}
+.chip{display:inline-block;font-size:12px;padding:3px 10px;border-radius:99px;margin-right:6px}.c1{background:#ff6b8122;color:var(--r)}.c2{background:#4ade8022;color:var(--g)}.c3{background:#fbbf2422;color:var(--y)}
+.sel{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}.sel select,.sel input{background:#0b0e14;color:var(--fg);border:1px solid var(--ln);border-radius:10px;padding:9px 12px;font:inherit}
+pre{background:#0b0e14;border-radius:12px;padding:14px;font:13px/1.6 Consolas,monospace;color:#c4b5fd;margin-bottom:12px;white-space:pre-wrap}pre b{color:var(--y);font-weight:400}
+.bars{display:grid;gap:10px}.br{display:grid;grid-template-columns:120px 1fr 90px;gap:10px;align-items:center}.br div{height:22px;background:#0b0e14;border-radius:8px;overflow:hidden}.br i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--a),#a78bfa);border-radius:8px;transition:1s cubic-bezier(.2,.8,.2,1)}.br b{text-align:right}
+.kp{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}.kp div{background:#0b0e14;border-radius:14px;padding:14px;text-align:center}.kp b{display:block;font-size:26px;color:var(--a)}.kp span{font-size:12px;color:var(--mut)}
+footer{text-align:center;color:var(--mut);padding:24px;font-size:14px}footer a{text-decoration:underline}
+@media(max-width:760px){.br{grid-template-columns:90px 1fr 70px}.kp{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="w"><h1>Работа с <em>базами данных</em></h1><p class="lead">Типичная задача: пришла «грязная» выгрузка клиентов. Импортируем, чистим, делаем запросы и получаем отчёт. Идите по шагам.</p>
+ <div class="steps" id="st"><button class="on" data-s="1">1 · Импорт</button><button data-s="2">2 · Очистка</button><button data-s="3">3 · Запросы</button><button data-s="4">4 · Отчёт</button></div>
+ <div id="v"></div></div>
+<footer>Демонстрация · разработано в <a href="../01-progfarm/progfarm.html">ProgFarm</a></footer>
+<script>
+const $=id=>document.getElementById(id),R=n=>n.toLocaleString('ru-RU')+' ₽';
+const RAW=`name,city,phone,amount,date
+Иван Петров ,москва,+7 (900) 111-22-33,12500,2026-09-01
+анна смирнова,Санкт-Петербург,89001112244,8300,2026-09-03
+Иван Петров ,москва,+7 (900) 111-22-33,12500,2026-09-01
+Олег Ким,Москва,8 900 333 44 55,15700,2026-09-05
+Мария Орлова,казань,+79005556677,,2026-09-07
+дмитрий иванов,Санкт-Петербург,9006667788,9900,2026-09-09
+Анна Смирнова,санкт-петербург,89001112244,8300,2026-09-03
+Елена Белова,Казань,+7 900 777-88-99,21400,2026-09-12
+Олег Ким,москва,89003334455,15700,2026-09-05
+Павел Зуев,Москва,+7(900)888-99-00,6700,2026-09-14`;
+let step=1,rows=[],clean=[],issues={};
+const cap=s=>s.trim().split(/\s+/).map(w=>w[0].toUpperCase()+w.slice(1).toLowerCase()).join(' ');
+const ph=p=>{let d=p.replace(/\D/g,'');if(d.length==10)d='7'+d;if(d[0]=='8')d='7'+d.slice(1);return d.length==11?`+7 (${d.slice(1,4)}) ${d.slice(4,7)}-${d.slice(7,9)}-${d.slice(9)}`:p};
+function parse(t){return t.trim().split('\n').slice(1).map(l=>{const c=l.split(',');return{name:c[0],city:c[1],phone:c[2],amount:c[3],date:c[4]}})}
+function doClean(){const seen=new Set(),out=[];issues={dup:0,fmt:0,empty:0};rows.forEach(r=>{const o={name:cap(r.name),city:cap(r.city),phone:ph(r.phone),amount:r.amount===''?null:+r.amount,date:r.date};
+ if(o.name!==r.name||o.city!==r.city||o.phone!==r.phone)issues.fmt++;if(o.amount===null){issues.empty++;o.amount=0;o.bad=1}
+ const k=o.name+o.phone+o.date;if(seen.has(k)){issues.dup++;return}seen.add(k);out.push(o)});clean=out}
+const tbl=(rs,bad)=>`<div class="tw"><table><thead><tr><th>Имя</th><th>Город</th><th>Телефон</th><th>Сумма</th><th>Дата</th></tr></thead><tbody>${rs.map(r=>`<tr class="${bad&&(r.bad)?'fixed':''}"><td>${r.name}</td><td>${r.city}</td><td>${r.phone}</td><td>${r.amount===''||r.amount===null?'<span class="x">пусто</span>':r.amount}</td><td>${r.date}</td></tr>`).join('')}</tbody></table></div>`;
+function go(s){step=s;document.querySelectorAll('#st button').forEach(b=>{b.classList.toggle('on',+b.dataset.s==s);b.classList.toggle('dn',+b.dataset.s<s)});
+ const v=$('v');
+ if(s==1){v.innerHTML=`<div class="card"><div class="row"><b>Вставьте CSV или используйте пример</b><span class="chip c3">10 строк</span></div><textarea id="ta">${RAW}</textarea><div class="row" style="margin-top:12px"><button class="btn" id="imp">Импортировать</button><button class="btn g" id="ex">Вернуть пример</button></div><div id="pv"></div></div>`;
+  $('ex').onclick=()=>$('ta').value=RAW;$('imp').onclick=()=>{rows=parse($('ta').value);$('pv').innerHTML=`<p style="margin:12px 0 8px"><span class="chip c2">Загружено строк: ${rows.length}</span><span class="chip c1">видно проблемы: регистр, телефоны, дубли, пустые</span></p>`+tbl(rows)+`<div class="row" style="margin-top:12px"><button class="btn" onclick="go(2)">Далее: очистка →</button></div>`}}
+ if(s==2){if(!rows.length)rows=parse(RAW);doClean();v.innerHTML=`<div class="card"><div class="row"><span class="chip c1">дублей: ${issues.dup}</span><span class="chip c3">поправлено форматов: ${issues.fmt}</span><span class="chip c1">пустых сумм: ${issues.empty}</span></div><p style="color:var(--mut);margin-bottom:10px">Результат: имена и города приведены к единому виду, телефоны к формату +7 (XXX) XXX-XX-XX, дубли удалены.</p>${tbl(clean,1)}<div class="row" style="margin-top:12px"><button class="btn g" onclick="download()">⬇ Скачать чистый CSV</button><button class="btn" onclick="go(3)">Далее: запросы →</button></div></div>`}
+ if(s==3){if(!clean.length){rows=parse(RAW);doClean()}const cities=[...new Set(clean.map(c=>c.city))];v.innerHTML=`<div class="card"><div class="sel"><select id="qc"><option value="">Все города</option>${cities.map(c=>`<option>${c}</option>`).join('')}</select><input id="qm" type="number" placeholder="Сумма от…" value="0"><select id="qs"><option value="amount DESC">Сначала крупные</option><option value="name">По имени</option><option value="date">По дате</option></select></div><pre id="sq"></pre><div id="qr"></div></div>`;
+  const run=()=>{const c=$('qc').value,m=+$('qm').value||0,s=$('qs').value;let r=clean.filter(x=>(!c||x.city==c)&&x.amount>=m);r=[...r].sort((a,b)=>s=='name'?a.name.localeCompare(b.name):s=='date'?a.date.localeCompare(b.date):b.amount-a.amount);
+   $('sq').innerHTML=`<b>SELECT</b> name, city, amount\n<b>FROM</b> customers\n<b>WHERE</b> ${[c?`city = '${c}'`:'',`amount >= ${m}`].filter(Boolean).join(' AND ')}\n<b>ORDER BY</b> ${s};`;
+   $('qr').innerHTML=`<p style="margin-bottom:8px"><span class="chip c2">найдено: ${r.length}</span></p>`+tbl(r)+`<div class="row" style="margin-top:12px"><button class="btn" onclick="go(4)">Далее: отчёт →</button></div>`};
+  ['qc','qm','qs'].forEach(i=>$(i).oninput=run);run()}
+ if(s==4){if(!clean.length){rows=parse(RAW);doClean()}const by={};clean.forEach(c=>by[c.city]=(by[c.city]||0)+c.amount);const tot=Object.values(by).reduce((a,b)=>a+b,0),mx=Math.max(...Object.values(by));
+  v.innerHTML=`<div class="card"><div class="kp"><div><b>${clean.length}</b><span>клиентов</span></div><div><b>${R(tot)}</b><span>общая выручка</span></div><div><b>${R(Math.round(tot/clean.length))}</b><span>средний чек</span></div></div><h3 style="margin-bottom:10px">Выручка по городам</h3><div class="bars">${Object.entries(by).sort((a,b)=>b[1]-a[1]).map(([c,v])=>`<div class="br"><span>${c}</span><div><i data-w="${v/mx*100}"></i></div><b>${R(v)}</b></div>`).join('')}</div><div class="row" style="margin-top:16px"><button class="btn g" onclick="download()">⬇ Выгрузить отчёт (CSV)</button><button class="btn" onclick="go(1)">↻ Заново</button></div></div>`;
+  setTimeout(()=>document.querySelectorAll('.br i').forEach(i=>i.style.width=i.dataset.w+'%'),60)}}
+function download(){const t='name;city;phone;amount;date\n'+clean.map(c=>[c.name,c.city,c.phone,c.amount,c.date].join(';')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿'+t],{type:'text/csv'}));a.download='clients-clean.csv';a.click()}
+$('st').onclick=e=>{if(e.target.dataset.s)go(+e.target.dataset.s)};go(1);
+</script>
+</body>
+</html>
