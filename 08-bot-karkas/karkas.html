@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Бот для продаж — каркас · интерактивная демонстрация</title>
+<meta name="description" content="Демонстрация каркаса Telegram-бота для продаж: меню, разделы, кнопки и заготовка оплаты. Можно нажимать на кнопки, как в настоящем боте.">
+<style>
+:root{--bg:#0e1621;--panel:#17212b;--ln:#ffffff14;--fg:#e9eef5;--mut:#7f91a4;--me:#2b5278;--bot:#182533;--acc:#5eb5f7}
+*{box-sizing:border-box;margin:0}body{background:radial-gradient(800px 500px at 20% 0,#1b3550,transparent),var(--bg);color:var(--fg);font:15px/1.5 "Segoe UI",system-ui,sans-serif;min-height:100vh}
+.w{max-width:1000px;margin:auto;padding:30px 20px;display:grid;grid-template-columns:380px 1fr;gap:34px;align-items:start}
+.phone{background:var(--panel);border-radius:34px;border:8px solid #0a0f16;box-shadow:0 30px 80px #000a;overflow:hidden;height:680px;display:flex;flex-direction:column}
+.top{display:flex;gap:12px;align-items:center;padding:12px 16px;background:#1c2733;border-bottom:1px solid var(--ln)}.av{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#b6ff3b,#38e8ff);display:grid;place-items:center;color:#000;font-weight:900}.top b{display:block}.top small{color:var(--mut)}
+#chat{flex:1;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:8px;scroll-behavior:smooth}
+.m{max-width:86%;padding:9px 13px;border-radius:16px;animation:pop .35s both;white-space:pre-line}.m.b{background:var(--bot);border-bottom-left-radius:4px;align-self:flex-start}.m.u{background:var(--me);border-bottom-right-radius:4px;align-self:flex-end}@keyframes pop{from{opacity:0;transform:translateY(10px) scale(.96)}}
+.kb{display:grid;gap:6px;margin-top:6px;align-self:stretch;animation:pop .4s both}.kb .r{display:flex;gap:6px}.kb button{flex:1;background:#2a3b4d;border:0;color:var(--acc);padding:10px;border-radius:10px;font:inherit;cursor:pointer;transition:.2s}.kb button:hover{background:#34506b;transform:translateY(-1px)}.kb button.dis{opacity:.5;pointer-events:none}
+.typing{align-self:flex-start;background:var(--bot);padding:10px 16px;border-radius:16px;display:flex;gap:4px}.typing i{width:7px;height:7px;border-radius:50%;background:var(--mut);animation:tp 1s infinite}.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}@keyframes tp{50%{transform:translateY(-5px);opacity:.4}}
+.inp{display:flex;gap:8px;padding:10px;background:#1c2733}.inp div{flex:1;background:#0e1621;border-radius:20px;padding:9px 14px;color:var(--mut)}
+h1{font-size:34px;letter-spacing:-1px;line-height:1.1;margin-bottom:12px}h1 em{font-style:normal;color:var(--acc)}.side p{color:var(--mut);margin-bottom:18px}
+.card{background:var(--panel);border:1px solid var(--ln);border-radius:18px;padding:20px;margin-bottom:14px}.card h3{margin-bottom:8px}.card ul{padding-left:18px;color:#c4d0de}.card li{margin:4px 0}
+pre{background:#0a0f16;border-radius:14px;padding:16px;overflow:auto;font:13px/1.55 Consolas,monospace;color:#9fdbff;border:1px solid var(--ln)}pre .c{color:#6b8299}
+.btn{display:inline-block;background:var(--acc);color:#04121f;padding:11px 20px;border-radius:99px;font-weight:700;text-decoration:none;margin-right:8px}
+footer{text-align:center;color:var(--mut);padding:20px;font-size:14px}footer a{text-decoration:underline}
+@media(max-width:860px){.w{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="w">
+ <div class="phone"><div class="top"><div class="av">S</div><div><b>Магазин «Свежо»</b><small>бот · онлайн</small></div></div><div id="chat"></div><div class="inp"><div>Сообщение</div></div></div>
+ <div class="side"><h1>Каркас <em>бота для продаж</em></h1><p>Нажимайте кнопки в телефоне слева — так будет вести себя бот. Структура уже готова, остаётся наполнить её вашими товарами и подключить оплату.</p>
+  <div class="card"><h3>Что внутри каркаса</h3><ul><li>Приветствие и главное меню</li><li>Каталог с разделами и карточками товара</li><li>Корзина и оформление заказа</li><li>Раздел «Контакты» и обратная связь</li><li>Заготовка под оплату (подключается позже)</li></ul></div>
+  <div class="card"><h3>Так выглядит код (шаблон `bot-template.js`)</h3><pre><span class="c">// каждый экран — это объект: текст + кнопки</span>
+const screens = {
+  menu:    { text: 'Добро пожаловать!', kb: [['🛍 Каталог','catalog'],['🛒 Корзина','cart']] },
+  catalog: { text: 'Выберите раздел',   kb: [['Букеты','cat1'],['Комнатные','cat2']] },
+  pay:     { text: 'Оплата скоро!',     kb: [['⬅ Меню','menu']] }
+};</pre></div>
+  <a class="btn" href="https://github.com/ANweb-bases/progfarm-portfolio/blob/main/08-bot-karkas/bot-template.js" target="_blank" rel="noopener">Открыть шаблон кода</a><a class="btn" style="background:#ffffff14;color:#fff" href="#" id="rs">Начать заново</a></div>
+</div>
+<footer>Интерактивная демонстрация · разработано в <a href="../01-progfarm/progfarm.html">ProgFarm</a></footer>
+<script>
+const $=id=>document.getElementById(id),chat=$('chat');
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+const CAT={cat1:['Букеты',[['Пионы · 25 шт',3200],['Розы кустовые',2400],['Тюльпаны · 15 шт',1500]]],cat2:[ 'Комнатные',[['Монстера',1900],['Фикус Бенджамина',1400],['Замиокулькас',2100]]]};
+let cart=[];
+const S={
+ menu:()=>['🌿 <b>Магазин «Свежо»</b>\nДобро пожаловать! Выберите, что хотите сделать:',[[['🛍 Каталог','catalog'],['🛒 Корзина','cart']],[['ℹ О магазине','about'],['📞 Контакты','contacts']]]],
+ catalog:()=>['Выберите раздел каталога:',[[['💐 Букеты','cat:cat1'],['🪴 Комнатные','cat:cat2']],[['⬅ Меню','menu']]]],
+ about:()=>['Мы доставляем свежие цветы и растения по городу за 2 часа. Работаем ежедневно 8:00–22:00.',[[['⬅ Меню','menu']]]],
+ contacts:()=>['📞 +7 900 000-00-00\n✈ @svezho_manager\n📍 ул. Цветочная, 5',[[['⬅ Меню','menu']]]],
+ cart:()=>cart.length?[`🛒 <b>Ваша корзина</b>\n${cart.map(x=>'• '+x[0]+' — '+x[1]+' ₽').join('\n')}\n\nИтого: ${cart.reduce((a,x)=>a+x[1],0)} ₽`,[[['💳 Оплатить','pay'],['🗑 Очистить','clear']],[['⬅ Меню','menu']]]]:['Корзина пока пуста.',[[['🛍 В каталог','catalog'],['⬅ Меню','menu']]]],
+ pay:()=>['💳 <b>Оплата</b>\nПриём платежей подключается на этапе запуска: ЮKassa, СБП или карта. Заказ сохранён, менеджер свяжется для подтверждения.',[[['✅ Оформить заказ','done'],['⬅ Корзина','cart']]]],
+ done:()=>{cart=[];return['🎉 Заказ принят! Номер #1042. Мы напишем, когда курьер выедет.',[[['⬅ Меню','menu']]]]},
+ clear:()=>{cart=[];return S.cart()}
+};
+function add(html,cls){const d=document.createElement('div');d.className='m '+cls;d.innerHTML=html;chat.append(d);chat.scrollTop=1e5;return d}
+async function show(key,arg){let r;if(key=='cat'){const c=CAT[arg];r=[`<b>${c[0]}</b>\nНажмите на товар, чтобы добавить в корзину:`,[...c[1].map(([n,p])=>[[`${n} · ${p} ₽`,'add:'+n+':'+p]]),[['⬅ Каталог','catalog'],['🛒 Корзина','cart']]]]}else r=S[key]();
+ const t=document.createElement('div');t.className='typing';t.innerHTML='<i></i><i></i><i></i>';chat.append(t);chat.scrollTop=1e5;await wait(550);t.remove();
+ add(r[0],'b');const kb=document.createElement('div');kb.className='kb';kb.innerHTML=r[1].map(row=>`<div class="r">${row.map(([t,d])=>`<button data-d="${d}">${t}</button>`).join('')}</div>`).join('');chat.append(kb);chat.scrollTop=1e5}
+chat.onclick=async e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset.d;b.parentElement.parentElement.querySelectorAll('button').forEach(x=>x.classList.add('dis'));
+ add(b.textContent,'u');
+ if(d.startsWith('add:')){const [,n,p]=d.split(':');cart.push([n,+p]);const t=await wait(350);add('✅ Добавлено: '+n,'b');return show('cat',CAT.cat1[1].some(x=>x[0]==n)?'cat1':'cat2')}
+ if(d.startsWith('cat:'))return show('cat',d.slice(4));show(d)};
+$('rs').onclick=e=>{e.preventDefault();chat.innerHTML='';cart=[];show('menu')};
+show('menu');
+</script>
+</body>
+</html>
