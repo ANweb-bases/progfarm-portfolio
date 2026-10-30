@@ -16,9 +16,9 @@
 | [ClipFlow](apps/clipflow) | Windows-приложение: история буфера обмена |
 | [Копилка](apps/kopilka) | Windows-приложение: учёт доходов и расходов |
 | [Night City Build Advisor](cyberpunk-builder) | Помощник по билдам Cyberpunk 2077 (сайт и .exe) |
-| [bot](bot) | Telegram-бот ProgFarm (Node.js) |
+| [bot](bot) | Telegram-бот ProgFarm (Node.js), временно недоступен |
 
 Готовые `.exe` лежат в [Releases](../../releases/latest). Сборка из исходников: `apps/build.bat` (нужен только .NET Framework 4, он есть в Windows 10/11).
 
 ## Контакты
-Заказ и оплата — [@ProgFarmBot](https://t.me/ProgFarmBot). Личный Telegram [@rivvva_la_viddda](https://t.me/rivvva_la_viddda) — только для развёрнутых и индивидуальных вопросов. Почта: progfarm604@gmail.com
+Заказы принимаются по почте progfarm604@gmail.com или в личных сообщениях Telegram [@rivvva_la_viddda](https://t.me/rivvva_la_viddda). Telegram-бот [@ProgFarmBot](https://t.me/ProgFarmBot) временно недоступен по техническим причинам.
