@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Починка сайта — диагностика и исправление · демонстрация</title>
+<meta name="description" content="Демонстрация починки сайта: сломанная страница, список найденных проблем и исправление каждой одним нажатием.">
+<style>
+:root{--bg:#10131a;--p:#171c26;--ln:#ffffff14;--fg:#e8ecf5;--mut:#8590a6;--ok:#22c55e;--er:#ff4d5e;--a:#38bdf8}
+*{box-sizing:border-box;margin:0}body{background:radial-gradient(700px 400px at 100% 0,#38bdf814,transparent),var(--bg);color:var(--fg);font:15px/1.5 "Segoe UI",system-ui,sans-serif}
+.w{max-width:1140px;margin:auto;padding:28px 20px;display:grid;grid-template-columns:1fr 380px;gap:24px;align-items:start}
+h1{grid-column:1/-1;font-size:36px;letter-spacing:-1px}h1 em{font-style:normal;color:var(--a)}.lead{grid-column:1/-1;color:var(--mut);margin-top:-14px}
+.site{background:#fff;color:#222;border-radius:18px;overflow:hidden;box-shadow:0 20px 60px #0008;position:relative;min-height:470px}.bar{display:flex;gap:6px;padding:10px 14px;background:#e6e9f0;align-items:center}.bar i{width:10px;height:10px;border-radius:50%;background:#bbb}.bar span{margin-left:10px;font-size:12px;color:#777;background:#fff;border-radius:99px;padding:3px 14px}
+.pg{padding:22px;overflow:hidden;position:relative}
+.nv{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}.nv b{font-size:20px}.nv a{color:#555;margin-left:16px}
+.hero h2{font-size:30px;letter-spacing:-1px}.hero p{color:#666;margin:6px 0 14px}
+.grid{display:flex;gap:12px}.card{flex:0 0 240px;border:1px solid #dde;border-radius:12px;padding:14px;background:#fafbff}.card b{display:block;margin-bottom:4px}
+.fx-layout .grid{flex-wrap:wrap}.fx-layout .card{flex:1 1 200px}
+.btn{display:inline-block;background:#3b6fe0;color:#fff;padding:10px 20px;border-radius:8px;font-weight:600;border:0;font:600 15px inherit;cursor:pointer}.dead{pointer-events:none;opacity:.55;position:relative}.dead::after{content:"✕";position:absolute;right:-10px;top:-10px;background:var(--er);color:#fff;border-radius:50%;width:22px;height:22px;display:grid;place-items:center;font-size:12px}.fx-btn .dead{pointer-events:auto;opacity:1}.fx-btn .dead::after{display:none}
+.form{margin-top:18px;display:grid;gap:8px;max-width:340px}.form input{padding:10px;border:1.5px solid #cfd4e6;border-radius:8px;font:inherit}.msg{font-size:13px;min-height:18px}
+.img{margin-top:14px;height:70px;border-radius:10px;background:#eef;display:grid;place-items:center;color:#889;font-size:13px}.img.broken{background:repeating-linear-gradient(45deg,#fee 0 10px,#fdd 10px 20px);color:var(--er)}
+.over{position:absolute;right:-70px;top:90px;width:260px;background:#ffe9a8;padding:14px;border-radius:10px;box-shadow:0 6px 18px #0003;font-size:13px;transition:.5s}.fx-over .over{right:20px;top:auto;bottom:16px;background:#e6f7ec}
+.flash{position:absolute;inset:0;background:radial-gradient(circle,#22c55e55,transparent 70%);opacity:0;pointer-events:none}.flash.go{animation:fl .8s}@keyframes fl{20%{opacity:1}100%{opacity:0}}
+.pn{background:var(--p);border:1px solid var(--ln);border-radius:20px;padding:20px;position:sticky;top:16px}.pn h3{font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--mut);margin-bottom:12px}
+.bug{display:grid;grid-template-columns:28px 1fr auto;gap:10px;align-items:center;background:#0f131a;border-radius:12px;padding:11px;margin-bottom:8px;transition:.4s;border:1px solid transparent}.bug i{font-style:normal;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:#ff4d5e22;color:var(--er)}.bug b{font-size:14px}.bug small{display:block;color:var(--mut);font-size:12px}
+.bug button{border:0;background:var(--a);color:#04121f;border-radius:8px;padding:7px 12px;font:700 13px inherit;cursor:pointer;transition:.2s}.bug button:hover{transform:translateY(-1px)}
+.bug.ok{border-color:#22c55e55}.bug.ok i{background:#22c55e22;color:var(--ok)}.bug.ok button{display:none}.bug.ok i::before{content:"✓"}.bug:not(.ok) i::before{content:"!"}
+.prog{height:8px;background:#0f131a;border-radius:99px;overflow:hidden;margin:6px 0 14px}.prog div{height:100%;width:0;background:linear-gradient(90deg,#ff4d5e,#22c55e);transition:.6s}
+.log{background:#080b10;border-radius:12px;padding:12px;font:12px/1.6 Consolas,monospace;color:#8fa;height:120px;overflow:auto}.log .e{color:#ff7b8a}.log .g{color:#6ee7a0}
+.all{margin-top:10px;width:100%;border:0;background:linear-gradient(135deg,#22c55e,#38bdf8);color:#04121f;padding:12px;border-radius:12px;font:800 15px inherit;cursor:pointer}
+footer{grid-column:1/-1;text-align:center;color:var(--mut);padding:10px;font-size:14px}footer a{text-decoration:underline}
+@media(max-width:900px){.w{grid-template-columns:1fr}.pn{position:static}.grid{flex-wrap:nowrap}}
+</style>
+</head>
+<body>
+<div class="w">
+ <h1>Починка <em>сайта</em></h1><p class="lead">Слева — страница с типичными поломками. Справа — результат диагностики. Нажмите «Исправить» у каждой проблемы или починить всё сразу.</p>
+ <div class="site" id="site"><div class="bar"><i></i><i></i><i></i><span>magazin-remonta.ru</span></div><div class="flash" id="fl"></div>
+  <div class="pg"><div class="nv"><b>РемонтПро</b><div><a>Услуги</a><a>Цены</a><a>Контакты</a></div></div>
+   <div class="hero"><h2>Ремонт квартир без стресса</h2><p>Фиксированная смета и гарантия 3 года.</p><span class="btn dead" id="b1">Рассчитать стоимость</span></div>
+   <div class="grid" style="margin-top:18px"><div class="card"><b>Косметический</b>от 3 500 ₽/м²</div><div class="card"><b>Капитальный</b>от 7 000 ₽/м²</div><div class="card"><b>Дизайнерский</b>от 12 000 ₽/м²</div></div>
+   <div class="img broken" id="im">🖼 Не удалось загрузить: /img/hero.jpg (404)</div>
+   <form class="form" id="fm"><input placeholder="Телефон"><button class="btn" id="sb">Отправить заявку</button><div class="msg" id="mg">⚠ Форма не отправляется</div></form>
+   <div class="over" id="ov">📢 Акция −15% (перекрывает контент!)</div></div></div>
+ <div class="pn"><h3>Диагностика</h3><div class="prog"><div id="pg"></div></div><div id="bugs"></div><button class="all" id="all">Починить всё одним нажатием</button><h3 style="margin-top:16px">Журнал</h3><div class="log" id="lg"></div></div>
+ <footer>Демонстрация · разработано в <a href="../01-progfarm/progfarm.html">ProgFarm</a></footer>
+</div>
+<script>
+const $=id=>document.getElementById(id),site=$('site');
+const B=[{id:'layout',t:'«Съехавшая» вёрстка',d:'Карточки не переносятся на узких экранах',fix:()=>site.classList.add('fx-layout'),log:'.grid{flex-wrap:wrap} — карточки перестроены'},
+ {id:'btn',t:'Мёртвая кнопка',d:'Нет обработчика, кнопка не нажимается',fix:()=>{site.classList.add('fx-btn');$('b1').classList.remove('dead');$('b1').onclick=()=>$('b1').textContent='Расчёт: от 148 000 ₽ ✓'},log:'pointer-events восстановлен, добавлен onclick'},
+ {id:'img',t:'Битая картинка',d:'Файл /img/hero.jpg → 404',fix:()=>{$('im').classList.remove('broken');$('im').textContent='🖼 hero.webp загружена (оптимизировано, 84 КБ)'},log:'путь исправлен, формат webp'},
+ {id:'form',t:'Форма не отправляется',d:'Ошибка в консоли: undefined is not a function',fix:()=>{$('mg').style.color='#16a34a';$('mg').textContent='✓ Форма работает: валидация и отправка на почту';$('fm').onsubmit=e=>{e.preventDefault();$('mg').textContent='✓ Заявка отправлена!'}},log:'исправлен вызов handler(), добавлена проверка полей'},
+ {id:'over',t:'Баннер перекрывает текст',d:'position:absolute без отступов',fix:()=>site.classList.add('fx-over'),log:'баннер перенесён в безопасную зону'}];
+const done=new Set();let li=0;
+const log=(t,c)=>{const d=document.createElement('div');d.className=c||'';d.textContent=new Date().toLocaleTimeString('ru-RU')+' '+t;$('lg').append(d);$('lg').scrollTop=1e5};
+function draw(){$('bugs').innerHTML=B.map(b=>`<div class="bug ${done.has(b.id)?'ok':''}"><i></i><div><b>${b.t}</b><small>${b.d}</small></div><button data-i="${b.id}">Исправить</button></div>`).join('');$('pg').style.width=done.size/B.length*100+'%'}
+function fix(id){if(done.has(id))return;const b=B.find(x=>x.id==id);b.fix();done.add(id);log('✓ '+b.log,'g');$('fl').classList.remove('go');void $('fl').offsetWidth;$('fl').classList.add('go');draw();if(done.size==B.length)log('✅ Все проблемы устранены, страница проверена в Chrome, Firefox и на телефоне','g')}
+$('bugs').onclick=e=>{if(e.target.dataset.i)fix(e.target.dataset.i)};
+$('all').onclick=async()=>{for(const b of B){fix(b.id);await new Promise(r=>setTimeout(r,450))}};
+$('fm').onsubmit=e=>{e.preventDefault()};
+log('Диагностика… найдено 5 проблем','e');B.forEach(b=>log('✗ '+b.t,'e'));draw();
+</script>
+</body>
+</html>
